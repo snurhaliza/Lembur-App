@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxNsNBjO35QG3389gPgJcPicA-nsixFywkS5u8xHU11Ixkz9lUsjRLBHoiXRmvz6RBH/exec"
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxgTy5d1O9TvD465oSDd-GdNWMGBHJ4UCAdk92J1zuYMvDUaE9HwRjZ6n8xXBJwBwXp/exec"
 
 function toast(msg){
   let d=document.createElement("div");
