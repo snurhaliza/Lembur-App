@@ -10,10 +10,10 @@
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginPage" class="page active">
-  <div class="login-box text-center">
-    <h3 class="logo-dark">MaintenaX</h3>
+<!-- LOGIN (POLosan) -->
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <h3 class="text-center">MaintenaX</h3>
 
     <select id="role" class="form-select mb-2">
       <option value="karyawan">Karyawan</option>
@@ -26,73 +26,78 @@
 </div>
 
 <!-- APP -->
-<div id="appPage" class="page">
+<div id="appPage" style="display:none;">
 
 <div class="sidebar">
   <h4>⚙ MaintenaX</h4>
   <button onclick="showPage('dashboard')">Dashboard</button>
-  <button onclick="showPage('input')">Input</button>
-  <button onclick="showPage('grafik')">Grafik</button>
+  <button onclick="showPage('data')">Lembur Bulan Ini</button>
+  <button onclick="showPage('all')">Semua Lembur</button>
   <button onclick="logout()">Logout</button>
-</div>
-
-<div class="topbar">
-  <div>MaintenaX</div>
-  <div id="todayTop"></div>
 </div>
 
 <div class="content">
 
-<h5 id="welcome"></h5>
-
 <!-- DASHBOARD -->
-<div id="dashboard" class="card p-3">
-  <h4 id="todayDate"></h4>
-  <p>Semangat lembur hari ini 💪</p>
-  <h5 id="statusHari">Belum Input</h5>
+<div id="dashboard">
+
+<div class="row">
+  <div class="col">
+    <div class="card stat">
+      <h6>Lembur Hari Ini</h6>
+      <h3 id="todayTotal">0</h3>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card stat">
+      <h6>Lembur Bulan Ini</h6>
+      <h3 id="monthTotal">0</h3>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card stat">
+      <h6>Warning >56 Jam</h6>
+      <h3 id="warningTotal">0</h3>
+    </div>
+  </div>
 </div>
 
-<!-- INPUT -->
-<div id="input" class="card p-3" style="display:none;">
-  <input type="date" id="tanggal" class="form-control mb-2">
-  <input id="nama" readonly class="form-control mb-2">
-  <input id="pekerjaan" class="form-control mb-2" placeholder="Pekerjaan">
-
-  <select id="lembur" class="form-select mb-2">
-    <option value="">Lembur</option>
-    <option value="N">Normal</option>
-    <option value="H">Libur</option>
-  </select>
-
-  <select id="alasan" class="form-select mb-2">
-    <option value="">Alasan</option>
-    <option value="1">1</option>
-    <option value="5">5</option>
-    <option value="8">8</option>
-  </select>
-
-  <input type="time" id="mulai" class="form-control mb-2">
-  <input type="time" id="akhir" class="form-control mb-2">
-
-  <input id="total" readonly class="form-control mb-2">
-
-  <button onclick="simpan()" class="btn btn-success">Simpan</button>
-</div>
-
-<!-- GRAFIK -->
-<div id="grafik" style="display:none;">
-  <input type="month" id="bulanTahun" class="form-control mb-2">
+<div class="card mt-3 p-3">
   <canvas id="chart"></canvas>
 </div>
 
 </div>
+
+<!-- DATA BULAN -->
+<div id="data" style="display:none;">
+
+<input type="month" id="filterBulan" class="form-control mb-2">
+
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Nama</th>
+<th>Total Jam</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<button class="btn btn-success" onclick="exportExcel()">Export Excel</button>
+<button class="btn btn-danger" onclick="exportPDF()">Export PDF</button>
+
 </div>
 
-<!-- POPUP -->
-<div id="successPopup" class="popup">
-  <div class="popup-content">
-    ✔ Lembur berhasil disimpan
-  </div>
+<!-- SEMUA DATA -->
+<div id="all" style="display:none;">
+  <h5>Semua Lembur</h5>
+  <select id="tahun" class="form-select mb-2"></select>
+  <ul id="bulanList"></ul>
+</div>
+
+</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
