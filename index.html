@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MaintenaX App</title>
+<title>MaintenaX</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
@@ -14,8 +14,13 @@
 <div id="loginPage" class="page active">
   <div class="login-box text-center">
     <h3 class="logo-dark">MaintenaX</h3>
-    <input id="loginNik" class="form-control mb-2" placeholder="NIK">
-    <input id="loginPass" type="password" class="form-control mb-3" placeholder="Password">
+
+    <select id="role" class="form-select mb-2">
+      <option value="karyawan">Karyawan</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <input id="loginNik" class="form-control mb-3" placeholder="Masukkan NIK">
     <button class="btn btn-primary w-100" onclick="login()">Login</button>
   </div>
 </div>
@@ -23,75 +28,70 @@
 <!-- APP -->
 <div id="appPage" class="page">
 
-  <div class="sidebar">
-    <h4 class="logo">⚙ MaintenaX</h4>
-    <button onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('input')">Input Lembur</button>
-    <button onclick="showPage('grafik')">Grafik</button>
-    <hr>
-    <button onclick="logout()">Logout</button>
-  </div>
+<div class="sidebar">
+  <h4>⚙ MaintenaX</h4>
+  <button onclick="showPage('dashboard')">Dashboard</button>
+  <button onclick="showPage('input')">Input</button>
+  <button onclick="showPage('grafik')">Grafik</button>
+  <button onclick="logout()">Logout</button>
+</div>
 
-  <div class="content">
+<div class="topbar">
+  <div>MaintenaX</div>
+  <div id="todayTop"></div>
+</div>
 
-    <h5 id="welcome" class="mb-3 text-white"></h5>
+<div class="content">
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="card p-4 mb-3">
-      <h4 id="todayDate"></h4>
-      <p class="text-muted">Semangat lembur hari ini 💪🔥</p>
+<h5 id="welcome"></h5>
 
-      <div class="row mt-3">
-        <div class="col">
-          <div class="card p-3 text-center">
-            <h6>Total Jam Bulan Ini</h6>
-            <h3 id="totalJam">0</h3>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card p-3 text-center">
-            <h6>Status Hari Ini</h6>
-            <h3 id="statusHari">Belum Input</h3>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="card p-3">
+  <h4 id="todayDate"></h4>
+  <p>Semangat lembur hari ini 💪</p>
+  <h5 id="statusHari">Belum Input</h5>
+</div>
 
-    <!-- INPUT -->
-    <div id="input" class="card p-3" style="display:none;">
-      <input type="date" id="tanggal" class="form-control mb-2">
-      <input type="text" id="nama" readonly class="form-control mb-2">
-      <input type="text" id="pekerjaan" class="form-control mb-2" placeholder="Pekerjaan">
+<!-- INPUT -->
+<div id="input" class="card p-3" style="display:none;">
+  <input type="date" id="tanggal" class="form-control mb-2">
+  <input id="nama" readonly class="form-control mb-2">
+  <input id="pekerjaan" class="form-control mb-2" placeholder="Pekerjaan">
 
-      <select id="lembur" class="form-select mb-2">
-        <option value="">Pilih Lembur</option>
-        <option value="N">Normal</option>
-        <option value="H">Hari Libur</option>
-      </select>
+  <select id="lembur" class="form-select mb-2">
+    <option value="">Lembur</option>
+    <option value="N">Normal</option>
+    <option value="H">Libur</option>
+  </select>
 
-      <select id="alasan" class="form-select mb-2">
-        <option value="">Pilih Alasan</option>
-        <option value="1">1 Jam</option>
-        <option value="5">5 Jam</option>
-        <option value="8">8 Jam</option>
-      </select>
+  <select id="alasan" class="form-select mb-2">
+    <option value="">Alasan</option>
+    <option value="1">1</option>
+    <option value="5">5</option>
+    <option value="8">8</option>
+  </select>
 
-      <div class="row">
-        <div class="col"><input type="time" id="mulai" class="form-control"></div>
-        <div class="col"><input type="time" id="akhir" class="form-control"></div>
-      </div>
+  <input type="time" id="mulai" class="form-control mb-2">
+  <input type="time" id="akhir" class="form-control mb-2">
 
-      <input id="total" readonly class="form-control mt-2" placeholder="Total otomatis">
+  <input id="total" readonly class="form-control mb-2">
 
-      <button class="btn btn-success w-100 mt-3" onclick="simpan()">Simpan Lembur</button>
-    </div>
+  <button onclick="simpan()" class="btn btn-success">Simpan</button>
+</div>
 
-    <!-- GRAFIK -->
-    <div id="grafik" class="card p-3" style="display:none;">
-      <input type="month" id="bulanTahun" class="form-control mb-3">
-      <canvas id="chart"></canvas>
-    </div>
+<!-- GRAFIK -->
+<div id="grafik" style="display:none;">
+  <input type="month" id="bulanTahun" class="form-control mb-2">
+  <canvas id="chart"></canvas>
+</div>
 
+</div>
+</div>
+
+<!-- POPUP -->
+<div id="successPopup" class="popup">
+  <div class="popup-content">
+    ✔ Lembur berhasil disimpan
   </div>
 </div>
 
