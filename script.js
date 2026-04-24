@@ -1,26 +1,13 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwL96MAOS73z_1zbWTlmflVvjFLKpMOSd5xz3wtm4wiSg3wRayUiJYi9XUQX4cTDU8U/exec";
-
-// TOAST
-function toast(msg,type="success"){
-  let d=document.createElement("div");
-  d.className="toast "+type;
-  d.innerHTML=msg;
-  document.body.appendChild(d);
-  setTimeout(()=>d.remove(),2500);
-}
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxfdAbe5tyS_kh8SIlkCafqZ7nbv1nzSZDm619NxS8Cvr-eOzwn_j01OmJnA_g_CrNo/exec";
 
 // LOGIN
 function login(){
-  if(!loginNik.value || !loginPass.value){
-    return toast("Isi semua field","error");
-  }
-
-  fetch(`${GAS_URL}?action=login&nik=${loginNik.value}&password=${loginPass.value}`)
+  fetch(`${GAS_URL}?action=login&nik=${loginNik.value}&password=${loginNik.value}`)
   .then(r=>r.json())
   .then(res=>{
-    if(!res.status) return toast("Login gagal","error");
+    if(!res.status) return alert("Login gagal");
 
-    localStorage.setItem("user", JSON.stringify(res));
+    localStorage.setItem("user",JSON.stringify(res));
     init(res);
     show("appPage");
   });
@@ -28,27 +15,20 @@ function login(){
 
 // INIT
 function init(u){
-  welcome.innerHTML="Halo, "+u.nama;
   nama.value=u.nama;
-  window.userNik=u.nik;
+  welcome.innerHTML="Halo "+u.nama;
 
-  setDashboard();
-  showPage("dashboard");
+  let t=new Date();
+  todayDate.innerHTML=t.toDateString();
+  todayTop.innerHTML=t.toDateString();
 
   bulanTahun.value=new Date().toISOString().slice(0,7);
 }
 
-// DASHBOARD
-function setDashboard(){
-  let t=new Date();
-  todayDate.innerHTML=t.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-}
-
 // NAV
 function show(id){
-  loginPage.classList.remove("active");
-  appPage.classList.remove("active");
-  document.getElementById(id).classList.add("active");
+  loginPage.style.display="none";
+  appPage.style.display="block";
 }
 
 function showPage(p){
@@ -61,45 +41,30 @@ function showPage(p){
   if(p==="grafik") loadGrafik();
 }
 
-// LOGOUT
-function logout(){
-  localStorage.removeItem("user");
-  show("loginPage");
-}
-
-// HITUNG JAM
-function hitung(){
-  if(!mulai.value || !akhir.value) return total.value="";
-
-  let [a,b]=mulai.value.split(":").map(Number);
-  let [c,d]=akhir.value.split(":").map(Number);
-
-  let m=(c*60+d)-(a*60+b);
-  if(m<0) m+=1440;
-
-  let j=m/60;
-  if(lembur.value==="N" && j>=5) j--;
-
-  total.value=j.toFixed(1);
-}
+// HITUNG
 mulai.oninput=hitung;
 akhir.oninput=hitung;
-lembur.onchange=hitung;
+
+function hitung(){
+  if(!mulai.value||!akhir.value) return;
+
+  let a=new Date("2000-01-01 "+mulai.value);
+  let b=new Date("2000-01-01 "+akhir.value);
+
+  let jam=(b-a)/3600000;
+  if(jam<0) jam+=24;
+
+  total.value=jam.toFixed(1);
+}
 
 // SIMPAN
 function simpan(){
-  if(!tanggal.value) return toast("Tanggal wajib","error");
-  if(!pekerjaan.value) return toast("Pekerjaan wajib","error");
-  if(!lembur.value) return toast("Pilih lembur","error");
-  if(!alasan.value) return toast("Pilih alasan","error");
-  if(!mulai.value || !akhir.value) return toast("Jam belum lengkap","error");
-
   fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
       tanggal:tanggal.value,
-      nik:userNik,
+      nik:JSON.parse(localStorage.getItem("user")).nik,
       nama:nama.value,
       pekerjaan:pekerjaan.value,
       lembur:lembur.value,
@@ -111,42 +76,31 @@ function simpan(){
   })
   .then(r=>r.json())
   .then(res=>{
-    if(res==="SUDAH_ADA") return toast("Sudah isi hari ini","error");
+    if(res==="SUDAH_ADA") return alert("Sudah ada");
 
-    toast("✔ Lembur berhasil disimpan","success");
-    statusHari.innerHTML="Sudah Input ✔";
+    successPopup.style.display="flex";
+    setTimeout(()=>successPopup.style.display="none",2000);
+
+    pekerjaan.value="";
+    mulai.value="";
+    akhir.value="";
+    total.value="";
   });
 }
 
 // GRAFIK
-let chartInstance;
-
 function loadGrafik(){
   let [y,m]=bulanTahun.value.split("-");
 
   fetch(`${GAS_URL}?action=grafik&tahun=${y}&bulan=${m}`)
   .then(r=>r.json())
   .then(d=>{
-    if(chartInstance) chartInstance.destroy();
-
-    chartInstance=new Chart(chart,{
+    new Chart(chart,{
       type:'bar',
       data:{
         labels:d.map(x=>x.nama),
-        datasets:[{
-          data:d.map(x=>x.total),
-          backgroundColor:'#2563eb'
-        }]
+        datasets:[{data:d.map(x=>x.total)}]
       }
     });
   });
-}
-
-// AUTO LOGIN
-window.onload=function(){
-  let u=JSON.parse(localStorage.getItem("user"));
-  if(u){
-    init(u);
-    show("appPage");
-  }
 }
