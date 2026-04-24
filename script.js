@@ -1,64 +1,50 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyyO1wVq7k0gUlBRwdRDrFKlsRcRR0-rvLcLLpuqZM4SYIj0ggsTAmfRmWQ2FyWBPJR/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzEF_Ux0ZcCUkHa5EAXWyno0Ys66po_GNAYkhumRdUdqpYpDXXc2txGLY8XGhsSoSfq/exec";
 
-// =======================
 // TOAST
-// =======================
-function toast(msg){
+function toast(msg,type="success"){
   let d=document.createElement("div");
-  d.className="toast";
+  d.className="toast "+type;
   d.innerHTML=msg;
   document.body.appendChild(d);
-  setTimeout(()=>d.remove(),2000);
+  setTimeout(()=>d.remove(),2500);
 }
 
-
-// =======================
-// LOGIN (FIX GET)
-// =======================
+// LOGIN
 function login(){
   if(!loginNik.value || !loginPass.value){
-    return toast("Isi semua field");
+    return toast("Isi semua field","error");
   }
 
-  const url = `${GAS_URL}?action=login&nik=${loginNik.value}&password=${loginPass.value}`;
-
-  fetch(url)
-  .then(res => res.text())
-  .then(text => {
-    console.log("LOGIN:", text);
-
-    let res;
-    try{
-      res = JSON.parse(text);
-    }catch(e){
-      return toast("Response error");
-    }
-
-    if(!res.status) return toast("Login gagal");
+  fetch(`${GAS_URL}?action=login&nik=${loginNik.value}&password=${loginPass.value}`)
+  .then(r=>r.json())
+  .then(res=>{
+    if(!res.status) return toast("Login gagal","error");
 
     localStorage.setItem("user", JSON.stringify(res));
     init(res);
     show("appPage");
-  })
-  .catch(()=>{
-    toast("Tidak bisa konek ke server");
   });
 }
 
-
-// =======================
-// INIT USER
-// =======================
+// INIT
 function init(u){
-  welcome.innerHTML="Halo "+u.nama;
+  welcome.innerHTML="Halo, "+u.nama;
   nama.value=u.nama;
   window.userNik=u.nik;
+
+  setDashboard();
+  showPage("dashboard");
+
+  bulanTahun.value=new Date().toISOString().slice(0,7);
 }
 
+// DASHBOARD
+function setDashboard(){
+  let t=new Date();
+  todayDate.innerHTML=t.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
 
-// =======================
-// NAVIGASI
-// =======================
+// NAV
 function show(id){
   loginPage.classList.remove("active");
   appPage.classList.remove("active");
@@ -66,26 +52,47 @@ function show(id){
 }
 
 function showPage(p){
+  dashboard.style.display="none";
   input.style.display="none";
   grafik.style.display="none";
 
-  if(p==="input"){
-    input.style.display="block";
-  }else{
-    grafik.style.display="block";
-    loadGrafik();
-  }
+  document.getElementById(p).style.display="block";
+
+  if(p==="grafik") loadGrafik();
 }
 
+// LOGOUT
+function logout(){
+  localStorage.removeItem("user");
+  show("loginPage");
+}
 
-// =======================
-// SIMPAN (POST)
-// =======================
+// HITUNG JAM
+function hitung(){
+  if(!mulai.value || !akhir.value) return total.value="";
+
+  let [a,b]=mulai.value.split(":").map(Number);
+  let [c,d]=akhir.value.split(":").map(Number);
+
+  let m=(c*60+d)-(a*60+b);
+  if(m<0) m+=1440;
+
+  let j=m/60;
+  if(lembur.value==="N" && j>=5) j--;
+
+  total.value=j.toFixed(1);
+}
+mulai.oninput=hitung;
+akhir.oninput=hitung;
+lembur.onchange=hitung;
+
+// SIMPAN
 function simpan(){
-
-  if(!tanggal.value) return toast("Tanggal kosong");
-  if(!pekerjaan.value) return toast("Pekerjaan kosong");
-  if(!mulai.value || !akhir.value) return toast("Jam belum lengkap");
+  if(!tanggal.value) return toast("Tanggal wajib","error");
+  if(!pekerjaan.value) return toast("Pekerjaan wajib","error");
+  if(!lembur.value) return toast("Pilih lembur","error");
+  if(!alasan.value) return toast("Pilih alasan","error");
+  if(!mulai.value || !akhir.value) return toast("Jam belum lengkap","error");
 
   fetch(GAS_URL,{
     method:"POST",
@@ -104,24 +111,21 @@ function simpan(){
   })
   .then(r=>r.json())
   .then(res=>{
-    if(res==="SUDAH_ADA") return toast("Sudah isi hari ini");
+    if(res==="SUDAH_ADA") return toast("Sudah isi hari ini","error");
 
-    toast("✔ Berhasil simpan");
-  })
-  .catch(()=>toast("Gagal simpan"));
+    toast("✔ Lembur berhasil disimpan","success");
+    statusHari.innerHTML="Sudah Input ✔";
+  });
 }
 
-
-// =======================
-// GRAFIK (FIX GET)
-// =======================
+// GRAFIK
 let chartInstance;
 
 function loadGrafik(){
   let [y,m]=bulanTahun.value.split("-");
 
   fetch(`${GAS_URL}?action=grafik&tahun=${y}&bulan=${m}`)
-  .then(res=>res.json())
+  .then(r=>r.json())
   .then(d=>{
     if(chartInstance) chartInstance.destroy();
 
@@ -133,11 +137,16 @@ function loadGrafik(){
           data:d.map(x=>x.total),
           backgroundColor:'#2563eb'
         }]
-      },
-      options:{
-        plugins:{legend:{display:false}}
       }
     });
-  })
-  .catch(()=>toast("Gagal load grafik"));
+  });
+}
+
+// AUTO LOGIN
+window.onload=function(){
+  let u=JSON.parse(localStorage.getItem("user"));
+  if(u){
+    init(u);
+    show("appPage");
+  }
 }
