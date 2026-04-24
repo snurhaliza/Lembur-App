@@ -1,79 +1,65 @@
 body{
-  font-family:'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+  font-family:sans-serif;
   margin:0;
+  background:linear-gradient(135deg,#1e3a8a,#3b82f6);
 }
 
-/* PAGE */
-.page{display:none;}
-.page.active{display:block;}
-
-/* LOGIN */
-.login-box{
-  width:320px;
-  margin:120px auto;
-  padding:25px;
-  background:white;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
-
-/* SIDEBAR */
 .sidebar{
-  width:220px;
+  width:200px;
   position:fixed;
   height:100vh;
   background:#1e3a8a;
-  padding:15px;
   color:white;
+  padding:10px;
 }
 
 .sidebar button{
   width:100%;
-  margin-bottom:10px;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#3b82f6;
-  color:white;
+  margin:5px 0;
 }
 
-.sidebar button:hover{
-  background:#2563eb;
-}
-
-/* CONTENT */
-.content{
-  margin-left:220px;
-  padding:20px;
-}
-
-/* CARD */
-.card{
-  border-radius:16px;
-  border:none;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* INPUT */
-input, select{
-  border-radius:10px !important;
-}
-
-/* LOGO */
-.logo{color:white;font-weight:bold;}
-.logo-dark{font-weight:bold;}
-
-/* TOAST */
-.toast{
+.topbar{
   position:fixed;
-  top:20px;
-  right:20px;
-  padding:12px 18px;
-  border-radius:12px;
-  color:white;
-  z-index:9999;
+  left:200px;
+  right:0;
+  height:50px;
+  background:white;
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
 }
 
-.toast.success{background:#16a34a;}
-.toast.error{background:#dc2626;}
+.content{
+  margin-left:200px;
+  padding:70px 20px;
+}
+
+.card{
+  border-radius:15px;
+}
+
+/* LOGIN */
+.login-box{
+  width:300px;
+  margin:120px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+
+/* POPUP */
+.popup{
+  display:none;
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.popup-content{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
