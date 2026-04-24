@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzEF_Ux0ZcCUkHa5EAXWyno0Ys66po_GNAYkhumRdUdqpYpDXXc2txGLY8XGhsSoSfq/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwL96MAOS73z_1zbWTlmflVvjFLKpMOSd5xz3wtm4wiSg3wRayUiJYi9XUQX4cTDU8U/exec";
 
 // TOAST
 function toast(msg,type="success"){
