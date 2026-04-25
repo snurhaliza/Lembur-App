@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/YOUR_GAS_URL/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycby3dxo47AHIEjrrpS6tLBIJaUrLtV_J_xZRsp5M23rgzlFO9GKeRcIIcHy7o38mBSJl/exec";
 
 function login(){
   fetch(`${GAS_URL}?action=login&nik=${nik.value}&password=${password.value}`)
