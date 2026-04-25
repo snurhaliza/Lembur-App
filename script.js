@@ -1,21 +1,30 @@
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwtWmjiLibJ320aegedisIa-ouw5H-buLZ8yU085MLNHfgUheNGDr-f8hE-sRqkFZWu/exec";
 
-function login(){
-  fetch(`${GAS_URL}?action=login&nik=${nik.value}&password=${password.value}`)
-  .then(r=>r.json())
-  .then(res=>{
-    if(!res.status){
-      alert("Login gagal");
-      return;
-    }
+async function login(){
 
-    localStorage.setItem("user", JSON.stringify(res));
+  let nikVal = document.getElementById("nik").value;
+  let passVal = document.getElementById("password").value;
+  let roleVal = document.getElementById("role").value;
 
-    // REDIRECT ROLE
-    if(res.role === "admin"){
-      window.location.href = "admin.html";
-    } else {
-      window.location.href = "karyawan.html";
-    }
-  });
+  let res = await fetch(`${GAS_URL}?action=login&nik=${nikVal}&password=${passVal}`);
+  let data = await res.json();
+
+  if(!data.status){
+    document.getElementById("msg").innerText = "Login gagal";
+    return;
+  }
+
+  // VALIDASI ROLE
+  if(data.role !== roleVal){
+    document.getElementById("msg").innerText = "Role tidak sesuai!";
+    return;
+  }
+
+  localStorage.setItem("user", JSON.stringify(data));
+
+  if(data.role === "admin"){
+    window.location.href = "admin.html";
+  }else{
+    window.location.href = "karyawan.html";
+  }
 }
