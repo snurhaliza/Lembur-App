@@ -3,104 +3,149 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MaintenaX</title>
-<link rel="stylesheet" href="style.css">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#f1f5f9;
+}
+
+/* LOGIN */
+.login-page{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.login-box{
+  width:320px;
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  height:100vh;
+  position:fixed;
+  background:#1e3a8a;
+  color:white;
+  padding:15px;
+}
+
+.sidebar button{
+  width:100%;
+  margin:5px 0;
+}
+
+/* CONTENT */
+.content{
+  margin-left:220px;
+  padding:20px;
+}
+
+/* CARD */
+.stat{
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+</style>
+
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage" class="login">
-  <div class="box">
-    <h2>MaintenaX</h2>
-    <input id="nik" placeholder="NIK">
-    <input id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+<div id="loginPage" class="login-page">
+  <div class="login-box text-center">
+    <h3>MaintenaX</h3>
+
+    <input id="loginNik" class="form-control mb-3" placeholder="Masukkan NIK">
+
+    <p style="font-size:12px;color:gray;">
+      Gunakan NIK sebagai password
+    </p>
+
+    <button class="btn btn-primary w-100" onclick="login()">Login</button>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none;">
+<div id="appPage" style="display:none;">
 
-  <!-- ADMIN SIDEBAR -->
-  <div id="adminSidebar" class="sidebar" style="display:none;">
-    <h3>ADMIN</h3>
-    <button onclick="show('adminDash')">Dashboard</button>
-    <button onclick="show('adminData')">Data Lembur</button>
+  <div class="sidebar">
+    <h4>⚙ MaintenaX</h4>
+    <button onclick="showPage('dashboard')">Dashboard</button>
+    <button onclick="showPage('input')">Input Lembur</button>
+    <button onclick="showPage('grafik')">Grafik</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- USER SIDEBAR -->
-  <div id="userSidebar" class="sidebar" style="display:none;">
-    <h3>KARYAWAN</h3>
-    <button onclick="show('userDash')">Dashboard</button>
-    <button onclick="show('input')">Input Lembur</button>
-    <button onclick="show('akun')">Akun Saya</button>
-    <button onclick="logout()">Logout</button>
-  </div>
-
-  <!-- CONTENT -->
   <div class="content">
 
-    <!-- ADMIN DASHBOARD -->
-    <div id="adminDash" class="page">
-      <h2>Dashboard Admin</h2>
+    <h5 id="welcome"></h5>
 
-      <div class="card">Hari ini: <span id="today"></span></div>
-      <div class="card">Bulan ini: <span id="month"></span></div>
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+      <div class="row">
+        <div class="col">
+          <div class="card stat">
+            <h6>Lembur Hari Ini</h6>
+            <h3 id="todayTotal">0</h3>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card stat">
+            <h6>Lembur Bulan Ini</h6>
+            <h3 id="monthTotal">0</h3>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card stat">
+            <h6>Warning >56 Jam</h6>
+            <h3 id="warningTotal">0</h3>
+          </div>
+        </div>
+      </div>
 
-      <h3>⚠ Warning >56 Jam</h3>
-      <div id="warning"></div>
-    </div>
-
-    <!-- ADMIN TABLE -->
-    <div id="adminData" class="page">
-      <h2>Data Lembur</h2>
-
-      <input id="searchName" placeholder="Cari Nama">
-      <input id="searchMonth" type="month">
-
-      <button onclick="loadTable()">Filter</button>
-
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Tanggal</th>
-            <th>NIK</th>
-            <th>Nama</th>
-            <th>Total</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tbl"></tbody>
-      </table>
-
-      <button onclick="exportExcel()">Export Excel</button>
-    </div>
-
-    <!-- USER DASHBOARD -->
-    <div id="userDash" class="page">
-      <h2>Selamat Datang 👋</h2>
-      <p id="tanggal"></p>
-
-      <div class="card">💡 "Kerja keras hari ini menentukan masa depanmu"</div>
+      <div class="card mt-3 p-3">
+        <canvas id="chart"></canvas>
+      </div>
     </div>
 
     <!-- INPUT -->
-    <div id="input" class="page">
-      <h3>Input Lembur</h3>
-      <input placeholder="Jam">
-      <button>Simpan</button>
+    <div id="input" style="display:none;">
+      <input type="date" id="tanggal" class="form-control mb-2">
+      <input id="nama" readonly class="form-control mb-2">
+      <input id="pekerjaan" class="form-control mb-2" placeholder="Pekerjaan">
+
+      <input type="time" id="mulai" class="form-control mb-2">
+      <input type="time" id="akhir" class="form-control mb-2">
+
+      <input id="total" readonly class="form-control mb-2">
+
+      <button onclick="simpan()" class="btn btn-success">Simpan</button>
     </div>
 
-    <!-- AKUN -->
-    <div id="akun" class="page">
-      <h3>Akun Saya</h3>
-      <p id="nama"></p>
+    <!-- GRAFIK -->
+    <div id="grafik" style="display:none;">
+      <input type="month" id="bulanTahun" class="form-control mb-2">
+      <canvas id="chart2"></canvas>
     </div>
 
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>
+
 </body>
 </html>
