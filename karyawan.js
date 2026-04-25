@@ -3,7 +3,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbybks5dvFwX8LbdFCfVL9Jb
 // ================= USER =================
 let user = JSON.parse(localStorage.getItem("user"));
 
-// CEK LOGIN
 if(!user){
   alert("Session habis!");
   location.href = "index.html";
@@ -12,32 +11,38 @@ if(!user){
 // ================= INIT =================
 function init(){
 
-  // AMBIL ELEMENT
+  // SET DATA USER
   document.getElementById("nik").value = user.nik;
   document.getElementById("nama").value = user.nama;
 
+  // SAPAAN
+  document.getElementById("welcome").innerText = "Halo " + user.nama;
+
+  // TANGGAL HARI INI
+  let now = new Date();
+  document.getElementById("todayDate").innerText =
+    now.toLocaleDateString("id-ID", {
+      weekday:"long",
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    });
+
+  // DEFAULT TANGGAL INPUT
+  document.getElementById("tanggal").value =
+    new Date().toISOString().split("T")[0];
+
+  // 🔥 PINDAHKAN EVENT KE SINI (INI YANG PENTING)
+  document.getElementById("mulai").oninput = hitungJam;
+  document.getElementById("akhir").oninput = hitungJam;
+
+  // LOAD DASHBOARD
   loadDash();
   setInterval(loadDash, 5000);
 }
 
-// ================= DASHBOARD =================
-async function loadDash(){
-
-  try{
-    let r = await fetch(GAS_URL + `?action=dashboard&nik=${user.nik}`);
-    let d = await r.json();
-
-    document.getElementById("todayTotal").innerText = (d.todayTotal || 0) + " Jam";
-    document.getElementById("monthTotal").innerText = (d.monthTotal || 0) + " Jam";
-    document.getElementById("status").innerText = d.status || "-";
-  }catch(err){
-    console.log("Dashboard error:", err);
-  }
-}
-
 // ================= HITUNG JAM =================
-document.getElementById("mulai").oninput =
-document.getElementById("akhir").oninput = function(){
+function hitungJam(){
 
   let mulai = document.getElementById("mulai").value;
   let akhir = document.getElementById("akhir").value;
@@ -51,7 +56,23 @@ document.getElementById("akhir").oninput = function(){
   if(jam < 0) jam += 24;
 
   document.getElementById("total").value = jam.toFixed(1);
-};
+}
+
+// ================= DASHBOARD =================
+async function loadDash(){
+
+  try{
+    let r = await fetch(GAS_URL + `?action=dashboard&nik=${user.nik}`);
+    let d = await r.json();
+
+    document.getElementById("todayTotal").innerText = (d.todayTotal || 0) + " Jam";
+    document.getElementById("monthTotal").innerText = (d.monthTotal || 0) + " Jam";
+    document.getElementById("status").innerText = d.status || "-";
+
+  }catch(err){
+    console.log("Dashboard error:", err);
+  }
+}
 
 // ================= SIMPAN =================
 async function simpan(){
@@ -95,7 +116,6 @@ async function simpan(){
 
 // ================= RESET =================
 function resetForm(){
-
   document.getElementById("keterangan").value = "";
   document.getElementById("mulai").value = "";
   document.getElementById("akhir").value = "";
