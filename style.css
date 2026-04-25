@@ -4,28 +4,11 @@ font-family:sans-serif;
 background:#f4f6fb;
 }
 
-/* LOGO CORNER */
-.logo{
-position:fixed;
-font-weight:bold;
-color:white;
-background:#1e3a8a;
-padding:8px 12px;
-border-radius:8px;
-z-index:999;
-font-size:12px;
-}
-
-.logo.top-left{top:10px;left:10px;}
-.logo.top-right{top:10px;right:10px;}
-.logo.bottom-left{bottom:10px;left:10px;}
-.logo.bottom-right{bottom:10px;right:10px;}
-
 .sidebar{
 width:220px;
 height:100vh;
 position:fixed;
-background:linear-gradient(#1e3a8a,#111827);
+background:#1e3a8a;
 color:white;
 padding:15px;
 }
@@ -35,7 +18,7 @@ width:100%;
 padding:10px;
 margin:5px 0;
 border:none;
-background:rgba(255,255,255,0.08);
+background:#2563eb;
 color:white;
 border-radius:8px;
 cursor:pointer;
@@ -43,30 +26,53 @@ cursor:pointer;
 
 .content{
 margin-left:240px;
-padding:15px;
-}
-
-.card{
-background:white;
-padding:12px;
-border-radius:10px;
-margin:10px 0;
-box-shadow:0 4px 15px rgba(0,0,0,0.08);
+padding:20px;
 }
 
 .grid{
 display:flex;
-gap:10px;
+gap:15px;
+}
+
+.card{
+flex:1;
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card h2{
+font-size:28px;
+margin-top:10px;
+}
+
+.notif{
+border-left:6px solid #3b82f6;
+}
+
+.warning{
+border-left:6px solid #ef4444;
 }
 
 table{
 width:100%;
-background:white;
+margin-top:10px;
 border-collapse:collapse;
-font-size:14px;
+background:white;
 }
 
 th,td{
-padding:8px;
-border:1px solid #eee;
+padding:10px;
+border:1px solid #ddd;
+text-align:center;
+}
+
+input{
+padding:10px;
+width:100%;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
 }
