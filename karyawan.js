@@ -1,57 +1,145 @@
-const GAS_URL="https://script.google.com/macros/s/AKfycbybks5dvFwX8LbdFCfVL9Jb5UI3841AAaTOjEE6l3YkA80IWGkHqx-kVFLicfRLFfhQ/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbybks5dvFwX8LbdFCfVL9Jb5UI3841AAaTOjEE6l3YkA80IWGkHqx-kVFLicfRLFfhQ/exec";
 
-let user=JSON.parse(localStorage.getItem("user"));
+// ================= USER =================
+let user = JSON.parse(localStorage.getItem("user"));
 
-nik.value=user.nik;
-nama.value=user.nama;
+// CEK LOGIN
+if(!user){
+  alert("Session habis!");
+  location.href = "index.html";
+}
 
-// DASHBOARD
+// ================= INIT =================
+function init(){
+
+  // AMBIL ELEMENT
+  document.getElementById("nik").value = user.nik;
+  document.getElementById("nama").value = user.nama;
+
+  loadDash();
+  setInterval(loadDash, 5000);
+}
+
+// ================= DASHBOARD =================
 async function loadDash(){
 
-let r=await fetch(GAS_URL+`?action=dashboard&nik=${user.nik}`);
-let d=await r.json();
+  try{
+    let r = await fetch(GAS_URL + `?action=dashboard&nik=${user.nik}`);
+    let d = await r.json();
 
-todayTotal.innerText=d.todayTotal+" Jam";
-monthTotal.innerText=d.monthTotal+" Jam";
-status.innerText=d.status;
-
+    document.getElementById("todayTotal").innerText = (d.todayTotal || 0) + " Jam";
+    document.getElementById("monthTotal").innerText = (d.monthTotal || 0) + " Jam";
+    document.getElementById("status").innerText = d.status || "-";
+  }catch(err){
+    console.log("Dashboard error:", err);
+  }
 }
 
-setInterval(loadDash,5000);
-loadDash();
+// ================= HITUNG JAM =================
+document.getElementById("mulai").oninput =
+document.getElementById("akhir").oninput = function(){
 
-// HITUNG JAM
-mulai.oninput=akhir.oninput=function(){
-let a=new Date("2000 "+mulai.value);
-let b=new Date("2000 "+akhir.value);
-let j=(b-a)/3600000;
-if(j<0) j+=24;
-total.value=j.toFixed(1);
+  let mulai = document.getElementById("mulai").value;
+  let akhir = document.getElementById("akhir").value;
+
+  if(!mulai || !akhir) return;
+
+  let a = new Date("2000-01-01 " + mulai);
+  let b = new Date("2000-01-01 " + akhir);
+
+  let jam = (b - a) / 3600000;
+  if(jam < 0) jam += 24;
+
+  document.getElementById("total").value = jam.toFixed(1);
 };
 
-// SIMPAN
+// ================= SIMPAN =================
 async function simpan(){
 
-if(!keterangan.value||!mulai.value||!akhir.value){
-alert("Semua wajib diisi!");
-return;
+  let pekerjaan = document.getElementById("keterangan").value;
+  let mulai = document.getElementById("mulai").value;
+  let akhir = document.getElementById("akhir").value;
+  let total = document.getElementById("total").value;
+
+  if(!pekerjaan || !mulai || !akhir){
+    alert("❌ Semua field wajib diisi!");
+    return;
+  }
+
+  try{
+
+    await fetch(GAS_URL,{
+      method:"POST",
+      body:JSON.stringify({
+        action:"simpan",
+        nik:user.nik,
+        nama:user.nama,
+        pekerjaan:pekerjaan,
+        alasan:document.getElementById("jenis").value,
+        k_alasan:document.getElementById("jam").value,
+        mulai:mulai,
+        akhir:akhir,
+        total:total
+      })
+    });
+
+    alert("✅ Lembur tersimpan");
+
+    resetForm();
+    loadDash();
+
+  }catch(err){
+    alert("❌ Gagal simpan");
+  }
 }
 
-await fetch(GAS_URL,{
-method:"POST",
-body:JSON.stringify({
-action:"simpan",
-nik:user.nik,
-nama:user.nama,
-pekerjaan:keterangan.value,
-alasan:jenis.value,
-k_alasan:jam.value,
-mulai:mulai.value,
-akhir:akhir.value,
-total:total.value
-})
-});
+// ================= RESET =================
+function resetForm(){
 
-alert("Tersimpan");
-loadDash();
+  document.getElementById("keterangan").value = "";
+  document.getElementById("mulai").value = "";
+  document.getElementById("akhir").value = "";
+  document.getElementById("total").value = "";
+}
+
+// ================= MENU =================
+function menu(id){
+
+  document.getElementById("dash").style.display = "none";
+  document.getElementById("input").style.display = "none";
+  document.getElementById("grafik").style.display = "none";
+
+  document.getElementById(id).style.display = "block";
+
+  if(id === "grafik") loadGrafik();
+}
+
+// ================= GRAFIK =================
+let chart;
+
+async function loadGrafik(){
+
+  let res = await fetch(GAS_URL + "?action=grafik");
+  let data = await res.json();
+
+  let ctx = document.getElementById("chart");
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:data.map(d=>d.nama),
+      datasets:[{
+        label:"Top Lembur",
+        data:data.map(d=>d.total)
+      }]
+    }
+  });
+}
+
+// ================= LOGOUT =================
+function logout(){
+  localStorage.clear();
+  location.href = "index.html";
 }
