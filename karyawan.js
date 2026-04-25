@@ -1,55 +1,43 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyjhPZD19TH-Q6XGmBUUTx72X3bqPoYsvdsRumD7wDV5S3-CokcHdV2oecp0yNpgz3S/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbz977NPlRuMLfpD4PMFsEBPOTO_sS_t7iCdcdZMNZVBhNqLkVtMc10dsV-Y1gqm8l33/exec";
 
-let user = JSON.parse(localStorage.getItem("user"));
+let user=JSON.parse(localStorage.getItem("user"));
 
-if(!user){
-  alert("Session habis!");
-  location.href = "index.html";
-}
-
-// INIT
 function init(){
-  document.getElementById("nik").value = user.nik;
-  document.getElementById("nama").value = user.nama;
-  document.getElementById("welcome").innerText = "Halo, " + user.nama;
+
+  nik.value=user.nik;
+  nama.value=user.nama;
+  welcome.innerText="Halo "+user.nama;
+
+  todayDate.innerText=new Date().toLocaleDateString("id-ID");
 
   loadDash();
-  setInterval(loadDash, 5000);
+  setInterval(loadDash,5000);
 }
 
-// DASHBOARD
 async function loadDash(){
 
-  let r = await fetch(GAS_URL + `?action=dashboard&nik=${user.nik}`);
-  let d = await r.json();
+  let r=await fetch(GAS_URL+`?action=dashboard&nik=${user.nik}`);
+  let d=await r.json();
 
-  document.getElementById("todayJam").innerText = (d.todayTotal || 0) + " Jam";
-  document.getElementById("monthTotal").innerText = (d.monthTotal || 0) + " Jam";
-  document.getElementById("status").innerText = d.status;
+  todayTotal.innerText=d.todayTotal+" Jam";
+  monthTotal.innerText=d.monthTotal+" Jam";
+  status.innerText=d.status;
 }
 
-// HITUNG JAM
-document.getElementById("mulai").oninput =
-document.getElementById("akhir").oninput = function(){
-
-  let mulai = document.getElementById("mulai").value;
-  let akhir = document.getElementById("akhir").value;
-
-  if(!mulai || !akhir) return;
-
-  let a = new Date("2000-01-01T" + mulai);
-  let b = new Date("2000-01-01T" + akhir);
-
-  let jam = (b - a) / 3600000;
-  if(jam < 0) jam += 24;
-
-  document.getElementById("total").value = jam.toFixed(1);
+mulai.oninput=akhir.oninput=function(){
+  let a=new Date("2000 "+mulai.value);
+  let b=new Date("2000 "+akhir.value);
+  let j=(b-a)/3600000;
+  if(j<0) j+=24;
+  total.value=j.toFixed(1);
 };
 
-// SIMPAN
 async function simpan(){
 
-  let pekerjaan = document.getElementById("keterangan").value;
+  if(!keterangan.value||!jenis.value||!jam.value||!mulai.value||!akhir.value){
+    alert("Isi semua!");
+    return;
+  }
 
   await fetch(GAS_URL,{
     method:"POST",
@@ -57,57 +45,53 @@ async function simpan(){
       action:"simpan",
       nik:user.nik,
       nama:user.nama,
-      pekerjaan:pekerjaan,
-      jenis:document.getElementById("jenis").value,
-      jam:document.getElementById("jam").value,
-      mulai:document.getElementById("mulai").value,
-      akhir:document.getElementById("akhir").value,
-      total:document.getElementById("total").value
+      pekerjaan:keterangan.value,
+      jenis:jenis.value,
+      jam:jam.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
     })
   });
 
   alert("Tersimpan");
+  resetForm();
   loadDash();
 }
 
-// MENU
-function menu(id){
-  document.querySelectorAll(".content > div").forEach(d=>{
-    d.style.display="none";
-  });
-  document.getElementById(id).style.display="block";
-
-  if(id === "grafik") loadGrafik();
+function resetForm(){
+  keterangan.value="";
+  jenis.value="";
+  jam.value="";
+  mulai.value="";
+  akhir.value="";
+  total.value="";
 }
 
-// GRAFIK
+function menu(id){
+  document.querySelectorAll(".content > div").forEach(d=>d.style.display="none");
+  document.getElementById(id).style.display="block";
+  if(id==="grafik") loadGrafik();
+}
+
 let chart;
 
 async function loadGrafik(){
-
-  let res = await fetch(GAS_URL + "?action=grafik");
-  let data = await res.json();
-
-  let ctx = document.getElementById("chart");
+  let r=await fetch(GAS_URL+"?action=grafik");
+  let d=await r.json();
 
   if(chart) chart.destroy();
 
-  chart = new Chart(ctx,{
+  chart=new Chart(chart,{
     type:"bar",
     data:{
-      labels:data.map(d=>d.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:data.map(d=>d.total)
-      }]
+      labels:d.map(x=>x.nama),
+      datasets:[{data:d.map(x=>x.total)}]
     }
   });
 }
 
-// LOGOUT
 function logout(){
   localStorage.clear();
   location.href="index.html";
 }
-
-init();
