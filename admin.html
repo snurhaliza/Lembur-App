@@ -6,12 +6,14 @@
 
 <body>
 
+<div class="logo top-left">MAINTENAX</div>
+<div class="logo top-right">MAINTENAX</div>
+
 <div class="sidebar">
-<h3>ADMIN PANEL</h3>
+<h3>ADMIN</h3>
+
 <button onclick="menu('dash')">Dashboard</button>
 <button onclick="menu('data')">Data Lembur</button>
-<button onclick="menu('warn')">Warning</button>
-<button onclick="menu('akun')">Akun</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -23,30 +25,24 @@
 <div class="grid">
 
 <div class="card">
-🔔 Lembur Hari Ini
-<h2 id="todayCount"></h2>
+📅 Hari Ini
+<h2 id="todayCount">0</h2>
 </div>
 
 <div class="card">
-📊 Lembur Bulan Ini
-<h2 id="monthTotal"></h2>
-</div>
-
-<div class="card">
-⚠️ Warning >56 Jam
-<h2 id="warning"></h2>
+📊 Bulan Ini
+<h2 id="monthTotal">0</h2>
 </div>
 
 </div>
 
 </div>
 
-<!-- DATA TABLE -->
+<!-- DATA -->
 <div id="data" style="display:none">
 
 <div class="card">
-
-<input id="search" placeholder="Cari nama">
+<input id="search" placeholder="Cari nama..." oninput="loadData()">
 
 <table>
 <thead>
@@ -55,23 +51,9 @@
 <th>Jam</th><th>Keterangan</th><th>Aksi</th>
 </tr>
 </thead>
-
 <tbody id="table"></tbody>
 </table>
 
-<button onclick="exportExcel()">Export Excel</button>
-
-</div>
-
-</div>
-
-<!-- AKUN -->
-<div id="akun" style="display:none">
-
-<div class="card">
-<h3>Ganti Password Admin</h3>
-<input id="pass">
-<button onclick="updatePass()">Simpan</button>
 </div>
 
 </div>
