@@ -1,54 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="sidebar">
-  <h3>Admin</h3>
-
-  <button onclick="showAdmin('dashboard')">Dashboard</button>
-  <button onclick="showAdmin('data')">Data Lembur</button>
-  <button onclick="showAdmin('warning')">Warning</button>
-  <button onclick="exportData()">Export</button>
-  <button onclick="logout()">Logout</button>
+<h3>ADMIN PANEL</h3>
+<button onclick="menu('dash')">Dashboard</button>
+<button onclick="menu('data')">Data Lembur</button>
+<button onclick="menu('warn')">Warning</button>
+<button onclick="menu('akun')">Akun</button>
+<button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
-  <div id="adminDashboard">
-    <h2>Dashboard Admin</h2>
+<!-- DASHBOARD -->
+<div id="dash">
 
-    <h4>Hari Ini: <span id="today"></span></h4>
-    <h4>Bulan Ini: <span id="month"></span></h4>
-    <h4>Karyawan Aktif: <span id="user"></span></h4>
-  </div>
+<div class="grid">
 
-  <div id="data" style="display:none;">
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>NIK</th>
-          <th>Nama</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody id="tableData"></tbody>
-    </table>
-  </div>
+<div class="card">
+🔔 Lembur Hari Ini
+<h2 id="todayCount"></h2>
+</div>
 
-  <div id="warning" style="display:none;">
-    <h3>Warning > 56 Jam</h3>
-    <div id="warningList"></div>
-  </div>
+<div class="card">
+📊 Lembur Bulan Ini
+<h2 id="monthTotal"></h2>
+</div>
+
+<div class="card">
+⚠️ Warning >56 Jam
+<h2 id="warning"></h2>
+</div>
+
+</div>
+
+</div>
+
+<!-- DATA TABLE -->
+<div id="data" style="display:none">
+
+<div class="card">
+
+<input id="search" placeholder="Cari nama">
+
+<table>
+<thead>
+<tr>
+<th>Tanggal</th><th>NIK</th><th>Nama</th>
+<th>Jam</th><th>Keterangan</th><th>Aksi</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+</table>
+
+<button onclick="exportExcel()">Export Excel</button>
+
+</div>
+
+</div>
+
+<!-- AKUN -->
+<div id="akun" style="display:none">
+
+<div class="card">
+<h3>Ganti Password Admin</h3>
+<input id="pass">
+<button onclick="updatePass()">Simpan</button>
+</div>
+
+</div>
 
 </div>
 
 <script src="admin.js"></script>
-
 </body>
 </html>
