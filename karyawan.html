@@ -2,20 +2,19 @@
 <html>
 <head>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div class="logo top-left">MAINTENAX</div>
-<div class="logo bottom-right">MAINTENAX</div>
-
 <div class="sidebar">
-<h3>KARYAWAN</h3>
+  <div class="logo">MAINTENAX</div>
+  <h3 id="welcome"></h3>
 
-<button onclick="menu('dash')">Dashboard</button>
-<button onclick="menu('input')">Input Lembur</button>
-<button onclick="menu('saya')">Saya</button>
-<button onclick="logout()">Logout</button>
+  <button onclick="menu('dash')">Dashboard</button>
+  <button onclick="menu('input')">Input Lembur</button>
+  <button onclick="menu('grafik')">Grafik</button>
+  <button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
@@ -23,19 +22,25 @@
 <!-- DASHBOARD -->
 <div id="dash">
 
-<div class="card">
-💡 Motivasi
-<h4>Kerja hari ini = sukses besok 💪</h4>
-</div>
+<div class="date-box" id="todayDate"></div>
 
-<div class="card">
+<div class="grid">
+
+<div class="card notif">
 📅 Hari Ini
-<h2 id="today"></h2>
+<h2 id="todayJam">0 Jam</h2>
 </div>
 
 <div class="card">
+⏱ Total Bulan Ini
+<h2 id="monthTotal">0 Jam</h2>
+</div>
+
+<div class="card warning">
 📌 Status
-<h3 id="status"></h3>
+<h2 id="status">-</h2>
+</div>
+
 </div>
 
 </div>
@@ -52,11 +57,13 @@
 <input id="keterangan" placeholder="Pekerjaan">
 
 <select id="jenis">
+<option value="">Pilih Alasan</option>
 <option>N</option>
 <option>H</option>
 </select>
 
 <select id="jam">
+<option value="">Pilih Jam</option>
 <option>1</option>
 <option>5</option>
 <option>8</option>
@@ -66,17 +73,20 @@
 <input type="time" id="akhir">
 <input id="total" readonly>
 
+<div class="btn-group">
 <button onclick="simpan()">Submit</button>
-
+<button onclick="resetForm()">Reset</button>
 </div>
 
 </div>
 
-<!-- SAYA -->
-<div id="saya" style="display:none">
+</div>
+
+<!-- GRAFIK -->
+<div id="grafik" style="display:none">
 <div class="card">
-<h3>Akun Saya</h3>
-<p id="infoUser"></p>
+<h3>Top 3 Karyawan</h3>
+<canvas id="chart"></canvas>
 </div>
 </div>
 
