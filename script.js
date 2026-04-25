@@ -1,30 +1,43 @@
-const URL = "https://script.google.com/macros/s/AKfycbxXn-dqRFV_6W0t05d6zFfoUSqCohdCO2lgVtw1l5YomTp6W1IOM-Eu9PGtC8FWp3h7/exec";
+const URL = "https://script.google.com/macros/s/AKfycbyRFuc1EwiMqe_8RCS-NZVEsJs9LNJTJv3fCmsxUfUWTUvoXNTvN4cVbSI_HzncjiG7/exec";
 
 let user = {};
 
 function login(){
-  const nik = document.getElementById("nik").value;
-  const role = document.getElementById("role").value;
 
-  fetch(URL+"?action=login&nik="+nik+"&password="+nik)
+  const nik = document.getElementById("nik").value;
+  const password = document.getElementById("password").value;
+
+  fetch(URL, {
+    method:"POST",
+    body: JSON.stringify({
+      action:"login",
+      nik,
+      password
+    })
+  })
   .then(r=>r.json())
   .then(res=>{
-    if(!res.status) return alert("Login gagal");
 
-    user = {...res, role};
+    if(!res.status){
+      alert("Login gagal");
+      return;
+    }
+
+    user = res;
 
     document.getElementById("loginPage").style.display="none";
     document.getElementById("app").style.display="block";
 
-    if(role==="admin"){
+    if(res.role === "admin"){
       document.getElementById("sidebarAdmin").style.display="block";
       show("adminDashboard");
       loadAdmin();
-    }else{
+    } else {
       document.getElementById("sidebarUser").style.display="block";
       show("userDashboard");
       loadUser();
     }
+
   });
 }
 
@@ -46,7 +59,7 @@ function loadAdmin(){
     document.getElementById("month").innerText=d.month;
 
     document.getElementById("warning").innerHTML =
-    d.warningList.map(x=>x.nama+" "+x.total+" jam").join("<br>");
+    d.warningList.map(x=>x.nama+" - "+x.total+" jam").join("<br>");
   });
 
   loadTable();
@@ -63,7 +76,6 @@ function loadTable(){
         <td>${x.nik}</td>
         <td>${x.nama}</td>
         <td>${x.total}</td>
-        <td><button onclick="hapus(${x.id})">Hapus</button></td>
       </tr>
     `).join("");
   });
@@ -75,12 +87,6 @@ function loadUser(){
   document.getElementById("namaAkun").innerText = user.nama;
 }
 
-/* SAVE LEMBUR */
-function save(){
-  alert("Simpan ke GAS (belum dihubungkan)");
-}
-
-/* EXPORT */
 function exportExcel(){
   window.open(URL+"?action=export");
 }
