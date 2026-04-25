@@ -1,81 +1,56 @@
 body{
   margin:0;
   font-family:sans-serif;
-  background:#f1f5f9;
+  background:#f4f6f9;
 }
 
-/* LOGIN */
 .login-page{
   display:flex;
+  height:100vh;
   justify-content:center;
   align-items:center;
-  height:100vh;
 }
 
 .login-box{
   width:320px;
   background:white;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  padding:20px;
+  border-radius:12px;
 }
 
-/* SIDEBAR */
 .sidebar{
   width:220px;
-  height:100vh;
   position:fixed;
+  height:100vh;
   background:#1e3a8a;
   color:white;
-  padding:15px;
+  padding:10px;
 }
 
 .sidebar button{
   width:100%;
   margin:5px 0;
-  background:transparent;
+  background:none;
   color:white;
   border:none;
   padding:10px;
   text-align:left;
 }
 
-.sidebar button:hover{
-  background:rgba(255,255,255,0.1);
-}
-
-/* CONTENT */
 .content{
   margin-left:220px;
   padding:20px;
 }
 
-/* CARD */
-.stat{
-  padding:20px;
-  border-radius:16px;
-  background:white;
-}
+.page{display:none;}
 
-.warning{
-  background:#fee2e2;
-  color:#b91c1c;
-}
-
-/* MOBILE RESPONSIVE */
 @media(max-width:768px){
-
   .sidebar{
+    position:relative;
     width:100%;
     height:auto;
-    position:relative;
   }
-
   .content{
     margin-left:0;
-  }
-
-  .login-box{
-    width:90%;
   }
 }
