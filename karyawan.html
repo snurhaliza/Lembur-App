@@ -7,70 +7,51 @@
 
 <body onload="init()">
 
-<!-- 🔷 SIDEBAR -->
 <div class="sidebar">
-
-  <div class="logo">MAINTENAX</div>
-
-  <!-- SAPAAN USER -->
-  <h3 id="welcome">Halo -</h3>
-
+  <h3 id="welcome"></h3>
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('input')">Input Lembur</button>
   <button onclick="menu('grafik')">Grafik</button>
   <button onclick="logout()">Logout</button>
-
 </div>
 
-<!-- 🔷 CONTENT -->
 <div class="content">
 
-<!-- ================= DASHBOARD ================= -->
 <div id="dash">
-
-  <!-- TANGGAL -->
-  <div class="date-box" id="todayDate"></div>
+  <div id="todayDate"></div>
 
   <div class="grid">
-
-    <div class="card notif">
-      📅 Hari Ini
-      <!-- ⚠️ HARUS SAMA DENGAN JS -->
+    <div class="card">
+      Hari Ini
       <h2 id="todayTotal">0 Jam</h2>
     </div>
 
     <div class="card">
-      ⏱ Total Bulan Ini
+      Bulan Ini
       <h2 id="monthTotal">0 Jam</h2>
     </div>
 
-    <div class="card warning">
-      📌 Status
+    <div class="card">
+      Status
       <h2 id="status">-</h2>
     </div>
-
   </div>
-
 </div>
 
-<!-- ================= INPUT ================= -->
 <div id="input" style="display:none">
-
   <div class="card">
 
-    <input type="date" id="tanggal">
     <input id="nik" readonly>
     <input id="nama" readonly>
-
     <input id="keterangan" placeholder="Pekerjaan">
 
-    <select id="Alasan">
-      <option value="">Pilih Alasan</option>
+    <select id="jenis">
+      <option value="">Alasan</option>
       <option>N</option>
       <option>H</option>
     </select>
 
-    <select id="K.Alasan">
+    <select id="jam">
       <option value="">K.Alasan</option>
       <option>1</option>
       <option>5</option>
@@ -79,25 +60,16 @@
 
     <input type="time" id="mulai">
     <input type="time" id="akhir">
-    <input id="total" readonly placeholder="Total Jam">
+    <input id="total" readonly>
 
-    <div class="btn-group">
-      <button onclick="simpan()">Submit</button>
-      <button onclick="resetForm()">Reset</button>
-    </div>
+    <button onclick="simpan()">Submit</button>
+    <button onclick="resetForm()">Reset</button>
 
   </div>
-
 </div>
 
-<!-- ================= GRAFIK ================= -->
 <div id="grafik" style="display:none">
-
-  <div class="card">
-    <h3>Top 3 Karyawan</h3>
-    <canvas id="chart"></canvas>
-  </div>
-
+  <canvas id="chart"></canvas>
 </div>
 
 </div>
