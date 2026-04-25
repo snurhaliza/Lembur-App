@@ -4,7 +4,6 @@ body{
   background:#f1f5f9;
 }
 
-/* LOGIN */
 .login-page{
   display:flex;
   justify-content:center;
@@ -15,12 +14,10 @@ body{
 .login-box{
   width:300px;
   background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  padding:25px;
+  border-radius:16px;
 }
 
-/* SIDEBAR */
 .sidebar{
   width:220px;
   height:100vh;
@@ -33,18 +30,36 @@ body{
 .sidebar button{
   width:100%;
   margin:5px 0;
+  background:transparent;
+  color:white;
+  border:none;
+  padding:10px;
+  text-align:left;
 }
 
-/* CONTENT */
 .content{
   margin-left:220px;
   padding:20px;
 }
 
-/* CARD */
 .stat{
-  padding:15px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  padding:20px;
+  border-radius:16px;
+  background:white;
+}
+
+.warning{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+
+@media(max-width:768px){
+  .sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+  }
+  .content{
+    margin-left:0;
+  }
 }
