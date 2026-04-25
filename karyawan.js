@@ -1,4 +1,4 @@
-const GAS_URL="https://script.google.com/macros/s/AKfycbyj3aR7074AlbGRh1r45270mbx_xkPRRDHsrIJnoaHvPNFeaeZGdnn_BBrIyJ28HvJv/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbybks5dvFwX8LbdFCfVL9Jb5UI3841AAaTOjEE6l3YkA80IWGkHqx-kVFLicfRLFfhQ/exec";
 
 let user=JSON.parse(localStorage.getItem("user"));
 
@@ -33,7 +33,7 @@ total.value=j.toFixed(1);
 async function simpan(){
 
 if(!keterangan.value||!mulai.value||!akhir.value){
-alert("Isi semua!");
+alert("Semua wajib diisi!");
 return;
 }
 
