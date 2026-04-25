@@ -9,13 +9,11 @@
 <body>
 
 <!-- LOGIN -->
-<div id="loginPage" class="login-page">
-  <div class="login-box">
-    <h3>⚙ MaintenaX</h3>
-
+<div id="loginPage" class="login">
+  <div class="box">
+    <h2>MaintenaX</h2>
     <input id="nik" placeholder="NIK">
-    <input id="password" type="password" placeholder="Password">
-
+    <input id="password" placeholder="Password">
     <button onclick="login()">Login</button>
   </div>
 </div>
@@ -24,19 +22,19 @@
 <div id="app" style="display:none;">
 
   <!-- ADMIN SIDEBAR -->
-  <div id="sidebarAdmin" class="sidebar" style="display:none;">
+  <div id="adminSidebar" class="sidebar" style="display:none;">
     <h3>ADMIN</h3>
-    <button onclick="show('adminDashboard')">Dashboard</button>
-    <button onclick="show('adminLembur')">Data Lembur</button>
+    <button onclick="show('adminDash')">Dashboard</button>
+    <button onclick="show('adminData')">Data Lembur</button>
     <button onclick="logout()">Logout</button>
   </div>
 
   <!-- USER SIDEBAR -->
-  <div id="sidebarUser" class="sidebar" style="display:none;">
+  <div id="userSidebar" class="sidebar" style="display:none;">
     <h3>KARYAWAN</h3>
-    <button onclick="show('userDashboard')">Dashboard</button>
-    <button onclick="show('inputLembur')">Input Lembur</button>
-    <button onclick="show('akun')">Akun</button>
+    <button onclick="show('userDash')">Dashboard</button>
+    <button onclick="show('input')">Input Lembur</button>
+    <button onclick="show('akun')">Akun Saya</button>
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -44,41 +42,60 @@
   <div class="content">
 
     <!-- ADMIN DASHBOARD -->
-    <div id="adminDashboard" class="page">
-      <h3>Dashboard Admin</h3>
-      <p>Hari ini: <span id="today"></span></p>
-      <p>Bulan ini: <span id="month"></span></p>
+    <div id="adminDash" class="page">
+      <h2>Dashboard Admin</h2>
 
+      <div class="card">Hari ini: <span id="today"></span></div>
+      <div class="card">Bulan ini: <span id="month"></span></div>
+
+      <h3>⚠ Warning >56 Jam</h3>
       <div id="warning"></div>
     </div>
 
     <!-- ADMIN TABLE -->
-    <div id="adminLembur" class="page" style="display:none;">
-      <h3>Data Lembur</h3>
-      <table>
+    <div id="adminData" class="page">
+      <h2>Data Lembur</h2>
+
+      <input id="searchName" placeholder="Cari Nama">
+      <input id="searchMonth" type="month">
+
+      <button onclick="loadTable()">Filter</button>
+
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>NIK</th>
+            <th>Nama</th>
+            <th>Total</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
         <tbody id="tbl"></tbody>
       </table>
 
-      <button onclick="exportExcel()">Export</button>
+      <button onclick="exportExcel()">Export Excel</button>
     </div>
 
     <!-- USER DASHBOARD -->
-    <div id="userDashboard" class="page" style="display:none;">
-      <h3>Selamat Datang</h3>
+    <div id="userDash" class="page">
+      <h2>Selamat Datang 👋</h2>
       <p id="tanggal"></p>
+
+      <div class="card">💡 "Kerja keras hari ini menentukan masa depanmu"</div>
     </div>
 
     <!-- INPUT -->
-    <div id="inputLembur" class="page" style="display:none;">
+    <div id="input" class="page">
       <h3>Input Lembur</h3>
       <input placeholder="Jam">
       <button>Simpan</button>
     </div>
 
     <!-- AKUN -->
-    <div id="akun" class="page" style="display:none;">
-      <h3>Akun</h3>
-      <p id="namaAkun"></p>
+    <div id="akun" class="page">
+      <h3>Akun Saya</h3>
+      <p id="nama"></p>
     </div>
 
   </div>
