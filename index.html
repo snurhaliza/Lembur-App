@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MaintenaX</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -16,106 +15,116 @@
     <h3>⚙ MaintenaX</h3>
 
     <select id="role" class="form-control mb-2">
-      <option value="karyawan">Login Karyawan</option>
-      <option value="admin">Login Admin</option>
+      <option value="karyawan">Karyawan</option>
+      <option value="admin">Admin</option>
     </select>
 
-    <input id="loginNik" class="form-control mb-2" placeholder="Masukkan NIK">
-
+    <input id="nik" class="form-control mb-2" placeholder="NIK (Password)">
     <button class="btn btn-primary w-100" onclick="login()">Login</button>
 
-    <small class="text-muted d-block mt-2">
-      Password = NIK
-    </small>
+    <small>Password = NIK</small>
   </div>
 </div>
 
 <!-- APP -->
-<div id="appPage" style="display:none;">
+<div id="app" style="display:none;">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h4>⚙ MaintenaX</h4>
+  <!-- SIDEBAR ADMIN -->
+  <div id="sidebarAdmin" class="sidebar" style="display:none;">
+    <h4>ADMIN</h4>
+    <button onclick="show('adminDashboard')">Dashboard</button>
+    <button onclick="show('adminLembur')">Data Lembur</button>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-    <button onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('lembur')">Data Lembur</button>
-
+  <!-- SIDEBAR KARYAWAN -->
+  <div id="sidebarUser" class="sidebar" style="display:none;">
+    <h4>KARYAWAN</h4>
+    <button onclick="show('userDashboard')">Dashboard</button>
+    <button onclick="show('inputLembur')">Input Lembur</button>
+    <button onclick="show('akun')">Akun Saya</button>
     <button onclick="logout()">Logout</button>
   </div>
 
   <!-- CONTENT -->
   <div class="content">
 
-    <h5 id="welcome"></h5>
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="page">
+      <h4>Dashboard Admin</h4>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard">
-
-      <div class="row g-3">
-
-        <div class="col-md-4">
-          <div class="card stat">
-            <h6>🔔 Lembur Hari Ini</h6>
-            <h3 id="todayTotal">0</h3>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card stat">
-            <h6>📅 Lembur Bulan Ini</h6>
-            <h3 id="monthTotal">0</h3>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card stat warning">
-            <h6>⚠ Warning >56 Jam</h6>
-            <div id="warningList"></div>
-          </div>
-        </div>
-
+      <div class="row">
+        <div class="col">Hari ini: <h3 id="today"></h3></div>
+        <div class="col">Bulan ini: <h3 id="month"></h3></div>
       </div>
 
       <div class="card mt-3 p-3">
-        <h5>🏆 Top 3 Karyawan</h5>
-        <ul id="top3"></ul>
+        <h5>⚠ Warning >56 Jam</h5>
+        <div id="warning"></div>
       </div>
-
     </div>
 
-    <!-- LEMBUR -->
-    <div id="lembur" style="display:none;">
+    <!-- ADMIN DATA -->
+    <div id="adminLembur" class="page" style="display:none;">
+      <h4>Data Lembur</h4>
 
-      <h5>Data Lembur</h5>
+      <input id="filterNama" class="form-control mb-2" placeholder="Cari nama">
+      <input type="month" id="filterBulan" class="form-control mb-2">
 
-      <div class="row mb-2">
-        <div class="col-6">
-          <input type="month" class="form-control">
-        </div>
-        <div class="col-6">
-          <input type="text" class="form-control" placeholder="Cari nama">
-        </div>
-      </div>
-
-      <div class="card p-2 table-responsive">
-        <table class="table table-sm">
+      <div class="table-responsive">
+        <table class="table">
           <thead>
             <tr>
               <th>Tanggal</th>
+              <th>NIK</th>
               <th>Nama</th>
-              <th>Pekerjaan</th>
               <th>Jam</th>
               <th>Aksi</th>
             </tr>
           </thead>
-          <tbody id="tableLembur"></tbody>
+          <tbody id="tbl"></tbody>
         </table>
       </div>
 
-      <button class="btn btn-success mt-2 w-100" onclick="exportExcel()">
-        Export Excel
-      </button>
+      <button class="btn btn-success" onclick="exportExcel()">Export Excel</button>
+    </div>
 
+    <!-- USER DASHBOARD -->
+    <div id="userDashboard" class="page" style="display:none;">
+      <h4>Selamat Datang 👋</h4>
+      <p id="tanggal"></p>
+
+      <div class="card p-3">
+        <h5>Motivasi Hari Ini 💪</h5>
+        <p>"Kerja keras hari ini menentukan masa depanmu."</p>
+      </div>
+
+      <div class="card mt-3 p-3">
+        <h5>Grafik Lembur Bulanan</h5>
+        <div id="chart"></div>
+      </div>
+    </div>
+
+    <!-- INPUT LEMBUR -->
+    <div id="inputLembur" class="page" style="display:none;">
+      <h4>Input Lembur</h4>
+
+      <input id="tgl" type="date" class="form-control mb-2">
+      <input id="jam" type="number" class="form-control mb-2" placeholder="Jam lembur">
+      <input id="alasan" class="form-control mb-2" placeholder="Alasan">
+
+      <button class="btn btn-primary w-100" onclick="save()">Simpan</button>
+    </div>
+
+    <!-- AKUN -->
+    <div id="akun" class="page" style="display:none;">
+      <h4>Akun Saya</h4>
+      <p id="namaAkun"></p>
+
+      <input id="newPass" class="form-control mb-2" placeholder="Password baru">
+      <button class="btn btn-warning w-100" onclick="updatePass()">Update</button>
+
+      <button class="btn btn-danger w-100 mt-2" onclick="logout()">Logout</button>
     </div>
 
   </div>
