@@ -21,6 +21,7 @@ border:none;
 background:#2563eb;
 color:white;
 border-radius:8px;
+cursor:pointer;
 }
 
 .content{
@@ -41,6 +42,17 @@ display:flex;
 gap:10px;
 }
 
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:8px;
+border:1px solid #ddd;
+}
+
 .login-box{
 width:300px;
 margin:120px auto;
@@ -58,5 +70,4 @@ margin:8px 0;
 
 .error{
 color:red;
-font-size:13px;
 }
