@@ -1,11 +1,21 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxh4yXDGDs_PcnQbZ4IEhtsYIRSXMvluDLiLXvjtCV_U8GjkMHxs2lSS_eivvnToj9M/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwHGWcc0XnF0ZhBxszlz-5i2tbB2r1OyjCCuZ-V9y3wrI0XJWNCSvIdzwG2LvKAbdW7/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 
+// VALIDASI USER LOGIN
+if(!user){
+  location.href = "index.html";
+}
+
+// AUTO ISI
 nik.value = user.nik;
 nama.value = user.nama;
-tanggal.value = new Date().toISOString().split("T")[0];
 
+// FORMAT TANGGAL INDONESIA
+let todayDate = new Date();
+tanggal.value = todayDate.toISOString().split("T")[0];
+
+// ================= MENU =================
 function menu(id){
   ["dash","input","saya"].forEach(i=>{
     document.getElementById(i).style.display="none";
@@ -13,48 +23,78 @@ function menu(id){
   document.getElementById(id).style.display="block";
 }
 
+// ================= HITUNG JAM =================
 mulai.oninput = akhir.oninput = function(){
-  let a = new Date("2000 "+mulai.value);
-  let b = new Date("2000 "+akhir.value);
-  let jam = (b-a)/3600000;
-  if(jam<0) jam+=24;
+
+  if(!mulai.value || !akhir.value) return;
+
+  let a = new Date("2000-01-01 " + mulai.value);
+  let b = new Date("2000-01-01 " + akhir.value);
+
+  let jam = (b - a) / 3600000;
+
+  if(jam < 0) jam += 24;
+
   total.value = jam.toFixed(1);
 };
 
+// ================= SIMPAN =================
 async function simpan(){
 
-  if(!tanggal.value || !mulai.value || !akhir.value || !keterangan.value){
-    alert("Semua field wajib diisi!");
+  if(!keterangan.value || !mulai.value || !akhir.value){
+    alert("❌ Semua field wajib diisi");
     return;
   }
 
-  if(!total.value || total.value <= 0){
-    alert("Jam lembur tidak valid!");
-    return;
-  }
-
-  let res = await fetch(GAS_URL,{
+  await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
-      tanggal:tanggal.value,
-      nik:user.nik,
-      nama:user.nama,
-      mulai:mulai.value,
-      akhir:akhir.value,
-      total:total.value,
-      keterangan:keterangan.value,
-      tipe:jenis.value
+      tanggal: tanggal.value,
+      nik: user.nik,
+      nama: user.nama,
+      pekerjaan: keterangan.value,
+      alasan: jenis.value,
+      k_alasan: jam.value,
+      mulai: mulai.value,
+      akhir: akhir.value,
+      total: total.value
     })
   });
 
-  let d = await res.json();
+  alert("✅ Data lembur tersimpan");
 
-  if(!d.status){
-    alert(d.message || "Gagal menyimpan");
-    return;
-  }
-
-  alert("Tersimpan");
   resetForm();
+  loadNotif(); // refresh notif setelah submit
 }
+
+// ================= RESET =================
+function resetForm(){
+  keterangan.value = "";
+  mulai.value = "";
+  akhir.value = "";
+  total.value = "";
+}
+
+// ================= NOTIF REALTIME =================
+async function loadNotif(){
+
+  let res = await fetch(GAS_URL + "?action=data");
+  let data = await res.json();
+
+  // FORMAT TANGGAL HARUS SAMA DENGAN GS
+  let today = new Date().toLocaleDateString("id-ID");
+
+  let ada = data.find(d =>
+    d.nik == user.nik &&
+    d.tanggal == today
+  );
+
+  status.innerText = ada
+    ? "✅ Sudah Input Hari Ini"
+    : "❌ Belum Input Hari Ini";
+}
+
+// ================= AUTO REFRESH =================
+loadNotif();
+setInterval(loadNotif, 5000);
