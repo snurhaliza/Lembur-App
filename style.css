@@ -1,71 +1,225 @@
+/* ================= GLOBAL ================= */
 body{
 margin:0;
-font-family:sans-serif;
+font-family:'Segoe UI', sans-serif;
 background:#f4f6fb;
 }
 
+/* ================= SIDEBAR ================= */
 .sidebar{
 width:220px;
 height:100vh;
 position:fixed;
-background:#1e3a8a;
+background:linear-gradient(180deg,#1e3a8a,#172554);
 color:white;
 padding:15px;
+box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+
+.sidebar h3{
+margin-bottom:20px;
 }
 
 .sidebar button{
 width:100%;
 padding:10px;
-margin:5px 0;
+margin:6px 0;
 border:none;
 background:#2563eb;
 color:white;
 border-radius:8px;
+cursor:pointer;
+transition:0.3s;
 }
 
+.sidebar button:hover{
+background:#1d4ed8;
+transform:scale(1.02);
+}
+
+/* ================= CONTENT ================= */
 .content{
 margin-left:240px;
 padding:20px;
 }
 
+/* ================= CARD ================= */
 .card{
 background:white;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
 margin:10px 0;
 text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:0.3s;
 }
 
+.card:hover{
+transform:translateY(-3px);
+}
+
+/* GRID */
 .grid{
 display:flex;
-gap:10px;
+gap:15px;
+flex-wrap:wrap;
 }
 
-.notif{border-left:5px solid blue;}
-.warning{border-left:5px solid red;}
+.grid .card{
+flex:1;
+min-width:200px;
+}
 
+/* NOTIF */
+.notif{
+border-left:6px solid #3b82f6;
+}
+
+/* WARNING */
+.warning{
+border-left:6px solid #ef4444;
+}
+
+/* ================= TABLE ================= */
 table{
 width:100%;
 border-collapse:collapse;
 background:white;
+margin-top:10px;
+border-radius:10px;
+overflow:hidden;
+}
+
+th{
+background:#1e3a8a;
+color:white;
 }
 
 th,td{
-padding:8px;
-border:1px solid #ddd;
-}
-
-.login-box{
-width:300px;
-margin:120px auto;
-padding:25px;
-background:white;
-border-radius:12px;
+padding:10px;
+border:1px solid #eee;
 text-align:center;
+font-size:14px;
 }
 
+tr:hover{
+background:#f1f5f9;
+}
+
+/* VALIDASI SEARCH */
+td[colspan]{
+text-align:center;
+color:red;
+font-weight:bold;
+padding:15px;
+}
+
+/* ================= BUTTON ================= */
+button{
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+/* ================= FORM ================= */
 input,select{
 width:100%;
 padding:10px;
 margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+outline:none;
+transition:0.2s;
+}
+
+input:focus,select:focus{
+border-color:#2563eb;
+box-shadow:0 0 3px rgba(37,99,235,0.5);
+}
+
+/* GROUP BUTTON */
+.btn-group{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.btn-group button{
+flex:1;
+padding:10px;
+border:none;
+background:#1e3a8a;
+color:white;
+border-radius:8px;
+}
+
+.btn-group button:last-child{
+background:#64748b;
+}
+
+/* ================= LOGIN ================= */
+.login-box{
+width:320px;
+margin:120px auto;
+padding:30px;
+background:white;
+border-radius:16px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.login-box h2{
+color:#1e3a8a;
+margin-bottom:15px;
+}
+
+.login-box button{
+width:100%;
+padding:10px;
+background:#1e3a8a;
+color:white;
+border:none;
+border-radius:8px;
+margin-top:10px;
+}
+
+/* ERROR TEXT */
+.error{
+color:red;
+font-size:13px;
+margin-top:5px;
+}
+
+/* ================= DATE BOX ================= */
+.date-box{
+font-size:20px;
+font-weight:bold;
+margin-bottom:15px;
+text-align:center;
+color:#1e3a8a;
+}
+
+/* ================= CHART ================= */
+canvas{
+margin-top:15px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+
+.sidebar{
+width:100%;
+height:auto;
+position:relative;
+}
+
+.content{
+margin-left:0;
+}
+
+.grid{
+flex-direction:column;
+}
 }
