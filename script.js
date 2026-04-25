@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwHGWcc0XnF0ZhBxszlz-5i2tbB2r1OyjCCuZ-V9y3wrI0XJWNCSvIdzwG2LvKAbdW7/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwkboJRUaTRfr2X_8HAPbd9xRanQMnkSBF-6frBWq1iVcw0v7aQ87LsEWcxoG5ZfrFZ/exec";
 
 async function login(){
 
