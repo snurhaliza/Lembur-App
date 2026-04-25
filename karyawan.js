@@ -1,47 +1,45 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwkboJRUaTRfr2X_8HAPbd9xRanQMnkSBF-6frBWq1iVcw0v7aQ87LsEWcxoG5ZfrFZ/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzEslE_V9X4C3xVnc_MLrzirZMFaWHWQtxo2JlvNphXyeTMvoGNd9lZ6IyrFPQHs_mw/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 
-// VALIDASI USER LOGIN
-if(!user){
-  location.href = "index.html";
-}
-
-// AUTO ISI
 nik.value = user.nik;
 nama.value = user.nama;
+tanggal.value = new Date().toISOString().split("T")[0];
 
-// FORMAT TANGGAL INDONESIA
-let todayDate = new Date();
-tanggal.value = todayDate.toISOString().split("T")[0];
+// SAPAAN
+welcome.innerText = "Halo, " + user.nama;
 
-// ================= MENU =================
+// TANGGAL HARI INI
+todayDate.innerText = new Date().toLocaleDateString("id-ID", {
+  weekday:"long",
+  day:"numeric",
+  month:"long",
+  year:"numeric"
+});
+
+// MENU
 function menu(id){
-  ["dash","input","saya"].forEach(i=>{
-    document.getElementById(i).style.display="none";
+  ["dash","input","grafik"].forEach(x=>{
+    document.getElementById(x).style.display="none";
   });
   document.getElementById(id).style.display="block";
+
+  if(id==="grafik") loadChart();
 }
 
-// ================= HITUNG JAM =================
+// HITUNG JAM OTOMATIS
 mulai.oninput = akhir.oninput = function(){
-
-  if(!mulai.value || !akhir.value) return;
-
-  let a = new Date("2000-01-01 " + mulai.value);
-  let b = new Date("2000-01-01 " + akhir.value);
-
-  let jam = (b - a) / 3600000;
-
-  if(jam < 0) jam += 24;
-
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+  let jam = (b-a)/3600000;
+  if(jam<0) jam+=24;
   total.value = jam.toFixed(1);
 };
 
-// ================= SIMPAN =================
+// SIMPAN
 async function simpan(){
 
-  if(!keterangan.value || !mulai.value || !akhir.value){
+  if(!keterangan.value || !jenis.value || !jam.value || !mulai.value || !akhir.value){
     alert("❌ Semua field wajib diisi");
     return;
   }
@@ -50,51 +48,91 @@ async function simpan(){
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
-      tanggal: tanggal.value,
-      nik: user.nik,
-      nama: user.nama,
-      pekerjaan: keterangan.value,
-      alasan: jenis.value,
-      k_alasan: jam.value,
-      mulai: mulai.value,
-      akhir: akhir.value,
-      total: total.value
+      nik:user.nik,
+      nama:user.nama,
+      pekerjaan:keterangan.value,
+      alasan:jenis.value,
+      k_alasan:jam.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
     })
   });
 
-  alert("✅ Data lembur tersimpan");
-
+  alert("✅ Tersimpan");
   resetForm();
-  loadNotif(); // refresh notif setelah submit
+  loadDashboard();
 }
 
-// ================= RESET =================
+// RESET
 function resetForm(){
-  keterangan.value = "";
-  mulai.value = "";
-  akhir.value = "";
-  total.value = "";
+  keterangan.value="";
+  jenis.value="";
+  jam.value="";
+  mulai.value="";
+  akhir.value="";
+  total.value="";
 }
 
-// ================= NOTIF REALTIME =================
-async function loadNotif(){
+// DASHBOARD REALTIME
+async function loadDashboard(){
 
-  let res = await fetch(GAS_URL + "?action=data");
+  let res = await fetch(GAS_URL+"?action=data");
   let data = await res.json();
 
-  // FORMAT TANGGAL HARUS SAMA DENGAN GS
   let today = new Date().toLocaleDateString("id-ID");
 
-  let ada = data.find(d =>
-    d.nik == user.nik &&
-    d.tanggal == today
-  );
+  let userData = data.filter(d=>d.nik===user.nik);
 
-  status.innerText = ada
-    ? "✅ Sudah Input Hari Ini"
-    : "❌ Belum Input Hari Ini";
+  // TOTAL HARI INI
+  let todayData = userData.filter(d=>d.tanggal===today);
+  let totalToday = todayData.reduce((a,b)=>a+Number(b.total),0);
+
+  todayJam.innerText = totalToday+" Jam";
+
+  // STATUS
+  status.innerText = todayData.length ? "✅ Sudah Input" : "❌ Belum Input";
+
+  // TOTAL BULAN
+  let bulan = new Date().getMonth()+1;
+  let tahun = new Date().getFullYear();
+
+  let totalMonth = userData.filter(d=>{
+    let [dd,mm,yy] = d.tanggal.split("/");
+    return Number(mm)===bulan && Number(yy)===tahun;
+  }).reduce((a,b)=>a+Number(b.total),0);
+
+  monthTotal.innerText = totalMonth+" Jam";
 }
 
-// ================= AUTO REFRESH =================
-loadNotif();
-setInterval(loadNotif, 5000);
+// GRAFIK
+let chart;
+
+async function loadChart(){
+
+  let res = await fetch(GAS_URL+"?action=grafik");
+  let data = await res.json();
+
+  let nama = data.map(x=>x.nama);
+  let total = data.map(x=>x.total);
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("chart"),{
+    type:"bar",
+    data:{
+      labels:nama,
+      datasets:[{data:total}]
+    }
+  });
+}
+
+// AUTO REFRESH
+setInterval(loadDashboard,5000);
+loadDashboard();
+
+// LOGOUT
+function logout(){
+  localStorage.clear();
+  location.href="index.html";
+}
