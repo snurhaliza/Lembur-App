@@ -1,78 +1,40 @@
-body{
-margin:0;
-font-family:sans-serif;
-background:#f4f6fb;
-}
-
-.sidebar{
-width:220px;
-height:100vh;
-position:fixed;
-background:#1e3a8a;
-color:white;
-padding:15px;
-}
-
-.sidebar button{
-width:100%;
-padding:10px;
-margin:5px 0;
-border:none;
-background:#2563eb;
-color:white;
-border-radius:8px;
-cursor:pointer;
-}
-
-.content{
-margin-left:240px;
-padding:20px;
-}
-
-.grid{
-display:flex;
-gap:15px;
-}
-
-.card{
-flex:1;
+.login-box.modern{
+width:300px;
+margin:100px auto;
+padding:30px;
 background:white;
-padding:15px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
 text-align:center;
 }
 
-.card h2{
-font-size:28px;
-margin-top:10px;
+.login-box h2{
+margin-bottom:20px;
+color:#1e3a8a;
 }
 
-.notif{
-border-left:6px solid #3b82f6;
-}
-
-.warning{
-border-left:6px solid #ef4444;
-}
-
-table{
+.login-box input,
+.login-box select{
 width:100%;
-margin-top:10px;
-border-collapse:collapse;
-background:white;
-}
-
-th,td{
 padding:10px;
-border:1px solid #ddd;
-text-align:center;
-}
-
-input{
-padding:10px;
-width:100%;
-margin-bottom:10px;
+margin:8px 0;
 border-radius:8px;
 border:1px solid #ccc;
+}
+
+.login-box button{
+width:100%;
+padding:10px;
+background:#1e3a8a;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+#msg{
+color:red;
+margin-top:10px;
+font-size:13px;
 }
