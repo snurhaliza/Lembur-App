@@ -7,8 +7,7 @@
 <body>
 
 <div class="sidebar">
-<h2>MAINTENAX</h2>
-
+<h3>ADMIN</h3>
 <button onclick="menu('dash')">Dashboard</button>
 <button onclick="menu('data')">Data Lembur</button>
 <button onclick="menu('grafik')">Grafik</button>
@@ -17,18 +16,16 @@
 
 <div class="content">
 
-<!-- DASHBOARD -->
 <div id="dash">
-
 <div class="grid">
 
 <div class="card notif">
-🔔 Lembur Hari Ini
+🔔 Hari Ini
 <h2 id="todayCount">0</h2>
 </div>
 
 <div class="card">
-📊 Total Jam Bulan Ini
+📊 Bulan Ini
 <h2 id="monthTotal">0</h2>
 </div>
 
@@ -38,10 +35,8 @@
 </div>
 
 </div>
-
 </div>
 
-<!-- DATA -->
 <div id="data" style="display:none">
 
 <input id="search" placeholder="Cari nama..." oninput="loadData()">
@@ -50,24 +45,17 @@
 <thead>
 <tr>
 <th>Tanggal</th><th>NIK</th><th>Nama</th>
-<th>Alasan</th><th>Tipe</th><th>Mulai</th>
-<th>Akhir</th><th>Total</th><th>Aksi</th>
+<th>Keterangan</th><th>Tipe</th>
+<th>Mulai</th><th>Akhir</th><th>Total</th><th>Aksi</th>
 </tr>
 </thead>
-
 <tbody id="table"></tbody>
 </table>
 
 </div>
 
-<!-- GRAFIK -->
 <div id="grafik" style="display:none">
-
-<div class="card">
-<h3>Top 3 Lembur</h3>
 <canvas id="chart"></canvas>
-</div>
-
 </div>
 
 </div>
