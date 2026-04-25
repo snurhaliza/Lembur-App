@@ -6,14 +6,12 @@
 
 <body>
 
-<div class="logo top-left">MAINTENAX</div>
-<div class="logo top-right">MAINTENAX</div>
-
 <div class="sidebar">
-<h3>ADMIN</h3>
+<h2>MAINTENAX</h2>
 
 <button onclick="menu('dash')">Dashboard</button>
 <button onclick="menu('data')">Data Lembur</button>
+<button onclick="menu('grafik')">Grafik</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -24,14 +22,19 @@
 
 <div class="grid">
 
-<div class="card">
-📅 Hari Ini
+<div class="card notif">
+🔔 Lembur Hari Ini
 <h2 id="todayCount">0</h2>
 </div>
 
 <div class="card">
-📊 Bulan Ini
+📊 Total Jam Bulan Ini
 <h2 id="monthTotal">0</h2>
+</div>
+
+<div class="card warning">
+⚠️ >56 Jam
+<h2 id="warning">0</h2>
 </div>
 
 </div>
@@ -41,25 +44,35 @@
 <!-- DATA -->
 <div id="data" style="display:none">
 
-<div class="card">
 <input id="search" placeholder="Cari nama..." oninput="loadData()">
 
 <table>
 <thead>
 <tr>
 <th>Tanggal</th><th>NIK</th><th>Nama</th>
-<th>Jam</th><th>Keterangan</th><th>Aksi</th>
+<th>Alasan</th><th>Tipe</th><th>Mulai</th>
+<th>Akhir</th><th>Total</th><th>Aksi</th>
 </tr>
 </thead>
+
 <tbody id="table"></tbody>
 </table>
 
 </div>
 
+<!-- GRAFIK -->
+<div id="grafik" style="display:none">
+
+<div class="card">
+<h3>Top 3 Lembur</h3>
+<canvas id="chart"></canvas>
 </div>
 
 </div>
 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>
