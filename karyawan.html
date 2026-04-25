@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Karyawan Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h3>Karyawan</h3>
+  <button onclick="show('dashboard')">Dashboard</button>
+  <button onclick="show('input')">Input Lembur</button>
+  <button onclick="show('grafik')">Grafik</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+    <h2>Motivasi Hari Ini</h2>
+    <p>Kerja keras hari ini adalah kesuksesan besok 💪</p>
+
+    <h3 id="tanggalHariIni"></h3>
+
+    <h4>Total Lembur Bulan Ini: <span id="totalBulan"></span></h4>
+    <h4>Total Jam Kamu: <span id="totalJam"></span></h4>
+    <h4>Status: <span id="status"></span></h4>
+  </div>
+
+  <!-- INPUT -->
+  <div id="input" style="display:none;">
+    <input type="date" id="tanggal" readonly>
+    <input id="nik" readonly>
+    <input id="nama" readonly>
+
+    <input type="time" id="mulai">
+    <input type="time" id="akhir">
+
+    <input id="total" readonly>
+    <input id="keterangan">
+
+    <button onclick="simpan()">Submit</button>
+    <button onclick="resetForm()">Reset</button>
+  </div>
+
+  <!-- GRAFIK -->
+  <div id="grafik" style="display:none;">
+    <canvas id="chartUser"></canvas>
+  </div>
+
+</div>
+
+<script src="karyawan.js"></script>
+
+</body>
+</html>
