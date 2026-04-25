@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h3>Admin</h3>
+
+  <button onclick="showAdmin('dashboard')">Dashboard</button>
+  <button onclick="showAdmin('data')">Data Lembur</button>
+  <button onclick="showAdmin('warning')">Warning</button>
+  <button onclick="exportData()">Export</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="content">
+
+  <div id="adminDashboard">
+    <h2>Dashboard Admin</h2>
+
+    <h4>Hari Ini: <span id="today"></span></h4>
+    <h4>Bulan Ini: <span id="month"></span></h4>
+    <h4>Karyawan Aktif: <span id="user"></span></h4>
+  </div>
+
+  <div id="data" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>NIK</th>
+          <th>Nama</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="tableData"></tbody>
+    </table>
+  </div>
+
+  <div id="warning" style="display:none;">
+    <h3>Warning > 56 Jam</h3>
+    <div id="warningList"></div>
+  </div>
+
+</div>
+
+<script src="admin.js"></script>
+
+</body>
+</html>
