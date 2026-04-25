@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwDHaRgVaNDr3Oe2zhMgZZ52W-R-UdlQ_poFELzMHlZhFITzJt6EAYGrueExjC2f5k/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxh4yXDGDs_PcnQbZ4IEhtsYIRSXMvluDLiLXvjtCV_U8GjkMHxs2lSS_eivvnToj9M/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 
@@ -22,7 +22,18 @@ mulai.oninput = akhir.oninput = function(){
 };
 
 async function simpan(){
-  await fetch(GAS_URL,{
+
+  if(!tanggal.value || !mulai.value || !akhir.value || !keterangan.value){
+    alert("Semua field wajib diisi!");
+    return;
+  }
+
+  if(!total.value || total.value <= 0){
+    alert("Jam lembur tidak valid!");
+    return;
+  }
+
+  let res = await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
@@ -37,5 +48,13 @@ async function simpan(){
     })
   });
 
+  let d = await res.json();
+
+  if(!d.status){
+    alert(d.message || "Gagal menyimpan");
+    return;
+  }
+
   alert("Tersimpan");
+  resetForm();
 }
