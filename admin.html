@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
 <div class="sidebar">
-  <h3>ADMIN</h3>
+  <h3>MAINTENAX</h3>
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
   <button onclick="menu('grafik')">Grafik</button>
@@ -16,10 +17,8 @@
 
 <div class="content">
 
-<!-- ================= DASHBOARD ================= -->
 <div id="dash">
   <div class="grid">
-
     <div class="card notif">
       🔔 Hari Ini
       <h2 id="todayCount">0</h2>
@@ -34,54 +33,33 @@
       ⚠️ >56 Jam
       <h2 id="warning">0</h2>
     </div>
-
   </div>
 </div>
 
-<!-- ================= DATA ================= -->
 <div id="data" style="display:none">
-
   <input id="search" placeholder="Cari nama..." oninput="loadData()">
 
   <table>
     <thead>
       <tr>
-        <th>Tanggal</th>
-        <th>NIK</th>
-        <th>Nama</th>
-        <th>Pekerjaan</th>
-        <th>Alasan</th>
-        <th>K Alasan</th>
-        <th>Mulai</th>
-        <th>Akhir</th>
-        <th>Total</th>
-        <th>Aksi</th>
+        <th>Tanggal</th><th>NIK</th><th>Nama</th>
+        <th>Pekerjaan</th><th>Lembur</th><th>K.Alasan</th>
+        <th>Mulai</th><th>Akhir</th><th>Total</th><th>Aksi</th>
       </tr>
     </thead>
-
     <tbody id="table"></tbody>
-
   </table>
-
 </div>
 
-<!-- ================= GRAFIK ================= -->
 <div id="grafik" style="display:none">
-
-  <div style="margin-bottom:10px;">
-    <input type="month" id="filterBulan">
-    <button onclick="loadChart()">Filter</button>
-    <button onclick="resetChart()">Reset</button>
-  </div>
-
+  <input type="month" id="filterBulan">
+  <button onclick="loadGrafik()">Filter</button>
+  <button onclick="resetChart()">Reset</button>
   <canvas id="chart"></canvas>
-
 </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="admin.js"></script>
-
 </body>
 </html>
