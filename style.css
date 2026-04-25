@@ -1,38 +1,21 @@
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:#f4f6f9;
-}
+body{margin:0;font-family:sans-serif;background:#f4f6f9}
 
 /* LOGIN */
-.login-page{
-  display:flex;
-  height:100vh;
-  justify-content:center;
-  align-items:center;
-}
-
-.login-box{
-  width:320px;
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
+.login{display:flex;height:100vh;justify-content:center;align-items:center}
+.box{background:white;padding:20px;border-radius:12px;width:300px}
 
 /* SIDEBAR */
 .sidebar{
   width:220px;
   position:fixed;
   height:100vh;
-  background:#1e3a8a;
+  background:#111827;
   color:white;
   padding:10px;
 }
 
 .sidebar button{
   width:100%;
-  margin:5px 0;
   background:none;
   color:white;
   border:none;
@@ -41,18 +24,26 @@ body{
 }
 
 /* CONTENT */
-.content{
-  margin-left:220px;
-  padding:20px;
+.content{margin-left:220px;padding:20px}
+
+.page{display:none}
+
+/* CARD */
+.card{
+  background:white;
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
 }
 
-.page{display:none;}
+/* TABLE */
+table{
+  width:100%;
+  background:white;
+  border-collapse:collapse;
+}
 
-@media(max-width:768px){
-  .sidebar{
-    position:relative;
-    width:100%;
-    height:auto;
-  }
-  .content{margin-left:0;}
+th,td{
+  padding:10px;
+  border:1px solid #ddd;
 }
