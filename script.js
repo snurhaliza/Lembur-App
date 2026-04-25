@@ -1,87 +1,138 @@
-const URL = "https://script.google.com/macros/s/AKfycbwdsDcuy1LcBnuyl8LKhjKvQn67NgMdPoNKHybmNgDpIegz1bnnsrFUTA9rniqXrUk8/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwNEglXFrZGL0KuiuGi4d2oXAd3i8ieBTZFTuo6gs3BAmXt4FCxa4vn6yvrgs7WB7iM/exec";
 
-let user={};
-
+// LOGIN (NIK = PASSWORD)
 function login(){
-  fetch(URL,{
+
+  if(!loginNik.value){
+    return alert("Isi NIK");
+  }
+
+  fetch(`${GAS_URL}?action=login&nik=${loginNik.value}&password=${loginNik.value}`)
+  .then(r=>r.json())
+  .then(res=>{
+    if(!res.status) return alert("Login gagal");
+
+    localStorage.setItem("user", JSON.stringify(res));
+
+    loginPage.style.display="none";
+    appPage.style.display="block";
+
+    welcome.innerHTML = "Halo, " + res.nama;
+    nama.value = res.nama;
+
+    if(res.role === "admin"){
+      loadDashboard();
+      showPage("dashboard");
+    }else{
+      showPage("input");
+    }
+  })
+  .catch(()=>{
+    alert("Server error");
+  });
+}
+
+// NAVIGATION
+function showPage(p){
+  dashboard.style.display="none";
+  input.style.display="none";
+  grafik.style.display="none";
+
+  document.getElementById(p).style.display="block";
+
+  if(p==="grafik") loadGrafik();
+}
+
+// LOGOUT
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
+}
+
+// HITUNG JAM OTOMATIS
+mulai.oninput = hitung;
+akhir.oninput = hitung;
+
+function hitung(){
+  if(!mulai.value || !akhir.value) return;
+
+  let a = new Date("2000-01-01 "+mulai.value);
+  let b = new Date("2000-01-01 "+akhir.value);
+
+  let jam = (b - a) / 3600000;
+  if(jam < 0) jam += 24;
+
+  total.value = jam.toFixed(1);
+}
+
+// SIMPAN LEMBUR
+function simpan(){
+
+  if(!tanggal.value) return alert("Tanggal kosong");
+  if(!pekerjaan.value) return alert("Pekerjaan kosong");
+  if(!total.value) return alert("Jam belum dihitung");
+
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
-      action:"login",
-      nik:nik.value,
-      password:password.value
+      action:"simpan",
+      tanggal:tanggal.value,
+      nik:user.nik,
+      nama:user.nama,
+      pekerjaan:pekerjaan.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
     })
   })
   .then(r=>r.json())
   .then(res=>{
-    if(!res.status) return alert("Gagal login");
+    if(res==="SUDAH_ADA") return alert("Sudah isi hari ini");
 
-    user=res;
+    alert("Lembur tersimpan");
 
-    loginPage.style.display="none";
-    app.style.display="block";
-
-    if(res.role==="admin"){
-      adminSidebar.style.display="block";
-      show("adminDash");
-      loadAdmin();
-    }else{
-      userSidebar.style.display="block";
-      show("userDash");
-      loadUser();
-    }
+    // RESET FORM
+    pekerjaan.value="";
+    mulai.value="";
+    akhir.value="";
+    total.value="";
   });
 }
 
-function show(id){
-  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById(id).style.display="block";
-}
-
-function logout(){location.reload();}
-
-/* ADMIN */
-function loadAdmin(){
-  fetch(URL+"?action=dashboard")
+// DASHBOARD ADMIN
+function loadDashboard(){
+  fetch(`${GAS_URL}?action=dashboard`)
   .then(r=>r.json())
   .then(d=>{
-    today.innerText=d.today;
-    month.innerText=d.month;
-    warning.innerHTML=d.warningList.map(x=>`${x.nama} - ${x.total} jam`).join("<br>");
-  });
+    todayTotal.innerHTML=d.today;
+    monthTotal.innerHTML=d.month;
+    warningTotal.innerHTML=d.warning;
 
-  loadTable();
+    new Chart(chart,{
+      type:'bar',
+      data:{
+        labels:d.chart.map(x=>x.nama),
+        datasets:[{data:d.chart.map(x=>x.total)}]
+      }
+    });
+  });
 }
 
-function loadTable(){
-  let n = searchName.value;
-  let m = searchMonth.value;
+// GRAFIK
+function loadGrafik(){
+  let [y,m]=bulanTahun.value.split("-");
 
-  fetch(URL+`?action=all&name=${n||""}&month=${m||""}`)
+  fetch(`${GAS_URL}?action=grafik&tahun=${y}&bulan=${m}`)
   .then(r=>r.json())
-  .then(data=>{
-    tbl.innerHTML=data.map(x=>`
-      <tr>
-        <td>${x.tanggal}</td>
-        <td>${x.nik}</td>
-        <td>${x.nama}</td>
-        <td>${x.total}</td>
-        <td><button onclick="hapus(${x.id})">Hapus</button></td>
-      </tr>
-    `).join("");
+  .then(d=>{
+    new Chart(chart2,{
+      type:'bar',
+      data:{
+        labels:d.map(x=>x.nama),
+        datasets:[{data:d.map(x=>x.total)}]
+      }
+    });
   });
-}
-
-function hapus(id){
-  fetch(URL+"?action=delete&id="+id)
-  .then(()=>loadTable());
-}
-
-/* USER */
-function loadUser(){
-  tanggal.innerText=new Date().toLocaleDateString();
-  nama.innerText=user.nama;
-}
-
-function exportExcel(){
-  window.open(URL+"?action=export");
 }
