@@ -1,47 +1,29 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwkboJRUaTRfr2X_8HAPbd9xRanQMnkSBF-6frBWq1iVcw0v7aQ87LsEWcxoG5ZfrFZ/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbyj3aR7074AlbGRh1r45270mbx_xkPRRDHsrIJnoaHvPNFeaeZGdnn_BBrIyJ28HvJv/exec";
 
 async function login(){
 
-  let password = document.getElementById("password").value.trim();
-  let role = document.getElementById("role").value;
-  let msg = document.getElementById("msg");
+  let password=password.value;
+  let role=role.value;
 
-  msg.innerText = "";
-
-  // VALIDASI INPUT
   if(!password){
-    msg.innerText = "❌ Password wajib diisi!";
+    msg.innerText="Password wajib!";
     return;
   }
 
-  try{
+  let res=await fetch(`${GAS_URL}?action=login&password=${password}`);
+  let d=await res.json();
 
-    let res = await fetch(`${GAS_URL}?action=login&password=${password}`);
-    let data = await res.json();
-
-    // VALIDASI LOGIN
-    if(!data || !data.status){
-      msg.innerText = "❌ NIK / Password tidak ditemukan";
-      return;
-    }
-
-    // VALIDASI ROLE
-    if(data.role !== role){
-      msg.innerText = "❌ Role tidak sesuai";
-      return;
-    }
-
-    // SIMPAN USER
-    localStorage.setItem("user", JSON.stringify(data));
-
-    // REDIRECT
-    if(role === "admin"){
-      location.href = "admin.html";
-    }else{
-      location.href = "karyawan.html";
-    }
-
-  }catch(err){
-    msg.innerText = "❌ Server error, coba lagi";
+  if(!d.status){
+    msg.innerText="Login gagal!";
+    return;
   }
+
+  if(d.role!==role){
+    msg.innerText="Role salah!";
+    return;
+  }
+
+  localStorage.setItem("user",JSON.stringify(d));
+
+  location.href= role==="admin"?"admin.html":"karyawan.html";
 }
