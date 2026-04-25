@@ -1,58 +1,103 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Karyawan Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="sidebar">
-  <h3>Karyawan</h3>
-  <button onclick="show('dashboard')">Dashboard</button>
-  <button onclick="show('input')">Input Lembur</button>
-  <button onclick="show('grafik')">Grafik</button>
-  <button onclick="logout()">Logout</button>
+<h3>KARYAWAN</h3>
+<button onclick="menu('dash')">Dashboard</button>
+<button onclick="menu('input')">Input</button>
+<button onclick="menu('grafik')">Grafik</button>
+<button onclick="menu('akun')">Saya</button>
+<button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
-  <!-- DASHBOARD -->
-  <div id="dashboard">
-    <h2>Motivasi Hari Ini</h2>
-    <p>Kerja keras hari ini adalah kesuksesan besok 💪</p>
+<!-- DASHBOARD -->
+<div id="dash">
 
-    <h3 id="tanggalHariIni"></h3>
+<div class="card">
+💡 Motivasi Hari Ini
+<h4>Kerja keras hari ini adalah kesuksesan besok 💪</h4>
+</div>
 
-    <h4>Total Lembur Bulan Ini: <span id="totalBulan"></span></h4>
-    <h4>Total Jam Kamu: <span id="totalJam"></span></h4>
-    <h4>Status: <span id="status"></span></h4>
-  </div>
+<div class="card">
+📅 Hari Ini
+<h2 id="today"></h2>
+</div>
 
-  <!-- INPUT -->
-  <div id="input" style="display:none;">
-    <input type="date" id="tanggal" readonly>
-    <input id="nik" readonly>
-    <input id="nama" readonly>
+<div class="card">
+📌 Status Lembur Hari Ini
+<h3 id="status"></h3>
+</div>
 
-    <input type="time" id="mulai">
-    <input type="time" id="akhir">
+<div class="card">
+📊 Total Bulan Ini
+<h2 id="totalBulan"></h2>
+</div>
 
-    <input id="total" readonly>
-    <input id="keterangan">
+</div>
 
-    <button onclick="simpan()">Submit</button>
-    <button onclick="resetForm()">Reset</button>
-  </div>
+<!-- INPUT -->
+<div id="input" style="display:none">
 
-  <!-- GRAFIK -->
-  <div id="grafik" style="display:none;">
-    <canvas id="chartUser"></canvas>
-  </div>
+<div class="card">
+
+<input type="date" id="tanggal">
+<input id="nik" readonly>
+<input id="nama" readonly>
+
+<input placeholder="Pekerjaan">
+
+<select>
+<option>N</option>
+<option>H</option>
+</select>
+
+<select>
+<option>1</option>
+<option>5</option>
+<option>8</option>
+</select>
+
+<input type="time" id="mulai">
+<input type="time" id="akhir">
+<input id="total" readonly>
+
+<button onclick="simpan()">Submit</button>
+<button onclick="reset()">Reset</button>
+
+</div>
+
+</div>
+
+<!-- GRAFIK -->
+<div id="grafik" style="display:none">
+
+<div class="card">
+<h3>Top 3 Lembur Karyawan</h3>
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+<!-- AKUN -->
+<div id="akun" style="display:none">
+
+<div class="card">
+<h3>Ganti Password</h3>
+<input id="pass">
+<button onclick="updatePass()">Simpan</button>
+</div>
+
+</div>
 
 </div>
 
 <script src="karyawan.js"></script>
-
 </body>
 </html>
