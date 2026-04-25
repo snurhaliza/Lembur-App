@@ -4,13 +4,30 @@ font-family:sans-serif;
 background:#f4f6fb;
 }
 
+/* LOGO CORNER */
+.logo{
+position:fixed;
+font-weight:bold;
+color:white;
+background:#1e3a8a;
+padding:8px 12px;
+border-radius:8px;
+z-index:999;
+font-size:12px;
+}
+
+.logo.top-left{top:10px;left:10px;}
+.logo.top-right{top:10px;right:10px;}
+.logo.bottom-left{bottom:10px;left:10px;}
+.logo.bottom-right{bottom:10px;right:10px;}
+
 .sidebar{
-width:240px;
+width:220px;
 height:100vh;
 position:fixed;
 background:linear-gradient(#1e3a8a,#111827);
 color:white;
-padding:20px;
+padding:15px;
 }
 
 .sidebar button{
@@ -18,22 +35,23 @@ width:100%;
 padding:10px;
 margin:5px 0;
 border:none;
-background:rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.08);
 color:white;
-border-radius:10px;
+border-radius:8px;
+cursor:pointer;
 }
 
 .content{
-margin-left:260px;
-padding:20px;
+margin-left:240px;
+padding:15px;
 }
 
 .card{
 background:white;
-padding:15px;
-border-radius:12px;
+padding:12px;
+border-radius:10px;
 margin:10px 0;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+box-shadow:0 4px 15px rgba(0,0,0,0.08);
 }
 
 .grid{
@@ -45,9 +63,10 @@ table{
 width:100%;
 background:white;
 border-collapse:collapse;
+font-size:14px;
 }
 
 th,td{
-padding:10px;
+padding:8px;
 border:1px solid #eee;
 }
