@@ -1,43 +1,34 @@
-const URL = "https://script.google.com/macros/s/AKfycbyRFuc1EwiMqe_8RCS-NZVEsJs9LNJTJv3fCmsxUfUWTUvoXNTvN4cVbSI_HzncjiG7/exec";
+const URL = "https://script.google.com/macros/s/AKfycbwdsDcuy1LcBnuyl8LKhjKvQn67NgMdPoNKHybmNgDpIegz1bnnsrFUTA9rniqXrUk8/exec";
 
-let user = {};
+let user={};
 
 function login(){
-
-  const nik = document.getElementById("nik").value;
-  const password = document.getElementById("password").value;
-
-  fetch(URL, {
+  fetch(URL,{
     method:"POST",
-    body: JSON.stringify({
+    body:JSON.stringify({
       action:"login",
-      nik,
-      password
+      nik:nik.value,
+      password:password.value
     })
   })
   .then(r=>r.json())
   .then(res=>{
+    if(!res.status) return alert("Gagal login");
 
-    if(!res.status){
-      alert("Login gagal");
-      return;
-    }
+    user=res;
 
-    user = res;
+    loginPage.style.display="none";
+    app.style.display="block";
 
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("app").style.display="block";
-
-    if(res.role === "admin"){
-      document.getElementById("sidebarAdmin").style.display="block";
-      show("adminDashboard");
+    if(res.role==="admin"){
+      adminSidebar.style.display="block";
+      show("adminDash");
       loadAdmin();
-    } else {
-      document.getElementById("sidebarUser").style.display="block";
-      show("userDashboard");
+    }else{
+      userSidebar.style.display="block";
+      show("userDash");
       loadUser();
     }
-
   });
 }
 
@@ -46,45 +37,49 @@ function show(id){
   document.getElementById(id).style.display="block";
 }
 
-function logout(){
-  location.reload();
-}
+function logout(){location.reload();}
 
 /* ADMIN */
 function loadAdmin(){
   fetch(URL+"?action=dashboard")
   .then(r=>r.json())
   .then(d=>{
-    document.getElementById("today").innerText=d.today;
-    document.getElementById("month").innerText=d.month;
-
-    document.getElementById("warning").innerHTML =
-    d.warningList.map(x=>x.nama+" - "+x.total+" jam").join("<br>");
+    today.innerText=d.today;
+    month.innerText=d.month;
+    warning.innerHTML=d.warningList.map(x=>`${x.nama} - ${x.total} jam`).join("<br>");
   });
 
   loadTable();
 }
 
 function loadTable(){
-  fetch(URL+"?action=all")
+  let n = searchName.value;
+  let m = searchMonth.value;
+
+  fetch(URL+`?action=all&name=${n||""}&month=${m||""}`)
   .then(r=>r.json())
   .then(data=>{
-    document.getElementById("tbl").innerHTML =
-    data.map(x=>`
+    tbl.innerHTML=data.map(x=>`
       <tr>
         <td>${x.tanggal}</td>
         <td>${x.nik}</td>
         <td>${x.nama}</td>
         <td>${x.total}</td>
+        <td><button onclick="hapus(${x.id})">Hapus</button></td>
       </tr>
     `).join("");
   });
 }
 
+function hapus(id){
+  fetch(URL+"?action=delete&id="+id)
+  .then(()=>loadTable());
+}
+
 /* USER */
 function loadUser(){
-  document.getElementById("tanggal").innerText = new Date().toLocaleDateString();
-  document.getElementById("namaAkun").innerText = user.nama;
+  tanggal.innerText=new Date().toLocaleDateString();
+  nama.innerText=user.nama;
 }
 
 function exportExcel(){
