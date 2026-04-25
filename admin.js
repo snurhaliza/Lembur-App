@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwtWmjiLibJ320aegedisIa-ouw5H-buLZ8yU085MLNHfgUheNGDr-f8hE-sRqkFZWu/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwDHaRgVaNDr3Oe2zhMgZZ52W-R-UdlQ_poFELzMHlZhFITzJt6EAYGrueExjC2f5k/exec";
 
 function menu(id){
   ["dash","data","grafik"].forEach(x=>{
@@ -12,47 +12,41 @@ function menu(id){
   if(id==="grafik") loadChart();
 }
 
-/* DASHBOARD */
 async function loadDashboard(){
   let res = await fetch(GAS_URL+"?action=dashboard");
   let d = await res.json();
 
-  document.getElementById("todayCount").innerText = d.todayCount;
-  document.getElementById("monthTotal").innerText = d.monthTotal;
-  document.getElementById("warning").innerText = d.warning;
+  todayCount.innerText = d.todayCount;
+  monthTotal.innerText = d.monthTotal;
+  warning.innerText = d.warning;
 }
 
-/* DATA */
 async function loadData(){
   let res = await fetch(GAS_URL+"?action=data");
   let data = await res.json();
 
-  let search = document.getElementById("search").value.toLowerCase();
+  let s = search.value.toLowerCase();
+  let html="";
 
-  let html = "";
-
-  data.filter(d=>d.nama.toLowerCase().includes(search))
+  data.filter(x=>x.nama.toLowerCase().includes(s))
   .forEach(d=>{
-    html += `
+    html+=`
     <tr>
-      <td>${d.tanggal}</td>
-      <td>${d.nik}</td>
-      <td>${d.nama}</td>
-      <td>${d.alasan}</td>
-      <td>${d.tipe}</td>
-      <td>${d.mulai}</td>
-      <td>${d.akhir}</td>
-      <td>${d.total}</td>
-      <td>
-        <button onclick="hapus(${d.id})">Hapus</button>
-      </td>
+    <td>${d.tanggal}</td>
+    <td>${d.nik}</td>
+    <td>${d.nama}</td>
+    <td>${d.keterangan}</td>
+    <td>${d.tipe}</td>
+    <td>${d.mulai}</td>
+    <td>${d.akhir}</td>
+    <td>${d.total}</td>
+    <td><button onclick="hapus(${d.id})">Hapus</button></td>
     </tr>`;
   });
 
-  document.getElementById("table").innerHTML = html;
+  table.innerHTML=html;
 }
 
-/* DELETE */
 async function hapus(id){
   await fetch(GAS_URL,{
     method:"POST",
@@ -61,7 +55,6 @@ async function hapus(id){
   loadData();
 }
 
-/* GRAFIK */
 let chart;
 
 async function loadChart(){
@@ -73,22 +66,18 @@ async function loadChart(){
 
   if(chart) chart.destroy();
 
-  chart = new Chart(document.getElementById("chart"),{
+  chart = new Chart(chartCanvas,{
     type:"bar",
     data:{
       labels:nama,
-      datasets:[{
-        label:"Jam Lembur",
-        data:total
-      }]
+      datasets:[{data:total}]
     }
   });
 }
 
 function logout(){
   localStorage.clear();
-  window.location.href="index.html";
+  location.href="index.html";
 }
 
-/* AUTO REFRESH NOTIF */
-setInterval(loadDashboard, 10000);
+setInterval(loadDashboard,10000);
