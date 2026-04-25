@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycby3dxo47AHIEjrrpS6tLBIJaUrLtV_J_xZRsp5M23rgzlFO9GKeRcIIcHy7o38mBSJl/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwE3gjqJJZyX4wTZhds943XidSS7Vyf7WkwgxJ5Drm0gl9tCf4URqfK7dZQ4f7wEPsK/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 
@@ -29,7 +29,7 @@ mulai.oninput = akhir.oninput = function(){
 
 // SIMPAN
 function simpan(){
-  fetch(GAS_URL,{
+  fetch(https://script.google.com/macros/s/AKfycbwE3gjqJJZyX4wTZhds943XidSS7Vyf7WkwgxJ5Drm0gl9tCf4URqfK7dZQ4f7wEPsK/execL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
@@ -44,6 +44,15 @@ function simpan(){
   })
   .then(r=>r.json())
   .then(()=>alert("Tersimpan"));
+}
+function cekStatus(){
+  fetch(GAS_URL+"?action=dashboard")
+  .then(r=>r.json())
+  .then(d=>{
+    status.innerText = d.todayCount > 0 
+      ? "SUDAH INPUT" 
+      : "BELUM INPUT";
+  });
 }
 
 // LOGOUT
