@@ -1,152 +1,104 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyjhPZD19TH-Q6XGmBUUTx72X3bqPoYsvdsRumD7wDV5S3-CokcHdV2oecp0yNpgz3S/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbz977NPlRuMLfpD4PMFsEBPOTO_sS_t7iCdcdZMNZVBhNqLkVtMc10dsV-Y1gqm8l33/exec";
 
-// ================= INIT =================
-function init(){
-  menu("dash");
-}
-
-// ================= MENU =================
 function menu(id){
 
   ["dash","data","grafik"].forEach(x=>{
-    document.getElementById(x).style.display = "none";
+    document.getElementById(x).style.display="none";
   });
 
-  document.getElementById(id).style.display = "block";
+  document.getElementById(id).style.display="block";
 
   if(id==="dash") loadDashboard();
   if(id==="data") loadData();
   if(id==="grafik") loadGrafik();
 }
 
-// ================= DASHBOARD =================
+// DASHBOARD
 async function loadDashboard(){
 
-  try{
-    let res = await fetch(GAS_URL+"?action=dashboard");
-    let d = await res.json();
+  let r = await fetch(GAS_URL+"?action=dashboard");
+  let d = await r.json();
 
-    // ADMIN = global (tanpa nik)
-    document.getElementById("todayCount").innerText = d.todayTotal || 0;
-    document.getElementById("monthTotal").innerText = d.monthTotal || 0;
-    document.getElementById("warning").innerText = d.status || "-";
-
-  }catch(err){
-    console.log("Dashboard error:", err);
-  }
+  todayCount.innerText = d.todayTotal;
+  monthTotal.innerText = d.monthTotal;
+  warning.innerText = d.warning;
 }
 
-// ================= DATA =================
+// DATA
 async function loadData(){
 
-  try{
-    let res = await fetch(GAS_URL+"?action=data");
-    let data = await res.json();
+  let r = await fetch(GAS_URL+"?action=data");
+  let data = await r.json();
 
-    let keyword = document.getElementById("search").value.toLowerCase();
+  let s = search.value.toLowerCase();
 
-    let html = "";
+  let f = data.filter(x=>x.nama.toLowerCase().includes(s));
 
-    let filtered = data.filter(d =>
-      d.nama.toLowerCase().includes(keyword)
-    );
-
-    if(filtered.length === 0){
-      html = `<tr><td colspan="10">❌ Nama tidak ditemukan</td></tr>`;
-    }else{
-
-      filtered.forEach(d=>{
-        html += `
-        <tr>
-          <td>${d.tanggal}</td>
-          <td>${d.nik}</td>
-          <td>${d.nama}</td>
-          <td>${d.pekerjaan}</td>
-          <td>${d.lembur}</td>      <!-- ✅ FIX -->
-          <td>${d.k_alasan}</td>    <!-- ✅ FIX -->
-          <td>${d.mulai}</td>
-          <td>${d.akhir}</td>
-          <td>${d.total}</td>
-          <td>
-            <button onclick="hapus(${d.id})">Hapus</button>
-          </td>
-        </tr>`;
-      });
-
-    }
-
-    document.getElementById("table").innerHTML = html;
-
-  }catch(err){
-    console.log("Data error:", err);
+  if(f.length===0){
+    table.innerHTML = `<tr><td colspan="10">Nama tidak ditemukan</td></tr>`;
+    return;
   }
+
+  table.innerHTML = f.map(d=>`
+  <tr>
+  <td>${d.tanggal}</td>
+  <td>${d.nik}</td>
+  <td>${d.nama}</td>
+  <td>${d.pekerjaan}</td>
+  <td>${d.lembur}</td>
+  <td>${d.k_alasan}</td>
+  <td>${d.mulai}</td>
+  <td>${d.akhir}</td>
+  <td>${d.total}</td>
+  <td><button onclick="hapus(${d.id})">Hapus</button></td>
+  </tr>`).join("");
 }
 
-// ================= DELETE =================
+// DELETE
 async function hapus(id){
-
-  if(!confirm("Yakin hapus data?")) return;
+  if(!confirm("Hapus data?")) return;
 
   await fetch(GAS_URL,{
     method:"POST",
-    body:JSON.stringify({
-      action:"delete",
-      id:id
-    })
+    body:JSON.stringify({action:"delete",id})
   });
 
   loadData();
 }
 
-// ================= GRAFIK =================
+// GRAFIK
 let chart;
 
 async function loadGrafik(){
 
-  try{
+  let bulan = filterBulan.value;
 
-    let bulan = document.getElementById("filterBulan").value;
+  let url = GAS_URL+"?action=grafik";
+  if(bulan) url += "&bulan="+bulan;
 
-    let url = GAS_URL+"?action=grafik";
-    if(bulan) url += "&bulan="+bulan;
+  let r = await fetch(url);
+  let d = await r.json();
 
-    let res = await fetch(url);
-    let data = await res.json();
+  if(chart) chart.destroy();
 
-    let ctx = document.getElementById("chart");
-
-    if(chart) chart.destroy();
-
-    chart = new Chart(ctx,{
-      type:"bar",
-      data:{
-        labels:data.map(d=>d.nama),
-        datasets:[{
-          label:"Jam Lembur",
-          data:data.map(d=>d.total)
-        }]
-      }
-    });
-
-  }catch(err){
-    console.log("Grafik error:", err);
-  }
+  chart = new Chart(chart,{
+    type:"bar",
+    data:{
+      labels:d.map(x=>x.nama),
+      datasets:[{data:d.map(x=>x.total)}]
+    }
+  });
 }
 
-// ================= RESET FILTER =================
 function resetChart(){
-  document.getElementById("filterBulan").value = "";
+  filterBulan.value="";
   loadGrafik();
 }
 
-// ================= LOGOUT =================
 function logout(){
   localStorage.clear();
   location.href="index.html";
 }
 
-// ================= AUTO LOAD =================
-init();
-
-// refresh dashboard realtime
-setInterval(loadDashboard, 5000);
+setInterval(loadDashboard,5000);
+menu("dash");
