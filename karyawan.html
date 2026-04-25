@@ -6,12 +6,15 @@
 
 <body>
 
+<div class="logo top-left">MAINTENAX</div>
+<div class="logo bottom-right">MAINTENAX</div>
+
 <div class="sidebar">
 <h3>KARYAWAN</h3>
+
 <button onclick="menu('dash')">Dashboard</button>
-<button onclick="menu('input')">Input</button>
-<button onclick="menu('grafik')">Grafik</button>
-<button onclick="menu('akun')">Saya</button>
+<button onclick="menu('input')">Input Lembur</button>
+<button onclick="menu('saya')">Saya</button>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -21,8 +24,8 @@
 <div id="dash">
 
 <div class="card">
-💡 Motivasi Hari Ini
-<h4>Kerja keras hari ini adalah kesuksesan besok 💪</h4>
+💡 Motivasi
+<h4>Kerja hari ini = sukses besok 💪</h4>
 </div>
 
 <div class="card">
@@ -31,13 +34,8 @@
 </div>
 
 <div class="card">
-📌 Status Lembur Hari Ini
+📌 Status
 <h3 id="status"></h3>
-</div>
-
-<div class="card">
-📊 Total Bulan Ini
-<h2 id="totalBulan"></h2>
 </div>
 
 </div>
@@ -51,14 +49,14 @@
 <input id="nik" readonly>
 <input id="nama" readonly>
 
-<input placeholder="Pekerjaan">
+<input id="keterangan" placeholder="Pekerjaan">
 
-<select>
+<select id="jenis">
 <option>N</option>
 <option>H</option>
 </select>
 
-<select>
+<select id="jam">
 <option>1</option>
 <option>5</option>
 <option>8</option>
@@ -69,31 +67,17 @@
 <input id="total" readonly>
 
 <button onclick="simpan()">Submit</button>
-<button onclick="reset()">Reset</button>
 
 </div>
 
 </div>
 
-<!-- GRAFIK -->
-<div id="grafik" style="display:none">
-
+<!-- SAYA -->
+<div id="saya" style="display:none">
 <div class="card">
-<h3>Top 3 Lembur Karyawan</h3>
-<canvas id="chart"></canvas>
+<h3>Akun Saya</h3>
+<p id="infoUser"></p>
 </div>
-
-</div>
-
-<!-- AKUN -->
-<div id="akun" style="display:none">
-
-<div class="card">
-<h3>Ganti Password</h3>
-<input id="pass">
-<button onclick="updatePass()">Simpan</button>
-</div>
-
 </div>
 
 </div>
