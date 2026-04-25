@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MaintenaX</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,38 +10,33 @@
 
 <!-- LOGIN -->
 <div id="loginPage" class="login-page">
-  <div class="login-box text-center">
+  <div class="login-box">
     <h3>⚙ MaintenaX</h3>
 
-    <select id="role" class="form-control mb-2">
-      <option value="karyawan">Karyawan</option>
-      <option value="admin">Admin</option>
-    </select>
+    <input id="nik" placeholder="NIK">
+    <input id="password" type="password" placeholder="Password">
 
-    <input id="nik" class="form-control mb-2" placeholder="NIK (Password)">
-    <button class="btn btn-primary w-100" onclick="login()">Login</button>
-
-    <small>Password = NIK</small>
+    <button onclick="login()">Login</button>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app" style="display:none;">
 
-  <!-- SIDEBAR ADMIN -->
+  <!-- ADMIN SIDEBAR -->
   <div id="sidebarAdmin" class="sidebar" style="display:none;">
-    <h4>ADMIN</h4>
+    <h3>ADMIN</h3>
     <button onclick="show('adminDashboard')">Dashboard</button>
     <button onclick="show('adminLembur')">Data Lembur</button>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- SIDEBAR KARYAWAN -->
+  <!-- USER SIDEBAR -->
   <div id="sidebarUser" class="sidebar" style="display:none;">
-    <h4>KARYAWAN</h4>
+    <h3>KARYAWAN</h3>
     <button onclick="show('userDashboard')">Dashboard</button>
     <button onclick="show('inputLembur')">Input Lembur</button>
-    <button onclick="show('akun')">Akun Saya</button>
+    <button onclick="show('akun')">Akun</button>
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -51,80 +45,40 @@
 
     <!-- ADMIN DASHBOARD -->
     <div id="adminDashboard" class="page">
-      <h4>Dashboard Admin</h4>
+      <h3>Dashboard Admin</h3>
+      <p>Hari ini: <span id="today"></span></p>
+      <p>Bulan ini: <span id="month"></span></p>
 
-      <div class="row">
-        <div class="col">Hari ini: <h3 id="today"></h3></div>
-        <div class="col">Bulan ini: <h3 id="month"></h3></div>
-      </div>
-
-      <div class="card mt-3 p-3">
-        <h5>⚠ Warning >56 Jam</h5>
-        <div id="warning"></div>
-      </div>
+      <div id="warning"></div>
     </div>
 
-    <!-- ADMIN DATA -->
+    <!-- ADMIN TABLE -->
     <div id="adminLembur" class="page" style="display:none;">
-      <h4>Data Lembur</h4>
+      <h3>Data Lembur</h3>
+      <table>
+        <tbody id="tbl"></tbody>
+      </table>
 
-      <input id="filterNama" class="form-control mb-2" placeholder="Cari nama">
-      <input type="month" id="filterBulan" class="form-control mb-2">
-
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>NIK</th>
-              <th>Nama</th>
-              <th>Jam</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="tbl"></tbody>
-        </table>
-      </div>
-
-      <button class="btn btn-success" onclick="exportExcel()">Export Excel</button>
+      <button onclick="exportExcel()">Export</button>
     </div>
 
     <!-- USER DASHBOARD -->
     <div id="userDashboard" class="page" style="display:none;">
-      <h4>Selamat Datang 👋</h4>
+      <h3>Selamat Datang</h3>
       <p id="tanggal"></p>
-
-      <div class="card p-3">
-        <h5>Motivasi Hari Ini 💪</h5>
-        <p>"Kerja keras hari ini menentukan masa depanmu."</p>
-      </div>
-
-      <div class="card mt-3 p-3">
-        <h5>Grafik Lembur Bulanan</h5>
-        <div id="chart"></div>
-      </div>
     </div>
 
-    <!-- INPUT LEMBUR -->
+    <!-- INPUT -->
     <div id="inputLembur" class="page" style="display:none;">
-      <h4>Input Lembur</h4>
-
-      <input id="tgl" type="date" class="form-control mb-2">
-      <input id="jam" type="number" class="form-control mb-2" placeholder="Jam lembur">
-      <input id="alasan" class="form-control mb-2" placeholder="Alasan">
-
-      <button class="btn btn-primary w-100" onclick="save()">Simpan</button>
+      <h3>Input Lembur</h3>
+      <input placeholder="Jam">
+      <button>Simpan</button>
     </div>
 
     <!-- AKUN -->
     <div id="akun" class="page" style="display:none;">
-      <h4>Akun Saya</h4>
+      <h3>Akun</h3>
       <p id="namaAkun"></p>
-
-      <input id="newPass" class="form-control mb-2" placeholder="Password baru">
-      <button class="btn btn-warning w-100" onclick="updatePass()">Update</button>
-
-      <button class="btn btn-danger w-100 mt-2" onclick="logout()">Logout</button>
     </div>
 
   </div>
