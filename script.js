@@ -1,115 +1,86 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwVhwF-WUuyUwoFVdGXZlVVfRekyioZWZhoV-EQDpygqbzNJYpI3yvMQZcX55OHYhbx/exec";
+const URL = "https://script.google.com/macros/s/AKfycbxXn-dqRFV_6W0t05d6zFfoUSqCohdCO2lgVtw1l5YomTp6W1IOM-Eu9PGtC8FWp3h7/exec";
 
-const loginNik = document.getElementById("loginNik");
-const loginPage = document.getElementById("loginPage");
-const appPage = document.getElementById("appPage");
-
-const dashboard = document.getElementById("dashboard");
-const lembur = document.getElementById("lembur");
-
-const todayTotal = document.getElementById("todayTotal");
-const monthTotal = document.getElementById("monthTotal");
-const warningList = document.getElementById("warningList");
-const top3 = document.getElementById("top3");
-const tableLembur = document.getElementById("tableLembur");
+let user = {};
 
 function login(){
-
-  const nik = loginNik.value.trim();
+  const nik = document.getElementById("nik").value;
   const role = document.getElementById("role").value;
 
-  if(!nik){
-    alert("NIK wajib diisi");
-    return;
-  }
-
-  fetch(`${GAS_URL}?action=login&nik=${nik}&password=${nik}`)
+  fetch(URL+"?action=login&nik="+nik+"&password="+nik)
   .then(r=>r.json())
   .then(res=>{
+    if(!res.status) return alert("Login gagal");
 
-    if(!res.status){
-      alert("Login gagal");
-      return;
+    user = {...res, role};
+
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("app").style.display="block";
+
+    if(role==="admin"){
+      document.getElementById("sidebarAdmin").style.display="block";
+      show("adminDashboard");
+      loadAdmin();
+    }else{
+      document.getElementById("sidebarUser").style.display="block";
+      show("userDashboard");
+      loadUser();
     }
-
-    res.role = role;
-    localStorage.setItem("user", JSON.stringify(res));
-
-    loginPage.style.display="none";
-    appPage.style.display="block";
-
-    document.getElementById("welcome").innerText =
-      `Selamat datang ${res.nama} (${role})`;
-
-    loadDashboard();
-  })
-  .catch(()=>{
-    alert("Server error / koneksi gagal");
   });
 }
 
-function showPage(p){
-  dashboard.style.display="none";
-  lembur.style.display="none";
-  document.getElementById(p).style.display="block";
-
-  if(p==="lembur") loadLembur();
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(id).style.display="block";
 }
 
 function logout(){
-  localStorage.clear();
   location.reload();
 }
 
-function loadDashboard(){
-  fetch(`${GAS_URL}?action=dashboard`)
+/* ADMIN */
+function loadAdmin(){
+  fetch(URL+"?action=dashboard")
   .then(r=>r.json())
   .then(d=>{
+    document.getElementById("today").innerText=d.today;
+    document.getElementById("month").innerText=d.month;
 
-    todayTotal.innerText = d.today;
-    monthTotal.innerText = d.month;
-
-    warningList.innerHTML = d.warningList
-      .map(x=>`${x.nama} (${x.total} jam)`)
-      .join("<br>");
-
-    let top = d.chart.sort((a,b)=>b.total-a.total).slice(0,3);
-
-    top3.innerHTML = top
-      .map(x=>`<li>${x.nama} - ${x.total} jam</li>`)
-      .join("");
+    document.getElementById("warning").innerHTML =
+    d.warningList.map(x=>x.nama+" "+x.total+" jam").join("<br>");
   });
+
+  loadTable();
 }
 
-function loadLembur(){
-  fetch(`${GAS_URL}?action=all`)
+function loadTable(){
+  fetch(URL+"?action=all")
   .then(r=>r.json())
   .then(data=>{
-    renderTable(data);
+    document.getElementById("tbl").innerHTML =
+    data.map(x=>`
+      <tr>
+        <td>${x.tanggal}</td>
+        <td>${x.nik}</td>
+        <td>${x.nama}</td>
+        <td>${x.total}</td>
+        <td><button onclick="hapus(${x.id})">Hapus</button></td>
+      </tr>
+    `).join("");
   });
 }
 
-function renderTable(data){
-  tableLembur.innerHTML = data.map(x=>`
-    <tr>
-      <td>${x.tanggal}</td>
-      <td>${x.nama}</td>
-      <td>${x.pekerjaan}</td>
-      <td>${x.total}</td>
-      <td>
-        <button class="btn btn-sm btn-danger" onclick="hapus('${x.id}')">X</button>
-      </td>
-    </tr>
-  `).join("");
+/* USER */
+function loadUser(){
+  document.getElementById("tanggal").innerText = new Date().toLocaleDateString();
+  document.getElementById("namaAkun").innerText = user.nama;
 }
 
-function hapus(id){
-  fetch(GAS_URL,{
-    method:"POST",
-    body:JSON.stringify({action:"hapus", id})
-  }).then(()=>loadLembur());
+/* SAVE LEMBUR */
+function save(){
+  alert("Simpan ke GAS (belum dihubungkan)");
 }
 
+/* EXPORT */
 function exportExcel(){
-  window.open(GAS_URL+"?action=export");
+  window.open(URL+"?action=export");
 }
