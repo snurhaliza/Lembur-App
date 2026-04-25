@@ -6,59 +6,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:#f1f5f9;
-}
-
-/* LOGIN */
-.login-page{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-
-.login-box{
-  width:320px;
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
-
-/* SIDEBAR */
-.sidebar{
-  width:220px;
-  height:100vh;
-  position:fixed;
-  background:#1e3a8a;
-  color:white;
-  padding:15px;
-}
-
-.sidebar button{
-  width:100%;
-  margin:5px 0;
-}
-
-/* CONTENT */
-.content{
-  margin-left:220px;
-  padding:20px;
-}
-
-/* CARD */
-.stat{
-  padding:15px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-</style>
-
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -66,14 +14,9 @@ body{
 <!-- LOGIN -->
 <div id="loginPage" class="login-page">
   <div class="login-box text-center">
-    <h3>MaintenaX</h3>
+    <h3>⚙ MaintenaX</h3>
 
     <input id="loginNik" class="form-control mb-3" placeholder="Masukkan NIK">
-
-    <p style="font-size:12px;color:gray;">
-      Gunakan NIK sebagai password
-    </p>
-
     <button class="btn btn-primary w-100" onclick="login()">Login</button>
   </div>
 </div>
@@ -81,71 +24,92 @@ body{
 <!-- APP -->
 <div id="appPage" style="display:none;">
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <h4>⚙ MaintenaX</h4>
+
     <button onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('input')">Input Lembur</button>
-    <button onclick="showPage('grafik')">Grafik</button>
+    <button onclick="showPage('lembur')">Lembur Bulanan</button>
+
     <button onclick="logout()">Logout</button>
   </div>
 
+  <!-- CONTENT -->
   <div class="content">
 
     <h5 id="welcome"></h5>
 
     <!-- DASHBOARD -->
     <div id="dashboard">
-      <div class="row">
-        <div class="col">
+
+      <div class="row g-3">
+
+        <div class="col-md-4">
           <div class="card stat">
-            <h6>Lembur Hari Ini</h6>
+            <h6>🔔 Lembur Hari Ini</h6>
             <h3 id="todayTotal">0</h3>
           </div>
         </div>
-        <div class="col">
+
+        <div class="col-md-4">
           <div class="card stat">
-            <h6>Lembur Bulan Ini</h6>
+            <h6>⏱ Lembur Bulan Ini</h6>
             <h3 id="monthTotal">0</h3>
           </div>
         </div>
-        <div class="col">
-          <div class="card stat">
-            <h6>Warning >56 Jam</h6>
-            <h3 id="warningTotal">0</h3>
+
+        <div class="col-md-4">
+          <div class="card stat warning">
+            <h6>⚠️ Warning >56 Jam</h6>
+            <div id="warningList"></div>
           </div>
         </div>
+
       </div>
 
       <div class="card mt-3 p-3">
-        <canvas id="chart"></canvas>
+        <h5>🏆 Top 3 Karyawan</h5>
+        <ul id="top3"></ul>
       </div>
+
     </div>
 
-    <!-- INPUT -->
-    <div id="input" style="display:none;">
-      <input type="date" id="tanggal" class="form-control mb-2">
-      <input id="nama" readonly class="form-control mb-2">
-      <input id="pekerjaan" class="form-control mb-2" placeholder="Pekerjaan">
+    <!-- LEMBUR -->
+    <div id="lembur" style="display:none;">
 
-      <input type="time" id="mulai" class="form-control mb-2">
-      <input type="time" id="akhir" class="form-control mb-2">
+      <h5>Lembur Bulanan</h5>
 
-      <input id="total" readonly class="form-control mb-2">
+      <div class="row mb-2">
+        <div class="col">
+          <input type="month" id="filterBulan" class="form-control">
+        </div>
+        <div class="col">
+          <input type="text" id="searchNama" class="form-control" placeholder="Cari nama">
+        </div>
+      </div>
 
-      <button onclick="simpan()" class="btn btn-success">Simpan</button>
-    </div>
+      <div class="card p-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Nama</th>
+              <th>Pekerjaan</th>
+              <th>Jam</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableLembur"></tbody>
+        </table>
+      </div>
 
-    <!-- GRAFIK -->
-    <div id="grafik" style="display:none;">
-      <input type="month" id="bulanTahun" class="form-control mb-2">
-      <canvas id="chart2"></canvas>
+      <button class="btn btn-success mt-2" onclick="exportExcel()">Export Excel</button>
+
     </div>
 
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="script.js"></script>
-
 </body>
 </html>
