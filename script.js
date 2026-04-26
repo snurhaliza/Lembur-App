@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwIKHpxc7tgQ8lvpTnDXHVQMYKwJluIHZGLHtw1z-z3vNr_JwOlMczhhprs3EEL0BDD/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx6zrp_8eihwMcaWByzF5Dw96pZ0V9hXaQxjErkrhHUdMDZxLGB0ZF5Jlbb8eOcvjNJ/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -28,7 +28,7 @@ async function login(){
   }
 
   localStorage.setItem("user",JSON.stringify(d));
-  location.href = role==="admin"?"admin.html":"karyawan.html";
+  location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
 // ================= MENU =================
@@ -37,27 +37,11 @@ function menu(id){
   document.getElementById(id).style.display="block";
 
   if(id==="dash"){
-    setTanggal();
     loadDashboard();
     loadGrafik();
   }
 
   if(id==="data") loadData();
-}
-
-// ================= TANGGAL =================
-function setTanggal(){
-  let el = document.getElementById("todayDate");
-  if(!el) return;
-
-  let now = new Date();
-
-  el.innerText = now.toLocaleDateString("id-ID",{
-    weekday:"long",
-    day:"numeric",
-    month:"long",
-    year:"numeric"
-  });
 }
 
 // ================= DASHBOARD =================
@@ -66,24 +50,21 @@ async function loadDashboard(){
   let url = GAS_URL+"?action=dashboard";
 
   if(user){
+    url += "&nik="+user.nik;
     url += "&role="+user.role;
   }
 
-  let r = await fetch(url);
+  let r = await fetch(url+"&t="+Date.now());
   let d = await r.json();
 
   if(todayCount) todayCount.innerText = d.todayTotal||0;
+  if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
 }
 
 // ================= GRAFIK =================
 async function loadGrafik(){
 
-  let bulan = document.getElementById("filterBulan")?.value || "";
-
-  let url = GAS_URL+"?action=grafik";
-  if(bulan) url += "&bulan="+bulan;
-
-  let r = await fetch(url);
+  let r = await fetch(GAS_URL+"?action=grafik&t="+Date.now());
   let d = await r.json();
 
   let ctx = document.getElementById("chart");
@@ -91,7 +72,7 @@ async function loadGrafik(){
 
   if(chart) chart.destroy();
 
-  if(!d.length){
+  if(!d || d.length===0){
     chart = new Chart(ctx,{
       type:"bar",
       data:{
@@ -114,28 +95,136 @@ async function loadGrafik(){
   });
 }
 
-// ================= 🔥 HITUNG JAM (FIX UTAMA) =================
+// ================= HITUNG JAM =================
 function hitungJam(){
 
-  let mulaiEl = document.getElementById("mulai");
-  let akhirEl = document.getElementById("akhir");
-  let totalEl = document.getElementById("total");
-
-  if(!mulaiEl || !akhirEl || !totalEl) return;
-
-  if(!mulaiEl.value || !akhirEl.value){
-    totalEl.value="";
+  if(!mulai.value || !akhir.value){
+    total.value="";
     return;
   }
 
-  let a = new Date("2000-01-01 "+mulaiEl.value);
-  let b = new Date("2000-01-01 "+akhirEl.value);
+  let a=new Date("2000 "+mulai.value);
+  let b=new Date("2000 "+akhir.value);
 
-  let jam = (b - a) / 3600000;
+  let j=(b-a)/3600000;
+  if(j<0) j+=24;
 
-  if(jam < 0) jam += 24;
+  total.value=j.toFixed(1);
+}
 
-  totalEl.value = jam.toFixed(1);
+// ================= SIMPAN (VALIDASI FULL) =================
+async function simpan(){
+
+  // VALIDASI
+  if(!keterangan.value.trim()){
+    alert("Pekerjaan wajib diisi!");
+    return;
+  }
+
+  if(!jenis.value){
+    alert("Jenis lembur wajib dipilih!");
+    return;
+  }
+
+  if(!jam.value){
+    alert("Keterangan alasan wajib dipilih!");
+    return;
+  }
+
+  if(!mulai.value){
+    alert("Jam mulai wajib diisi!");
+    return;
+  }
+
+  if(!akhir.value){
+    alert("Jam akhir wajib diisi!");
+    return;
+  }
+
+  if(!total.value || total.value==0){
+    alert("Total jam tidak valid!");
+    return;
+  }
+
+  // VALIDASI WAKTU
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+
+  if(a.getTime() === b.getTime()){
+    alert("Jam mulai dan akhir tidak boleh sama!");
+    return;
+  }
+
+  // KIRIM DATA
+  let r = await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"simpan",
+      nik:user.nik,
+      nama:user.nama,
+      pekerjaan:keterangan.value.trim(),
+      lembur:jenis.value,
+      k_alasan:jam.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
+    })
+  });
+
+  let d = await r.json();
+
+  if(!d.status){
+    alert(d.msg);
+    return;
+  }
+
+  alert("Tersimpan ✅");
+  resetForm();
+  loadDashboard();
+}
+
+// ================= RESET =================
+function resetForm(){
+  keterangan.value="";
+  jenis.value="";
+  jam.value="";
+  mulai.value="";
+  akhir.value="";
+  total.value="";
+}
+
+// ================= DATA =================
+async function loadData(){
+
+  let r = await fetch(GAS_URL+"?action=data");
+  let data = await r.json();
+
+  table.innerHTML = data.map(d=>`
+  <tr>
+    <td>${d.tanggal}</td>
+    <td>${d.nik}</td>
+    <td>${d.nama}</td>
+    <td>${d.pekerjaan}</td>
+    <td>${d.lembur}</td>
+    <td>${d.k_alasan}</td>
+    <td>${d.mulai}</td>
+    <td>${d.akhir}</td>
+    <td>${d.total}</td>
+    <td><button onclick="hapus(${d.id})">Hapus</button></td>
+  </tr>`).join("");
+}
+
+// ================= DELETE =================
+async function hapus(id){
+
+  if(!confirm("Yakin hapus data?")) return;
+
+  await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"delete",id})
+  });
+
+  loadData();
 }
 
 // ================= INIT =================
@@ -147,16 +236,11 @@ function init(){
     if(welcome) welcome.innerText="Halo "+user.nama;
   }
 
-  setTanggal();
   menu("dash");
 
-  // 🔥 AUTO BIND EVENT (INI YANG BIKIN TOTAL MUNCUL)
-  let mulaiEl = document.getElementById("mulai");
-  let akhirEl = document.getElementById("akhir");
-
-  if(mulaiEl && akhirEl){
-    mulaiEl.oninput = hitungJam;
-    akhirEl.oninput = hitungJam;
+  if(mulai && akhir){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
   }
 
   setInterval(()=>{
