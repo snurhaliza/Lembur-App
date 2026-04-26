@@ -1,16 +1,14 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyX75AY5_WDGpPYHCap8DEPk2GRoCr-IysDxwB33A61yGhXFOetGS9WrRDXInUw2sEt/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxuGLxi8gzw1l4n-Gkp2EFTCAY9vpbnzRa_JE4zH69oi4jQiJ3UJXD-47UI5Kvs0QdR/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
 // ================= TANGGAL =================
 function tampilkanTanggal(){
-
   let el = document.getElementById("todayDate");
   if(!el) return;
 
   let now = new Date();
-
   let hari = now.toLocaleDateString("id-ID", { weekday: "long" });
   let tanggal = now.toLocaleDateString("id-ID");
 
@@ -188,17 +186,22 @@ function resetForm(){
   total.value="";
 }
 
-// ================= DATA (FIX HAPUS + SEARCH) =================
+// ================= DATA (FILTER BULAN) =================
 async function loadData(){
 
   let r = await fetch(GAS_URL+"?action=data");
   let data = await r.json();
 
-  let keyword = document.getElementById("search").value.toLowerCase();
+  let bulan = document.getElementById("filterBulanData")?.value;
 
-  let filtered = data.filter(d => 
-    d.nama.toLowerCase().includes(keyword)
-  );
+  let filtered = data.filter(d => {
+    if(!bulan) return true;
+
+    let parts = d.tanggal.split("/"); // dd/MM/yyyy
+    let format = parts[2] + "-" + parts[1]; // yyyy-MM
+
+    return format === bulan;
+  });
 
   table.innerHTML = filtered.map(d=>`
   <tr>
@@ -238,7 +241,6 @@ function init(){
   }
 
   menu("dash");
-
   tampilkanTanggal();
 
   if(mulai && akhir){
@@ -249,6 +251,12 @@ function init(){
   let filter = document.getElementById("filterBulan");
   if(filter){
     filter.onchange = loadGrafik;
+  }
+
+  // ✅ FILTER DATA BULAN
+  let filterData = document.getElementById("filterBulanData");
+  if(filterData){
+    filterData.onchange = loadData;
   }
 
   setInterval(()=>{
