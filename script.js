@@ -3,7 +3,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbwIKHpxc7tgQ8lvpTnDXHVQ
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
-// LOGIN
+// ================= LOGIN =================
 async function login(){
 
   let pass = password.value.trim();
@@ -31,7 +31,7 @@ async function login(){
   location.href = role==="admin"?"admin.html":"karyawan.html";
 }
 
-// MENU
+// ================= MENU =================
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
@@ -45,7 +45,7 @@ function menu(id){
   if(id==="data") loadData();
 }
 
-// TANGGAL
+// ================= TANGGAL =================
 function setTanggal(){
   let el = document.getElementById("todayDate");
   if(!el) return;
@@ -60,7 +60,7 @@ function setTanggal(){
   });
 }
 
-// DASHBOARD
+// ================= DASHBOARD =================
 async function loadDashboard(){
 
   let url = GAS_URL+"?action=dashboard";
@@ -75,7 +75,7 @@ async function loadDashboard(){
   if(todayCount) todayCount.innerText = d.todayTotal||0;
 }
 
-// GRAFIK
+// ================= GRAFIK =================
 async function loadGrafik(){
 
   let bulan = document.getElementById("filterBulan")?.value || "";
@@ -114,7 +114,31 @@ async function loadGrafik(){
   });
 }
 
-// INIT
+// ================= 🔥 HITUNG JAM (FIX UTAMA) =================
+function hitungJam(){
+
+  let mulaiEl = document.getElementById("mulai");
+  let akhirEl = document.getElementById("akhir");
+  let totalEl = document.getElementById("total");
+
+  if(!mulaiEl || !akhirEl || !totalEl) return;
+
+  if(!mulaiEl.value || !akhirEl.value){
+    totalEl.value="";
+    return;
+  }
+
+  let a = new Date("2000-01-01 "+mulaiEl.value);
+  let b = new Date("2000-01-01 "+akhirEl.value);
+
+  let jam = (b - a) / 3600000;
+
+  if(jam < 0) jam += 24;
+
+  totalEl.value = jam.toFixed(1);
+}
+
+// ================= INIT =================
 function init(){
 
   if(user){
@@ -126,13 +150,22 @@ function init(){
   setTanggal();
   menu("dash");
 
+  // 🔥 AUTO BIND EVENT (INI YANG BIKIN TOTAL MUNCUL)
+  let mulaiEl = document.getElementById("mulai");
+  let akhirEl = document.getElementById("akhir");
+
+  if(mulaiEl && akhirEl){
+    mulaiEl.oninput = hitungJam;
+    akhirEl.oninput = hitungJam;
+  }
+
   setInterval(()=>{
     loadDashboard();
     loadGrafik();
   },10000);
 }
 
-// LOGOUT
+// ================= LOGOUT =================
 function logout(){
   localStorage.clear();
   location.href="index.html";
