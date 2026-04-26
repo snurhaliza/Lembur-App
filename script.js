@@ -1,21 +1,20 @@
-const GAS = "https://script.google.com/macros/s/AKfycbxJghFH4e9L0ld9KJjRXJIOjNLkkuP04htRK2Bnq07b6uQyYJxig3XooKyc_lmjNbId/exec"; // ganti
+const GAS_URL="https://script.google.com/macros/s/AKfycbzRNpWJtKlP2lBBO5dt8Y6fXw84eDlrv60f7gXH0grbGZSGQj4LnG0wT1kRebADyyQ6/exec";
 
-let user = JSON.parse(localStorage.getItem("user"));
-let chart;
+let user=JSON.parse(localStorage.getItem("user"));
 
-// INIT
-function init(){
+// LOGIN
+async function login(){
+  let pass=password.value.trim();
+  let role=document.getElementById("role").value;
 
-  if(user){
-    nik.value=user.nik;
-    nama.value=user.nama;
-    welcome.innerText="Halo "+user.nama;
-  }
+  let r=await fetch(`${GAS_URL}?action=login&password=${pass}`);
+  let d=await r.json();
 
-  menu("dash");
+  if(!d.status){ msg.innerText="User tidak ditemukan"; return; }
+  if(d.role!==role){ msg.innerText="Role salah"; return; }
 
-  mulai.oninput=hitung;
-  akhir.oninput=hitung;
+  localStorage.setItem("user",JSON.stringify(d));
+  location.href=role==="admin"?"admin.html":"karyawan.html";
 }
 
 // MENU
@@ -23,23 +22,26 @@ function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
-  if(id==="dash"){
-    loadDash();
-    loadGrafik();
-  }
+  if(id==="dash") loadDashboard();
+  if(id==="data") loadData();
+  if(id==="grafik") loadGrafik();
 }
 
 // DASHBOARD
-async function loadDash(){
+async function loadDashboard(){
 
-  let url = GAS+"?action=dash&nik="+user.nik;
-  let d = await (await fetch(url)).json();
+  let url=GAS_URL+"?action=dashboard";
+  if(user?.role==="karyawan") url+="&nik="+user.nik;
 
-  monthTotal.innerText=(d.total||0)+" Jam";
+  let r=await fetch(url+"&t="+Date.now());
+  let d=await r.json();
+
+  if(todayCount) todayCount.innerText=d.notif||0;
+  if(monthTotal) monthTotal.innerText=(d.monthTotal||0)+" Jam";
 }
 
 // HITUNG JAM
-function hitung(){
+function hitungJam(){
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
   let j=(b-a)/3600000;
@@ -50,12 +52,7 @@ function hitung(){
 // SIMPAN
 async function simpan(){
 
-  if(!keterangan.value||!jenis.value||!jam.value||!mulai.value||!akhir.value){
-    alert("Isi semua!");
-    return;
-  }
-
-  let r = await fetch(GAS,{
+  let r=await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
@@ -70,16 +67,13 @@ async function simpan(){
     })
   });
 
-  let d = await r.json();
+  let d=await r.json();
 
-  if(!d.status){
-    alert("Sudah input hari ini!");
-    return;
-  }
+  if(!d.status){ alert(d.msg); return; }
 
   alert("Tersimpan");
   resetForm();
-  loadDash();
+  loadDashboard();
 }
 
 // RESET
@@ -92,25 +86,73 @@ function resetForm(){
   total.value="";
 }
 
+// DATA
+async function loadData(){
+
+  let r=await fetch(GAS_URL+"?action=data");
+  let d=await r.json();
+
+  table.innerHTML=d.map(x=>`
+  <tr>
+  <td>${x.tanggal}</td>
+  <td>${x.nik}</td>
+  <td>${x.nama}</td>
+  <td>${x.pekerjaan}</td>
+  <td>${x.lembur}</td>
+  <td>${x.k_alasan}</td>
+  <td>${x.mulai}</td>
+  <td>${x.akhir}</td>
+  <td>${x.total}</td>
+  <td><button onclick="hapus(${x.id})">Hapus</button></td>
+  </tr>`).join("");
+}
+
+// DELETE
+async function hapus(id){
+  await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"delete",id})
+  });
+  loadData();
+}
+
 // GRAFIK
+let chart;
 async function loadGrafik(){
 
-  let d = await (await fetch(GAS+"?action=grafik")).json();
+  let r=await fetch(GAS_URL+"?action=grafik");
+  let d=await r.json();
 
-  let ctx = document.getElementById("chart");
+  let ctx=document.getElementById("chart");
 
   if(chart) chart.destroy();
 
-  chart = new Chart(ctx,{
+  chart=new Chart(ctx,{
     type:"bar",
     data:{
       labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:d.map(x=>x.total)
-      }]
+      datasets:[{data:d.map(x=>x.total)}]
     }
   });
+}
+
+// INIT
+function init(){
+
+  if(user){
+    if(nik) nik.value=user.nik;
+    if(nama) nama.value=user.nama;
+    if(welcome) welcome.innerText="Halo "+user.nama;
+  }
+
+  menu("dash");
+
+  if(mulai){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
+  }
+
+  setInterval(loadDashboard,5000);
 }
 
 // LOGOUT
