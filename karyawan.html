@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Karyawan - Maintenax</title>
+  <title>Karyawan</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -12,67 +12,59 @@
   <h3 id="welcome"></h3>
 
   <button onclick="menu('dash')">Dashboard</button>
-  <button onclick="menu('input')">Input Lembur</button>
+  <button onclick="menu('input')">Input</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
-<!-- DASHBOARD -->
-<div id="dash">
+  <!-- DASHBOARD -->
+  <div id="dash">
 
-  <!-- TANGGAL -->
-  <div id="todayDate" class="card"></div>
+    <!-- TANGGAL -->
+    <div id="todayDate" class="card"></div>
 
-  <!-- FILTER BULAN -->
-  <div class="card">
-    <label>Pilih Bulan:</label>
-    <input type="month" id="filterBulan" onchange="loadGrafik()">
-  </div>
-
-  <!-- GRAFIK -->
-  <div class="card">
-    <h3>Top 3 Karyawan</h3>
-    <canvas id="chart"></canvas>
-  </div>
-
-</div>
-
-<!-- INPUT -->
-<div id="input" style="display:none">
-
-  <div class="card">
-
-    <input id="nik" readonly>
-    <input id="nama" readonly>
-
-    <input id="keterangan" placeholder="Pekerjaan">
-
-    <select id="jenis">
-      <option value="">Lembur</option>
-      <option>N</option>
-      <option>H</option>
-    </select>
-
-    <select id="jam">
-      <option value="">K.Alasan</option>
-      <option>1</option>
-      <option>5</option>
-      <option>8</option>
-    </select>
-
-    <!-- 🔥 FIX DI SINI -->
-    <input type="time" id="mulai" onchange="hitungJam()" oninput="hitungJam()">
-    <input type="time" id="akhir" onchange="hitungJam()" oninput="hitungJam()">
-
-    <input id="total" readonly placeholder="Total Jam">
-
-    <button onclick="simpan()">Submit</button>
-    <button onclick="resetForm()">Reset</button>
+    <!-- GRAFIK -->
+    <div class="card">
+      <h3>Top 3 Karyawan</h3>
+      <canvas id="chart"></canvas>
+    </div>
 
   </div>
 
-</div>
+  <!-- INPUT -->
+  <div id="input" style="display:none">
+
+    <div class="card">
+
+      <input id="nik" readonly>
+      <input id="nama" readonly>
+
+      <input id="keterangan" placeholder="Pekerjaan">
+
+      <select id="jenis">
+        <option value="">Lembur</option>
+        <option>N</option>
+        <option>H</option>
+      </select>
+
+      <select id="jam">
+        <option value="">K.Alasan</option>
+        <option>1</option>
+        <option>5</option>
+        <option>8</option>
+      </select>
+
+      <input type="time" id="mulai">
+      <input type="time" id="akhir">
+      <input id="total" readonly placeholder="Total Jam">
+
+      <button onclick="simpan()">Submit</button>
+      <button onclick="resetForm()">Reset</button>
+
+    </div>
+
+  </div>
 
 </div>
 
