@@ -7,7 +7,7 @@ let chart;
 async function login(){
 
   let pass = password.value.trim();
-  let role = document.getElementById("role").value.toLowerCase();
+  let role = document.getElementById("role").value;
 
   if(!pass){
     msg.innerText="NIK wajib diisi!";
@@ -22,7 +22,7 @@ async function login(){
     return;
   }
 
-  if(String(d.role).toLowerCase() !== role){
+  if(d.role!==role){
     msg.innerText="Role salah!";
     return;
   }
@@ -36,26 +36,29 @@ function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
-  if(id==="dash") loadGrafik();
+  if(id==="dash"){
+    loadDashboard();
+    loadGrafik();
+  }
+
   if(id==="data") loadData();
 }
 
-// ================= TANGGAL =================
-function showToday(){
+// ================= DASHBOARD =================
+async function loadDashboard(){
 
-  let el = document.getElementById("todayDate");
-  if(!el) return;
+  let url = GAS_URL+"?action=dashboard";
 
-  let d = new Date();
+  if(user){
+    url += "&nik="+user.nik;
+    url += "&role="+user.role;
+  }
 
-  let hari = d.toLocaleDateString("id-ID",{
-    weekday:"long",
-    day:"numeric",
-    month:"long",
-    year:"numeric"
-  });
+  let r = await fetch(url+"&t="+Date.now());
+  let d = await r.json();
 
-  el.innerText = "📅 " + hari;
+  if(todayCount) todayCount.innerText = d.todayTotal||0;
+  if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
 }
 
 // ================= GRAFIK =================
@@ -92,7 +95,7 @@ async function loadGrafik(){
   });
 }
 
-// ================= HITUNG JAM (FIX) =================
+// ================= HITUNG JAM =================
 function hitungJam(){
 
   if(!mulai.value || !akhir.value){
@@ -100,34 +103,66 @@ function hitungJam(){
     return;
   }
 
-  let [j1,m1] = mulai.value.split(":").map(Number);
-  let [j2,m2] = akhir.value.split(":").map(Number);
+  let a=new Date("2000 "+mulai.value);
+  let b=new Date("2000 "+akhir.value);
 
-  let a = j1*60+m1;
-  let b = j2*60+m2;
+  let j=(b-a)/3600000;
+  if(j<0) j+=24;
 
-  let selisih = (b-a)/60;
-  if(selisih<0) selisih+=24;
-
-  total.value = selisih.toFixed(1);
+  total.value=j.toFixed(1);
 }
 
-// ================= SIMPAN =================
+// ================= SIMPAN (VALIDASI FULL) =================
 async function simpan(){
 
-  if(!keterangan.value.trim()) return alert("Pekerjaan wajib diisi!");
-  if(!jenis.value) return alert("Jenis wajib!");
-  if(!jam.value) return alert("Alasan wajib!");
-  if(!mulai.value) return alert("Mulai wajib!");
-  if(!akhir.value) return alert("Akhir wajib!");
+  // VALIDASI
+  if(!keterangan.value.trim()){
+    alert("Pekerjaan wajib diisi!");
+    return;
+  }
 
+  if(!jenis.value){
+    alert("Jenis lembur wajib dipilih!");
+    return;
+  }
+
+  if(!jam.value){
+    alert("Keterangan alasan wajib dipilih!");
+    return;
+  }
+
+  if(!mulai.value){
+    alert("Jam mulai wajib diisi!");
+    return;
+  }
+
+  if(!akhir.value){
+    alert("Jam akhir wajib diisi!");
+    return;
+  }
+
+  if(!total.value || total.value==0){
+    alert("Total jam tidak valid!");
+    return;
+  }
+
+  // VALIDASI WAKTU
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+
+  if(a.getTime() === b.getTime()){
+    alert("Jam mulai dan akhir tidak boleh sama!");
+    return;
+  }
+
+  // KIRIM DATA
   let r = await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
       nik:user.nik,
       nama:user.nama,
-      pekerjaan:keterangan.value,
+      pekerjaan:keterangan.value.trim(),
       lembur:jenis.value,
       k_alasan:jam.value,
       mulai:mulai.value,
@@ -143,9 +178,9 @@ async function simpan(){
     return;
   }
 
-  alert("Tersimpan");
+  alert("Tersimpan ✅");
   resetForm();
-  loadGrafik();
+  loadDashboard();
 }
 
 // ================= RESET =================
@@ -181,7 +216,8 @@ async function loadData(){
 
 // ================= DELETE =================
 async function hapus(id){
-  if(!confirm("Yakin hapus?")) return;
+
+  if(!confirm("Yakin hapus data?")) return;
 
   await fetch(GAS_URL,{
     method:"POST",
@@ -200,7 +236,6 @@ function init(){
     if(welcome) welcome.innerText="Halo "+user.nama;
   }
 
-  showToday();
   menu("dash");
 
   if(mulai && akhir){
@@ -208,7 +243,10 @@ function init(){
     akhir.oninput=hitungJam;
   }
 
-  setInterval(loadGrafik,10000);
+  setInterval(()=>{
+    loadDashboard();
+    loadGrafik();
+  },10000);
 }
 
 // ================= LOGOUT =================
