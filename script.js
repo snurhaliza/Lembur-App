@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxxytgSpZXDpOZO776P-McVfyVAz2IZt_eB_94Oz1m0XlYBsTPZAbAEBszSqAhZl3SL/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyWZtGkirPCnK3aucKdQlTgDE75wrkV5tqIm-Pa55w8saXz1tSfUBcAxx-hystmaKrZ/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
