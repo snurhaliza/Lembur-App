@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Karyawan - Maintenax</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body onload="init()">
 
 <div class="sidebar">
   <h3 id="welcome"></h3>
-
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('input')">Input Lembur</button>
   <button onclick="logout()">Logout</button>
@@ -21,19 +19,13 @@
 <!-- DASHBOARD -->
 <div id="dash">
 
-  <div id="todayDate"></div>
-
-  <div class="grid">
-
-    <div class="card">
-      Total Bulan Ini
-      <h2 id="monthTotal">0 Jam</h2>
-    </div>
-
+  <div class="card">
+    Total Lembur Bulan Ini
+    <h2 id="monthTotal">0 Jam</h2>
   </div>
 
   <div class="card">
-    <h3>Top 3 Karyawan</h3>
+    <h3>Top 3 Lembur</h3>
     <canvas id="chart"></canvas>
   </div>
 
@@ -50,7 +42,7 @@
     <input id="keterangan" placeholder="Pekerjaan">
 
     <select id="jenis">
-      <option value="">Lembur</option>
+      <option value="">Alasan</option>
       <option>N</option>
       <option>H</option>
     </select>
