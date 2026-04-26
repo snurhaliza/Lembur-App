@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzZY_bCcavpvNfTrMapt6DLqZqDQ1IhLv3cnVlXhVQA_GsSeW37pUrxo6SwyYsRi_ao/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwwAK26rgVqMXqdGMgQxiMHxLv4rhfeNNmQWLuRzvDD07kjBQnl2m1ytmZTn0Bc98j5/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -8,6 +8,11 @@ async function login(){
 
   let pass = password.value.trim();
   let role = document.getElementById("role").value;
+
+  if(!pass){
+    msg.innerText="NIK wajib diisi!";
+    return;
+  }
 
   let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
   let d = await r.json();
@@ -43,7 +48,11 @@ function menu(id){
 async function loadDashboard(){
 
   let url = GAS_URL+"?action=dashboard";
-  if(user?.nik) url+="&nik="+user.nik;
+
+  if(user){
+    url += "&nik="+user.nik;
+    url += "&role="+user.role;
+  }
 
   let r = await fetch(url+"&t="+Date.now());
   let d = await r.json();
@@ -86,24 +95,74 @@ async function loadGrafik(){
   });
 }
 
-// ================= INPUT =================
+// ================= HITUNG JAM =================
 function hitungJam(){
+
+  if(!mulai.value || !akhir.value){
+    total.value="";
+    return;
+  }
+
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
+
   let j=(b-a)/3600000;
   if(j<0) j+=24;
+
   total.value=j.toFixed(1);
 }
 
+// ================= SIMPAN (VALIDASI FULL) =================
 async function simpan(){
 
+  // VALIDASI
+  if(!keterangan.value.trim()){
+    alert("Pekerjaan wajib diisi!");
+    return;
+  }
+
+  if(!jenis.value){
+    alert("Jenis lembur wajib dipilih!");
+    return;
+  }
+
+  if(!jam.value){
+    alert("Keterangan alasan wajib dipilih!");
+    return;
+  }
+
+  if(!mulai.value){
+    alert("Jam mulai wajib diisi!");
+    return;
+  }
+
+  if(!akhir.value){
+    alert("Jam akhir wajib diisi!");
+    return;
+  }
+
+  if(!total.value || total.value==0){
+    alert("Total jam tidak valid!");
+    return;
+  }
+
+  // VALIDASI WAKTU
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+
+  if(a.getTime() === b.getTime()){
+    alert("Jam mulai dan akhir tidak boleh sama!");
+    return;
+  }
+
+  // KIRIM DATA
   let r = await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
       nik:user.nik,
       nama:user.nama,
-      pekerjaan:keterangan.value,
+      pekerjaan:keterangan.value.trim(),
       lembur:jenis.value,
       k_alasan:jam.value,
       mulai:mulai.value,
@@ -119,7 +178,7 @@ async function simpan(){
     return;
   }
 
-  alert("Tersimpan");
+  alert("Tersimpan ✅");
   resetForm();
   loadDashboard();
 }
@@ -155,11 +214,16 @@ async function loadData(){
   </tr>`).join("");
 }
 
+// ================= DELETE =================
 async function hapus(id){
+
+  if(!confirm("Yakin hapus data?")) return;
+
   await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({action:"delete",id})
   });
+
   loadData();
 }
 
@@ -173,9 +237,6 @@ function init(){
   }
 
   menu("dash");
-
-  loadDashboard();
-  loadGrafik();
 
   if(mulai && akhir){
     mulai.oninput=hitungJam;
