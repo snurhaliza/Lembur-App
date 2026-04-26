@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxvZAr2a-MfbzQsBQO2RQZbnvfEpPqvJLr_2qlHD9CvD0r-faoYU-e32U9lWbPFXOzk/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyQZeD_xSTXSFyDEHYZDh0aCZPwI7Z2ErZI3DDQOHpbk9ohC3C0U0zhKahESH_TCa0g/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -33,7 +33,6 @@ async function login(){
 
 // ================= MENU =================
 function menu(id){
-
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
@@ -50,8 +49,9 @@ async function loadDashboard(){
 
   let url = GAS_URL+"?action=dashboard";
 
-  if(user && user.nik){
-    url += "&nik="+encodeURIComponent(user.nik);
+  if(user){
+    url += "&nik="+user.nik;
+    url += "&role="+user.role;
   }
 
   let r = await fetch(url+"&t="+Date.now());
@@ -112,23 +112,57 @@ function hitungJam(){
   total.value=j.toFixed(1);
 }
 
-// ================= SIMPAN =================
+// ================= SIMPAN (VALIDASI FULL) =================
 async function simpan(){
 
-  if(!keterangan.value.trim()) return alert("Pekerjaan wajib diisi!");
-  if(!jenis.value) return alert("Jenis wajib!");
-  if(!jam.value) return alert("Keterangan wajib!");
-  if(!mulai.value) return alert("Mulai wajib!");
-  if(!akhir.value) return alert("Akhir wajib!");
-  if(!total.value || total.value==0) return alert("Total tidak valid!");
+  // VALIDASI
+  if(!keterangan.value.trim()){
+    alert("Pekerjaan wajib diisi!");
+    return;
+  }
 
+  if(!jenis.value){
+    alert("Jenis lembur wajib dipilih!");
+    return;
+  }
+
+  if(!jam.value){
+    alert("Keterangan alasan wajib dipilih!");
+    return;
+  }
+
+  if(!mulai.value){
+    alert("Jam mulai wajib diisi!");
+    return;
+  }
+
+  if(!akhir.value){
+    alert("Jam akhir wajib diisi!");
+    return;
+  }
+
+  if(!total.value || total.value==0){
+    alert("Total jam tidak valid!");
+    return;
+  }
+
+  // VALIDASI WAKTU
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+
+  if(a.getTime() === b.getTime()){
+    alert("Jam mulai dan akhir tidak boleh sama!");
+    return;
+  }
+
+  // KIRIM DATA
   let r = await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
       nik:user.nik,
       nama:user.nama,
-      pekerjaan:keterangan.value,
+      pekerjaan:keterangan.value.trim(),
       lembur:jenis.value,
       k_alasan:jam.value,
       mulai:mulai.value,
@@ -144,7 +178,7 @@ async function simpan(){
     return;
   }
 
-  alert("Tersimpan");
+  alert("Tersimpan ✅");
   resetForm();
   loadDashboard();
 }
@@ -183,7 +217,7 @@ async function loadData(){
 // ================= DELETE =================
 async function hapus(id){
 
-  if(!confirm("Yakin hapus?")) return;
+  if(!confirm("Yakin hapus data?")) return;
 
   await fetch(GAS_URL,{
     method:"POST",
@@ -219,4 +253,4 @@ function init(){
 function logout(){
   localStorage.clear();
   location.href="index.html";
-}
+}MASI BELUM TERUPDATE 
