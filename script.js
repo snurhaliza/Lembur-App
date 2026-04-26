@@ -1,95 +1,46 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwq8xObhrM_d7RZcljULJC84YpszoaR7Hxu5Pxyx-RQqq-XjEywzFEe7w9xViFm7Uen/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbzHlet2nSy-tHbJkzoQrlJ-a8c5XPXru-NUqXj0gNbYuvbWyPTwCvAtUBs6vwRFawGT/exec";
 
-let user = JSON.parse(localStorage.getItem("user"));
+let user=JSON.parse(localStorage.getItem("user"));
 
-// ================= LOGIN =================
+// LOGIN
 async function login(){
+  let pass=password.value.trim();
+  let role=document.getElementById("role").value;
 
-  const pass = document.getElementById("password").value.trim();
-  const roleInput = document.getElementById("role").value;
-  const msg = document.getElementById("msg");
+  let r=await fetch(`${GAS_URL}?action=login&password=${pass}`);
+  let d=await r.json();
 
-  if(!pass){
-    msg.innerText = "Isi NIK!";
-    return;
-  }
+  if(!d.status){ msg.innerText="User tidak ditemukan"; return; }
+  if(d.role!==role){ msg.innerText="Role salah"; return; }
 
-  try{
-
-    const res = await fetch(`${GAS_URL}?action=login&password=${pass}`);
-    const d = await res.json();
-
-    if(!d.status){
-      msg.innerText = "User tidak ditemukan!";
-      return;
-    }
-
-    if(d.role !== roleInput){
-      msg.innerText = "Role salah!";
-      return;
-    }
-
-    localStorage.setItem("user", JSON.stringify(d));
-
-    location.href = d.role==="admin"
-      ? "admin.html"
-      : "karyawan.html";
-
-  }catch{
-    msg.innerText = "Server error!";
-  }
+  localStorage.setItem("user",JSON.stringify(d));
+  location.href=role==="admin"?"admin.html":"karyawan.html";
 }
 
-// ================= INIT =================
-function init(){
-
-  if(!user){
-    location.href="index.html";
-    return;
-  }
-
-  if(nik) nik.value=user.nik;
-  if(nama) nama.value=user.nama;
-  if(welcome) welcome.innerText="Halo "+user.nama;
-  if(todayDate) todayDate.innerText=new Date().toLocaleDateString("id-ID");
-
-  menu("dash");
-
-  if(mulai && akhir){
-    mulai.oninput=hitungJam;
-    akhir.oninput=hitungJam;
-  }
-
-  setInterval(loadDashboard,5000);
-}
-
-// ================= MENU =================
+// MENU
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
-  if(id==="dash"){
-    loadDashboard();
-    loadGrafik();
-  }
+  if(id==="dash") loadDashboard();
   if(id==="data") loadData();
+  if(id==="grafik") loadGrafik();
 }
 
-// ================= DASHBOARD =================
+// DASHBOARD
 async function loadDashboard(){
 
-  let url = GAS_URL+"?action=dashboard";
-  if(user?.nik) url += "&nik="+user.nik;
+  let url=GAS_URL+"?action=dashboard";
+  if(user?.role==="karyawan") url+="&nik="+user.nik;
 
-  let r = await fetch(url);
-  let d = await r.json();
+  let r=await fetch(url+"&t="+Date.now());
+  let d=await r.json();
 
-  if(todayCount) todayCount.innerText=d.todayTotal||0;
-  if(todayTotal) todayTotal.innerText=(d.todayTotal||0)+" Jam";
+  if(todayCount) todayCount.innerText=d.notif||0;
   if(monthTotal) monthTotal.innerText=(d.monthTotal||0)+" Jam";
 }
 
-// ================= HITUNG JAM =================
+// HITUNG JAM
 function hitungJam(){
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
@@ -98,15 +49,10 @@ function hitungJam(){
   total.value=j.toFixed(1);
 }
 
-// ================= SIMPAN =================
+// SIMPAN
 async function simpan(){
 
-  if(!keterangan.value||!jenis.value||!jam.value||!mulai.value||!akhir.value){
-    alert("Isi semua!");
-    return;
-  }
-
-  await fetch(GAS_URL,{
+  let r=await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
@@ -121,12 +67,16 @@ async function simpan(){
     })
   });
 
+  let d=await r.json();
+
+  if(!d.status){ alert(d.msg); return; }
+
   alert("Tersimpan");
   resetForm();
   loadDashboard();
 }
 
-// ================= RESET =================
+// RESET
 function resetForm(){
   keterangan.value="";
   jenis.value="";
@@ -136,70 +86,76 @@ function resetForm(){
   total.value="";
 }
 
-// ================= DATA =================
+// DATA
 async function loadData(){
 
-  let r = await fetch(GAS_URL+"?action=data");
-  let data = await r.json();
+  let r=await fetch(GAS_URL+"?action=data");
+  let d=await r.json();
 
-  let s = search.value.toLowerCase();
-
-  let f = data.filter(x=>x.nama.toLowerCase().includes(s));
-
-  table.innerHTML = f.map(d=>`
+  table.innerHTML=d.map(x=>`
   <tr>
-    <td>${d.tanggal}</td>
-    <td>${d.nik}</td>
-    <td>${d.nama}</td>
-    <td>${d.pekerjaan}</td>
-    <td>${d.lembur}</td>
-    <td>${d.k_alasan}</td>
-    <td>${d.mulai}</td>
-    <td>${d.akhir}</td>
-    <td>${d.total}</td>
-    <td><button onclick="hapus(${d.id})">Hapus</button></td>
+  <td>${x.tanggal}</td>
+  <td>${x.nik}</td>
+  <td>${x.nama}</td>
+  <td>${x.pekerjaan}</td>
+  <td>${x.lembur}</td>
+  <td>${x.k_alasan}</td>
+  <td>${x.mulai}</td>
+  <td>${x.akhir}</td>
+  <td>${x.total}</td>
+  <td><button onclick="hapus(${x.id})">Hapus</button></td>
   </tr>`).join("");
 }
 
-// ================= DELETE =================
+// DELETE
 async function hapus(id){
-  if(!confirm("Hapus data?")) return;
-
   await fetch(GAS_URL,{
     method:"POST",
     body:JSON.stringify({action:"delete",id})
   });
-
   loadData();
 }
 
-// ================= GRAFIK =================
+// GRAFIK
 let chart;
-
 async function loadGrafik(){
 
-  let r = await fetch(GAS_URL+"?action=grafik");
-  let d = await r.json();
+  let r=await fetch(GAS_URL+"?action=grafik");
+  let d=await r.json();
 
-  let ctx = document.getElementById("chart");
-
-  if(!ctx) return;
+  let ctx=document.getElementById("chart");
 
   if(chart) chart.destroy();
 
-  chart = new Chart(ctx,{
+  chart=new Chart(ctx,{
     type:"bar",
     data:{
       labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:d.map(x=>x.total)
-      }]
+      datasets:[{data:d.map(x=>x.total)}]
     }
   });
 }
 
-// ================= LOGOUT =================
+// INIT
+function init(){
+
+  if(user){
+    if(nik) nik.value=user.nik;
+    if(nama) nama.value=user.nama;
+    if(welcome) welcome.innerText="Halo "+user.nama;
+  }
+
+  menu("dash");
+
+  if(mulai){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
+  }
+
+  setInterval(loadDashboard,5000);
+}
+
+// LOGOUT
 function logout(){
   localStorage.clear();
   location.href="index.html";
