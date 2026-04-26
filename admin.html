@@ -18,11 +18,62 @@
 
 <div class="content">
 
-<!-- DASHBOARD -->
-<div id="dash">
+  <!-- DASHBOARD -->
+  <div id="dash">
 
-  <!-- ✅ TANGGAL -->
-  <div id="todayDate" class="card"></div>
+    <!-- TANGGAL -->
+    <div id="todayDate" class="card"></div>
 
-  <div class="grid">
-    <div class="card
+    <!-- NOTIF -->
+    <div class="grid">
+      <div class="card notif">
+        🔔 Notifikasi Hari Ini
+        <h2 id="todayCount">0</h2>
+      </div>
+    </div>
+
+    <!-- FILTER BULAN -->
+    <div class="card">
+      <label>Filter Bulan:</label>
+      <input type="month" id="filterBulan" onchange="loadGrafik()">
+    </div>
+
+    <!-- GRAFIK -->
+    <div class="card">
+      <h3>Top 3 Karyawan</h3>
+      <canvas id="chart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- DATA -->
+  <div id="data" style="display:none">
+
+    <input id="search" placeholder="Cari nama..." oninput="loadData()">
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>NIK</th>
+          <th>Nama</th>
+          <th>Pekerjaan</th>
+          <th>Lembur</th>
+          <th>K.Alasan</th>
+          <th>Mulai</th>
+          <th>Akhir</th>
+          <th>Total</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+
+      <tbody id="table"></tbody>
+    </table>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
