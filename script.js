@@ -1,8 +1,8 @@
-const GAS_URL="https://script.google.com/macros/s/AKfycbwWTAog-WKjBK-9HNwkaeGvGXZu513HXktETBxQRGtnlBICsGlTo44fnizYKqQdaYU/exec";
+const GAS_URL="https://script.google.com/macros/s/AKfycbx8TNorYgiYgiDkRT-axFg5xurOuZpKfKP7iCOWKBlxaqNjHyiLqfCPPgu4dLBsfJhN/exec";
 
 let user=JSON.parse(localStorage.getItem("user"));
 
-// ================= LOGIN =================
+// LOGIN
 async function login(){
   let pass=password.value.trim();
   let role=document.getElementById("role").value;
@@ -17,20 +17,17 @@ async function login(){
   location.href=role==="admin"?"admin.html":"karyawan.html";
 }
 
-// ================= MENU =================
+// MENU
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
-  if(id==="dash"){
-    loadDashboard();
-    loadGrafik(); // 🔥 FIX WAJIB
-  }
-
+  if(id==="dash") loadDashboard();
   if(id==="data") loadData();
+  if(id==="grafik") loadGrafik();
 }
 
-// ================= DASHBOARD =================
+// DASHBOARD
 async function loadDashboard(){
 
   let url=GAS_URL+"?action=dashboard";
@@ -43,17 +40,90 @@ async function loadDashboard(){
   if(monthTotal) monthTotal.innerText=(d.monthTotal||0)+" Jam";
 }
 
-// ================= GRAFIK =================
-let chart;
+// HITUNG JAM
+function hitungJam(){
+  let a=new Date("2000 "+mulai.value);
+  let b=new Date("2000 "+akhir.value);
+  let j=(b-a)/3600000;
+  if(j<0) j+=24;
+  total.value=j.toFixed(1);
+}
 
+// SIMPAN
+async function simpan(){
+
+  let r=await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"simpan",
+      nik:user.nik,
+      nama:user.nama,
+      pekerjaan:keterangan.value,
+      lembur:jenis.value,
+      k_alasan:jam.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
+    })
+  });
+
+  let d=await r.json();
+
+  if(!d.status){ alert(d.msg); return; }
+
+  alert("Tersimpan");
+  resetForm();
+  loadDashboard();
+}
+
+// RESET
+function resetForm(){
+  keterangan.value="";
+  jenis.value="";
+  jam.value="";
+  mulai.value="";
+  akhir.value="";
+  total.value="";
+}
+
+// DATA
+async function loadData(){
+
+  let r=await fetch(GAS_URL+"?action=data");
+  let d=await r.json();
+
+  table.innerHTML=d.map(x=>`
+  <tr>
+  <td>${x.tanggal}</td>
+  <td>${x.nik}</td>
+  <td>${x.nama}</td>
+  <td>${x.pekerjaan}</td>
+  <td>${x.lembur}</td>
+  <td>${x.k_alasan}</td>
+  <td>${x.mulai}</td>
+  <td>${x.akhir}</td>
+  <td>${x.total}</td>
+  <td><button onclick="hapus(${x.id})">Hapus</button></td>
+  </tr>`).join("");
+}
+
+// DELETE
+async function hapus(id){
+  await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"delete",id})
+  });
+  loadData();
+}
+
+// GRAFIK
+let chart;
 async function loadGrafik(){
 
-  let r=await fetch(GAS_URL+"?action=grafik&t="+Date.now());
+  let r=await fetch(GAS_URL+"?action=grafik");
   let d=await r.json();
 
   let ctx=document.getElementById("chart");
-
-  if(!ctx) return;
 
   if(chart) chart.destroy();
 
@@ -61,19 +131,12 @@ async function loadGrafik(){
     type:"bar",
     data:{
       labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:d.map(x=>x.total)
-      }]
-    },
-    options:{
-      responsive:true,
-      plugins:{legend:{display:false}}
+      datasets:[{data:d.map(x=>x.total)}]
     }
   });
 }
 
-// ================= INIT =================
+// INIT
 function init(){
 
   if(user){
@@ -84,13 +147,15 @@ function init(){
 
   menu("dash");
 
-  setInterval(()=>{
-    loadDashboard();
-    loadGrafik(); // 🔥 AUTO UPDATE
-  },5000);
+  if(mulai){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
+  }
+
+  setInterval(loadDashboard,5000);
 }
 
-// ================= LOGOUT =================
+// LOGOUT
 function logout(){
   localStorage.clear();
   location.href="index.html";
