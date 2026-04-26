@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Admin - Maintenax</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body onload="init()">
 
 <div class="sidebar">
-  <h3>ADMIN</h3>
+  <h3>MAINTENAX</h3>
+
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
   <button onclick="logout()">Logout</button>
@@ -19,13 +21,15 @@
 <!-- DASHBOARD -->
 <div id="dash">
 
-  <div class="card">
-    Notifikasi Input Hari Ini
-    <h2 id="todayCount">0</h2>
+  <div class="grid">
+    <div class="card notif">
+      🔔 Notifikasi Hari Ini
+      <h2 id="todayCount">0</h2>
+    </div>
   </div>
 
   <div class="card">
-    <h3>Top 3 Lembur</h3>
+    <h3>Top 3 Karyawan</h3>
     <canvas id="chart"></canvas>
   </div>
 
@@ -33,6 +37,9 @@
 
 <!-- DATA -->
 <div id="data" style="display:none">
+
+  <input id="search" placeholder="Cari nama..." oninput="loadData()">
+
   <table>
     <thead>
       <tr>
@@ -48,8 +55,10 @@
         <th>Aksi</th>
       </tr>
     </thead>
+
     <tbody id="table"></tbody>
   </table>
+
 </div>
 
 </div>
