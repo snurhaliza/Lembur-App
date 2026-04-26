@@ -5,61 +5,69 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
+<body onload="init()">
 
 <div class="sidebar">
   <h3>MAINTENAX</h3>
+
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
-  <button onclick="menu('grafik')">Grafik</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
+<!-- DASHBOARD -->
 <div id="dash">
+
   <div class="grid">
     <div class="card notif">
-      🔔 Hari Ini
+      Hari Ini
       <h2 id="todayCount">0</h2>
     </div>
 
     <div class="card">
-      📊 Bulan Ini
-      <h2 id="monthTotal">0</h2>
-    </div>
-
-    <div class="card warning">
-      ⚠️ >56 Jam
-      <h2 id="warning">0</h2>
+      Bulan Ini
+      <h2 id="monthTotal">0 Jam</h2>
     </div>
   </div>
+
+  <!-- GRAFIK -->
+  <div class="card">
+    <h3>Top 3 Karyawan</h3>
+    <canvas id="chart"></canvas>
+  </div>
+
 </div>
 
+<!-- DATA -->
 <div id="data" style="display:none">
+
   <input id="search" placeholder="Cari nama..." oninput="loadData()">
 
   <table>
     <thead>
       <tr>
-        <th>Tanggal</th><th>NIK</th><th>Nama</th>
-        <th>Pekerjaan</th><th>Lembur</th><th>K.Alasan</th>
-        <th>Mulai</th><th>Akhir</th><th>Total</th><th>Aksi</th>
+        <th>Tanggal</th>
+        <th>NIK</th>
+        <th>Nama</th>
+        <th>Pekerjaan</th>
+        <th>Lembur</th>
+        <th>K.Alasan</th>
+        <th>Mulai</th>
+        <th>Akhir</th>
+        <th>Total</th>
+        <th>Aksi</th>
       </tr>
     </thead>
+
     <tbody id="table"></tbody>
   </table>
-</div>
 
-<div id="grafik" style="display:none">
-  <input type="month" id="filterBulan">
-  <button onclick="loadGrafik()">Filter</button>
-  <button onclick="resetChart()">Reset</button>
-  <canvas id="chart"></canvas>
 </div>
 
 </div>
 
-<script src="admin.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
