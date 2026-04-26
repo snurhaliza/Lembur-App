@@ -3,7 +3,7 @@ margin:0;
 font-family:sans-serif;
 }
 
-/* 🔥 LOGIN BACKGROUND */
+/* LOGIN */
 .login-bg{
 height:100vh;
 background:linear-gradient(135deg,#1e3a8a,#2563eb);
@@ -12,7 +12,6 @@ justify-content:center;
 align-items:center;
 }
 
-/* 🔥 LOGIN BOX */
 .login-box{
 width:320px;
 padding:25px;
@@ -23,7 +22,6 @@ box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
 .login-box h2{
-margin-bottom:15px;
 color:#1e3a8a;
 }
 
@@ -44,20 +42,9 @@ color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
-transition:0.3s;
 }
 
-.login-box button:hover{
-background:#1e40af;
-}
-
-.error{
-color:red;
-font-size:13px;
-}
-
-/* ================= APP ================= */
-
+/* APP */
 .sidebar{
 width:220px;
 height:100vh;
@@ -93,11 +80,6 @@ margin:10px 0;
 text-align:center;
 }
 
-.grid{
-display:flex;
-gap:10px;
-}
-
 table{
 width:100%;
 border-collapse:collapse;
@@ -107,4 +89,8 @@ background:white;
 th,td{
 padding:8px;
 border:1px solid #ddd;
+}
+
+.error{
+color:red;
 }
