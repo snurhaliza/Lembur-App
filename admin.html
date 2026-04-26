@@ -9,7 +9,6 @@
 
 <div class="sidebar">
   <h3>MAINTENAX</h3>
-
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
   <button onclick="logout()">Logout</button>
@@ -19,25 +18,17 @@
 
 <!-- DASHBOARD -->
 <div id="dash">
-
   <div class="grid">
     <div class="card notif">
-      Hari Ini
+      🔔 Notifikasi Hari Ini
       <h2 id="todayCount">0</h2>
-    </div>
-
-    <div class="card">
-      Bulan Ini
-      <h2 id="monthTotal">0 Jam</h2>
     </div>
   </div>
 
-  <!-- GRAFIK -->
   <div class="card">
     <h3>Top 3 Karyawan</h3>
     <canvas id="chart"></canvas>
   </div>
-
 </div>
 
 <!-- DATA -->
