@@ -8,8 +8,7 @@
 <body onload="init()">
 
 <div class="sidebar">
-  <h3 id="welcome">Halo</h3>
-
+  <h3 id="welcome"></h3>
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('input')">Input Lembur</button>
   <button onclick="logout()">Logout</button>
@@ -20,10 +19,9 @@
 <!-- DASHBOARD -->
 <div id="dash">
 
-  <div id="todayDate" class="date-box"></div>
+  <div id="todayDate"></div>
 
   <div class="grid">
-
     <div class="card">
       Hari Ini
       <h2 id="todayTotal">0 Jam</h2>
@@ -33,12 +31,10 @@
       Bulan Ini
       <h2 id="monthTotal">0 Jam</h2>
     </div>
-
   </div>
 
-  <!-- GRAFIK -->
   <div class="card">
-    <h3>Top Lembur</h3>
+    <h3>Top 3 Karyawan</h3>
     <canvas id="chart"></canvas>
   </div>
 
@@ -46,7 +42,6 @@
 
 <!-- INPUT -->
 <div id="input" style="display:none">
-
   <div class="card">
 
     <input id="nik" readonly>
@@ -55,7 +50,7 @@
     <input id="keterangan" placeholder="Pekerjaan">
 
     <select id="jenis">
-      <option value="">Lembur</option>
+      <option value="">Alasan</option>
       <option>N</option>
       <option>H</option>
     </select>
@@ -69,15 +64,12 @@
 
     <input type="time" id="mulai">
     <input type="time" id="akhir">
-    <input id="total" readonly placeholder="Total Jam">
+    <input id="total" readonly>
 
-    <div class="btn-group">
-      <button onclick="simpan()">Submit</button>
-      <button onclick="resetForm()">Reset</button>
-    </div>
+    <button onclick="simpan()">Submit</button>
+    <button onclick="resetForm()">Reset</button>
 
   </div>
-
 </div>
 
 </div>
