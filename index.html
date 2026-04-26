@@ -1,26 +1,62 @@
 <!DOCTYPE html>
+
 <html>
 <head>
   <title>Login - Maintenax</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- ICON -->
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="login-page">
 
-<div class="login-box">
+<div class="login-box" id="loginBox">
   <h2>MAINTENAX</h2>
 
-  <select id="role">
-    <option value="karyawan">Karyawan</option>
-    <option value="admin">Admin</option>
-  </select>
+  <!-- ROLE -->
 
-  <input id="password" placeholder="Masukkan NIK">
+  <div class="input-group">
+    <i class="fa fa-users"></i>
+    <select id="role">
+      <option value="karyawan">Karyawan</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
 
-  <button onclick="login()">Login</button>
+  <!-- NIK -->
+
+  <div class="input-group">
+    <i class="fa fa-id-card"></i>
+    <input id="password" placeholder="Masukkan NIK">
+  </div>
+
+  <!-- BUTTON -->
+
+<button onclick="handleLogin()">Login</button>
 
   <p id="msg" class="error"></p>
 </div>
 
 <script src="script.js"></script>
+
+<script>
+function handleLogin(){
+  const btn = document.querySelector(".login-box button");
+
+  btn.innerText = "Loading...";
+  btn.disabled = true;
+
+  // tetap pakai function lama kamu
+  login();
+
+  setTimeout(()=>{
+    btn.innerText = "Login";
+    btn.disabled = false;
+  },2000);
+}
+</script>
+
 </body>
 </html>
