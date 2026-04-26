@@ -1,9 +1,9 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyn81Z7u0pODbD96Zs_D5SC-A5rmDyNpk_zLnkvZxQQsQmvNjdRfktaRIkl5AUDimBm/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwIKHpxc7tgQ8lvpTnDXHVQMYKwJluIHZGLHtw1z-z3vNr_JwOlMczhhprs3EEL0BDD/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
-// ================= LOGIN =================
+// LOGIN
 async function login(){
 
   let pass = password.value.trim();
@@ -28,16 +28,16 @@ async function login(){
   }
 
   localStorage.setItem("user",JSON.stringify(d));
-  location.href = role==="admin" ? "admin.html" : "karyawan.html";
+  location.href = role==="admin"?"admin.html":"karyawan.html";
 }
 
-// ================= MENU =================
+// MENU
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
 
   if(id==="dash"){
-    setTodayDate(); // ✅ tambah tanggal
+    setTanggal();
     loadDashboard();
     loadGrafik();
   }
@@ -45,37 +45,42 @@ function menu(id){
   if(id==="data") loadData();
 }
 
-// ================= TANGGAL =================
-function setTodayDate(){
+// TANGGAL
+function setTanggal(){
   let el = document.getElementById("todayDate");
   if(!el) return;
 
-  let d = new Date();
-  el.innerText = "Tanggal: " + d.toLocaleDateString("id-ID");
+  let now = new Date();
+
+  el.innerText = now.toLocaleDateString("id-ID",{
+    weekday:"long",
+    day:"numeric",
+    month:"long",
+    year:"numeric"
+  });
 }
 
-// ================= DASHBOARD =================
+// DASHBOARD
 async function loadDashboard(){
 
   let url = GAS_URL+"?action=dashboard";
 
   if(user){
-    url += "&nik="+user.nik;
     url += "&role="+user.role;
   }
 
-  let r = await fetch(url+"&t="+Date.now());
+  let r = await fetch(url);
   let d = await r.json();
 
   if(todayCount) todayCount.innerText = d.todayTotal||0;
 }
 
-// ================= GRAFIK =================
+// GRAFIK
 async function loadGrafik(){
 
-  let bulan = document.getElementById("filterBulan")?.value;
+  let bulan = document.getElementById("filterBulan")?.value || "";
 
-  let url = GAS_URL+"?action=grafik&t="+Date.now();
+  let url = GAS_URL+"?action=grafik";
   if(bulan) url += "&bulan="+bulan;
 
   let r = await fetch(url);
@@ -85,6 +90,17 @@ async function loadGrafik(){
   if(!ctx) return;
 
   if(chart) chart.destroy();
+
+  if(!d.length){
+    chart = new Chart(ctx,{
+      type:"bar",
+      data:{
+        labels:["Belum ada data"],
+        datasets:[{data:[0]}]
+      }
+    });
+    return;
+  }
 
   chart = new Chart(ctx,{
     type:"bar",
@@ -98,7 +114,7 @@ async function loadGrafik(){
   });
 }
 
-// ================= INIT =================
+// INIT
 function init(){
 
   if(user){
@@ -107,6 +123,7 @@ function init(){
     if(welcome) welcome.innerText="Halo "+user.nama;
   }
 
+  setTanggal();
   menu("dash");
 
   setInterval(()=>{
@@ -115,7 +132,7 @@ function init(){
   },10000);
 }
 
-// ================= LOGOUT =================
+// LOGOUT
 function logout(){
   localStorage.clear();
   location.href="index.html";
