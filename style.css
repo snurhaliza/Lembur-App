@@ -1,73 +1,119 @@
 body{
-margin:0;
-font-family:sans-serif;
-background:#f4f6fb;
+  margin:0;
+  font-family:sans-serif;
+  background:#f4f6fb;
 }
 
-.sidebar{
-width:220px;
-height:100vh;
-position:fixed;
-background:#1e3a8a;
-color:white;
-padding:15px;
-}
-
-.sidebar button{
-width:100%;
-padding:10px;
-margin:5px 0;
-border:none;
-background:#2563eb;
-color:white;
-border-radius:8px;
-cursor:pointer;
-}
-
-.content{
-margin-left:240px;
-padding:20px;
-}
-
-.card{
-background:white;
-padding:15px;
-border-radius:10px;
-margin:10px 0;
-text-align:center;
-}
-
-.grid{
-display:flex;
-gap:10px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-}
-
-th,td{
-padding:8px;
-border:1px solid #ddd;
+/* LOGIN */
+.login-bg{
+  background:linear-gradient(135deg,#1e3a8a,#2563eb);
 }
 
 .login-box{
-width:300px;
-margin:120px auto;
-padding:25px;
-background:white;
-border-radius:12px;
-text-align:center;
+  width:320px;
+  margin:120px auto;
+  padding:25px;
+  background:white;
+  border-radius:12px;
+  text-align:center;
 }
 
+.login-box h2{
+  margin-bottom:15px;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  height:100vh;
+  position:fixed;
+  background:#1e3a8a;
+  color:white;
+  padding:15px;
+}
+
+.sidebar h3{
+  margin-bottom:20px;
+}
+
+.sidebar button{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  border:none;
+  background:#2563eb;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.sidebar button:hover{
+  background:#1d4ed8;
+}
+
+/* CONTENT */
+.content{
+  margin-left:240px;
+  padding:20px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  margin:10px 0;
+  text-align:center;
+  box-shadow:0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* GRID */
+.grid{
+  display:flex;
+  gap:10px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+
+th,td{
+  padding:8px;
+  border:1px solid #ddd;
+  text-align:center;
+}
+
+/* INPUT */
 input,select{
-width:100%;
-padding:10px;
-margin:8px 0;
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 
+/* BUTTON GROUP */
+.btn-group{
+  display:flex;
+  gap:10px;
+}
+
+.btn-group button{
+  flex:1;
+}
+
+/* DATE */
+.date-box{
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+/* ERROR */
 .error{
-color:red;
+  color:red;
+  font-size:13px;
 }
