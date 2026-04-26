@@ -1,30 +1,42 @@
-const GAS = "https://script.google.com/macros/s/AKfycbyJzOOUt2I-6xP8WtK4OpjQ4T8pPfp_a_UQl4Hc6MtO59cWvpBYkGUF3Ku9TXJszLQI/exec";
+const GAS = "https://script.google.com/macros/s/AKfycby28MjajmSn8bahXvXCmKU4XALQRVir-GYZUNwg223tK4pdLeJhpc8vyrfHhcSiNEM/exec"; 
+
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
-// LOGIN
+// ================= LOGIN =================
 async function login(){
 
-  let pass = password.value.trim();
-  let role = roleSelect.value;
+  let pass = document.getElementById("password").value.trim();
+  let role = document.getElementById("role").value;
 
-  let d = await (await fetch(`${GAS}?action=login&password=${pass}`)).json();
-
-  if(!d.status){
-    msg.innerText="Login gagal!";
+  if(!pass){
+    msg.innerText="Isi NIK!";
     return;
   }
 
-  if(d.role !== role){
-    msg.innerText="Role salah!";
-    return;
-  }
+  try{
+    let res = await fetch(GAS+"?action=login&password="+pass);
+    let d = await res.json();
 
-  localStorage.setItem("user",JSON.stringify(d));
-  location.href = role==="admin" ? "admin.html" : "karyawan.html";
+    if(!d.status){
+      msg.innerText="User tidak ditemukan!";
+      return;
+    }
+
+    localStorage.setItem("user",JSON.stringify(d));
+
+    if(d.role==="admin"){
+      location.href="admin.html";
+    }else{
+      location.href="karyawan.html";
+    }
+
+  }catch(e){
+    msg.innerText="Server error!";
+  }
 }
 
-// DASHBOARD
+// ================= DASHBOARD =================
 async function loadDash(){
 
   let url = GAS+"?action=dash";
@@ -32,31 +44,34 @@ async function loadDash(){
 
   let d = await (await fetch(url)).json();
 
-  if(todayCount) todayCount.innerText=d.notif||0;
-  if(monthTotal) monthTotal.innerText=(d.total||0)+" Jam";
+  if(document.getElementById("todayCount"))
+    todayCount.innerText=d.notif||0;
+
+  if(document.getElementById("monthTotal"))
+    monthTotal.innerText=(d.total||0)+" Jam";
 }
 
-// DATA
+// ================= DATA =================
 async function loadData(){
 
   let d = await (await fetch(GAS+"?action=data")).json();
 
   table.innerHTML = d.map(x=>`
   <tr>
-    <td>${x.tanggal}</td>
-    <td>${x.nik}</td>
-    <td>${x.nama}</td>
-    <td>${x.pekerjaan}</td>
-    <td>${x.lembur}</td>
-    <td>${x.k_alasan}</td>
-    <td>${x.mulai}</td>
-    <td>${x.akhir}</td>
-    <td>${x.total}</td>
+    <td>${x[0]}</td>
+    <td>${x[1]}</td>
+    <td>${x[2]}</td>
+    <td>${x[3]}</td>
+    <td>${x[4]}</td>
+    <td>${x[5]}</td>
+    <td>${x[6]}</td>
+    <td>${x[7]}</td>
+    <td>${x[8]}</td>
     <td><button onclick="hapus(${x.id})">Hapus</button></td>
   </tr>`).join("");
 }
 
-// DELETE
+// ================= HAPUS =================
 async function hapus(id){
   await fetch(GAS,{
     method:"POST",
@@ -65,16 +80,19 @@ async function hapus(id){
   loadData();
 }
 
-// HITUNG JAM
+// ================= HITUNG JAM =================
 function hitung(){
+
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
+
   let j=(b-a)/3600000;
   if(j<0) j+=24;
+
   total.value=j.toFixed(1);
 }
 
-// SIMPAN
+// ================= SIMPAN =================
 async function simpan(){
 
   let d = await (await fetch(GAS,{
@@ -93,35 +111,41 @@ async function simpan(){
   })).json();
 
   if(!d.status){
-    alert(d.msg);
+    alert("Gagal / sudah input hari ini");
     return;
   }
 
   alert("Tersimpan");
 }
 
-// GRAFIK
+// ================= GRAFIK =================
 async function loadGrafik(){
 
   let d = await (await fetch(GAS+"?action=grafik")).json();
 
-  let ctx=document.getElementById("chart");
+  let ctx = document.getElementById("chart");
   if(!ctx) return;
 
   if(chart) chart.destroy();
 
-  chart=new Chart(ctx,{
+  chart = new Chart(ctx,{
     type:"bar",
     data:{
       labels:d.map(x=>x.nama),
-      datasets:[{data:d.map(x=>x.total)}]
+      datasets:[{
+        label:"Jam Lembur",
+        data:d.map(x=>x.total)
+      }]
     }
   });
 }
 
-// MENU
+// ================= MENU =================
 function menu(id){
-  document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
+
+  document.querySelectorAll(".content > div")
+  .forEach(x=>x.style.display="none");
+
   document.getElementById(id).style.display="block";
 
   if(id==="dash"){
@@ -132,7 +156,7 @@ function menu(id){
   if(id==="data") loadData();
 }
 
-// INIT
+// ================= INIT =================
 function init(){
 
   if(user){
@@ -151,7 +175,7 @@ function init(){
   setInterval(loadDash,15000);
 }
 
-// LOGOUT
+// ================= LOGOUT =================
 function logout(){
   localStorage.clear();
   location.href="index.html";
