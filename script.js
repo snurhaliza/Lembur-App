@@ -1,9 +1,9 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyWZtGkirPCnK3aucKdQlTgDE75wrkV5tqIm-Pa55w8saXz1tSfUBcAxx-hystmaKrZ/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzZY_bCcavpvNfTrMapt6DLqZqDQ1IhLv3cnVlXhVQA_GsSeW37pUrxo6SwyYsRi_ao/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
-// LOGIN
+// ================= LOGIN =================
 async function login(){
 
   let pass = password.value.trim();
@@ -13,7 +13,7 @@ async function login(){
   let d = await r.json();
 
   if(!d.status){
-    msg.innerText="Login gagal!";
+    msg.innerText="User tidak ditemukan!";
     return;
   }
 
@@ -23,11 +23,10 @@ async function login(){
   }
 
   localStorage.setItem("user",JSON.stringify(d));
-
   location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
-// MENU
+// ================= MENU =================
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
   document.getElementById(id).style.display="block";
@@ -40,29 +39,40 @@ function menu(id){
   if(id==="data") loadData();
 }
 
-// DASHBOARD
+// ================= DASHBOARD =================
 async function loadDashboard(){
 
   let url = GAS_URL+"?action=dashboard";
   if(user?.nik) url+="&nik="+user.nik;
 
-  let r = await fetch(url);
+  let r = await fetch(url+"&t="+Date.now());
   let d = await r.json();
 
   if(todayCount) todayCount.innerText = d.todayTotal||0;
   if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
 }
 
-// GRAFIK
+// ================= GRAFIK =================
 async function loadGrafik(){
 
-  let r = await fetch(GAS_URL+"?action=grafik");
+  let r = await fetch(GAS_URL+"?action=grafik&t="+Date.now());
   let d = await r.json();
 
   let ctx = document.getElementById("chart");
   if(!ctx) return;
 
   if(chart) chart.destroy();
+
+  if(!d || d.length===0){
+    chart = new Chart(ctx,{
+      type:"bar",
+      data:{
+        labels:["Belum ada data"],
+        datasets:[{data:[0]}]
+      }
+    });
+    return;
+  }
 
   chart = new Chart(ctx,{
     type:"bar",
@@ -76,7 +86,7 @@ async function loadGrafik(){
   });
 }
 
-// INPUT
+// ================= INPUT =================
 function hitungJam(){
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
@@ -114,6 +124,7 @@ async function simpan(){
   loadDashboard();
 }
 
+// ================= RESET =================
 function resetForm(){
   keterangan.value="";
   jenis.value="";
@@ -123,7 +134,7 @@ function resetForm(){
   total.value="";
 }
 
-// DATA ADMIN
+// ================= DATA =================
 async function loadData(){
 
   let r = await fetch(GAS_URL+"?action=data");
@@ -152,7 +163,7 @@ async function hapus(id){
   loadData();
 }
 
-// INIT
+// ================= INIT =================
 function init(){
 
   if(user){
@@ -163,6 +174,9 @@ function init(){
 
   menu("dash");
 
+  loadDashboard();
+  loadGrafik();
+
   if(mulai && akhir){
     mulai.oninput=hitungJam;
     akhir.oninput=hitungJam;
@@ -171,10 +185,10 @@ function init(){
   setInterval(()=>{
     loadDashboard();
     loadGrafik();
-  },10000); // 🔥 jangan terlalu sering
+  },10000);
 }
 
-// LOGOUT
+// ================= LOGOUT =================
 function logout(){
   localStorage.clear();
   location.href="index.html";
