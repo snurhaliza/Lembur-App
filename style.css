@@ -11,15 +11,56 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* efek background halus */
+.login-page::before{
+  content:"";
+  position:absolute;
+  width:350px;
+  height:350px;
+  background:rgba(255,255,255,0.1);
+  border-radius:50%;
+  top:-100px;
+  left:-100px;
+  filter:blur(60px);
+}
+
+.login-page::after{
+  content:"";
+  position:absolute;
+  width:350px;
+  height:350px;
+  background:rgba(255,255,255,0.1);
+  border-radius:50%;
+  bottom:-100px;
+  right:-100px;
+  filter:blur(60px);
 }
 
 .login-box{
-  width:300px;
-  padding:25px;
-  background:white;
-  border-radius:12px;
+  width:320px;
+  padding:30px 25px;
+  background:rgba(255,255,255,0.95);
+  border-radius:16px;
   text-align:center;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  box-shadow:0 15px 40px rgba(0,0,0,0.25);
+  backdrop-filter:blur(10px);
+  animation:fadeIn 0.6s ease;
+}
+
+/* animasi masuk */
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 /* SIDEBAR */
@@ -83,4 +124,3 @@ input,select{
   color:red;
 }
 
-buat login lebih menarik tanpa merubah apapun, jangan sentuh grafik dan tabel, HANYA LOGINNYA BUAT MENARIK
