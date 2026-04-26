@@ -18,19 +18,19 @@
 
 <div class="content">
 
-<!-- ================= DASHBOARD ================= -->
+<!-- DASHBOARD -->
 <div id="dash">
 
-  <!-- ✅ TANGGAL HARI INI -->
+  <!-- TANGGAL -->
   <div id="todayDate" class="card"></div>
 
-  <!-- ✅ FILTER BULAN -->
+  <!-- FILTER BULAN -->
   <div class="card">
     <label>Pilih Bulan:</label>
     <input type="month" id="filterBulan" onchange="loadGrafik()">
   </div>
 
-  <!-- ✅ GRAFIK -->
+  <!-- GRAFIK -->
   <div class="card">
     <h3>Top 3 Karyawan</h3>
     <canvas id="chart"></canvas>
@@ -38,7 +38,7 @@
 
 </div>
 
-<!-- ================= INPUT ================= -->
+<!-- INPUT -->
 <div id="input" style="display:none">
 
   <div class="card">
@@ -61,8 +61,9 @@
       <option>8</option>
     </select>
 
-    <input type="time" id="mulai">
-    <input type="time" id="akhir">
+    <!-- 🔥 FIX DI SINI -->
+    <input type="time" id="mulai" onchange="hitungJam()" oninput="hitungJam()">
+    <input type="time" id="akhir" onchange="hitungJam()" oninput="hitungJam()">
 
     <input id="total" readonly placeholder="Total Jam">
 
