@@ -1,42 +1,21 @@
-const GAS = "https://script.google.com/macros/s/AKfycbxJghFH4e9L0ld9KJjRXJIOjNLkkuP04htRK2Bnq07b6uQyYJxig3XooKyc_lmjNbId/exec"; // 🔥 GANTI
+const GAS = "https://script.google.com/macros/s/AKfycbxJghFH4e9L0ld9KJjRXJIOjNLkkuP04htRK2Bnq07b6uQyYJxig3XooKyc_lmjNbId/exec"; // ganti
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
-
-// LOGIN
-async function login(){
-
-  let pass = password.value.trim();
-
-  let r = await fetch(GAS+"?action=login&password="+pass);
-  let d = await r.json();
-
-  if(!d.status){
-    msg.innerText="Login gagal!";
-    return;
-  }
-
-  localStorage.setItem("user",JSON.stringify(d));
-
-  if(d.role==="admin") location.href="admin.html";
-  else location.href="karyawan.html";
-}
 
 // INIT
 function init(){
 
   if(user){
-    if(nik) nik.value=user.nik;
-    if(nama) nama.value=user.nama;
-    if(welcome) welcome.innerText="Halo "+user.nama;
+    nik.value=user.nik;
+    nama.value=user.nama;
+    welcome.innerText="Halo "+user.nama;
   }
 
   menu("dash");
 
-  if(mulai && akhir){
-    mulai.oninput=hitung;
-    akhir.oninput=hitung;
-  }
+  mulai.oninput=hitung;
+  akhir.oninput=hitung;
 }
 
 // MENU
@@ -48,20 +27,15 @@ function menu(id){
     loadDash();
     loadGrafik();
   }
-
-  if(id==="data") loadData();
 }
 
-// DASH
+// DASHBOARD
 async function loadDash(){
 
-  let url = GAS+"?action=dash";
-  if(user?.nik) url+="&nik="+user.nik;
-
+  let url = GAS+"?action=dash&nik="+user.nik;
   let d = await (await fetch(url)).json();
 
-  if(todayCount) todayCount.innerText=d.notif||0;
-  if(monthTotal) monthTotal.innerText=(d.total||0)+" Jam";
+  monthTotal.innerText=(d.total||0)+" Jam";
 }
 
 // HITUNG JAM
@@ -75,6 +49,11 @@ function hitung(){
 
 // SIMPAN
 async function simpan(){
+
+  if(!keterangan.value||!jenis.value||!jam.value||!mulai.value||!akhir.value){
+    alert("Isi semua!");
+    return;
+  }
 
   let r = await fetch(GAS,{
     method:"POST",
@@ -99,58 +78,8 @@ async function simpan(){
   }
 
   alert("Tersimpan");
-}
-
-// DATA
-async function loadData(){
-
-  let data = await (await fetch(GAS+"?action=data")).json();
-
-  table.innerHTML = data.map(d=>`
-  <tr>
-    <td>${d.tanggal}</td>
-    <td>${d.nik}</td>
-    <td>${d.nama}</td>
-    <td>${d.pekerjaan}</td>
-    <td>${d.lembur}</td>
-    <td>${d.k_alasan}</td>
-    <td>${d.mulai}</td>
-    <td>${d.akhir}</td>
-    <td>${d.total}</td>
-    <td><button onclick="hapus(${d.id})">Hapus</button></td>
-  </tr>
-  `).join("");
-}
-
-// HAPUS
-async function hapus(id){
-  await fetch(GAS,{
-    method:"POST",
-    body:JSON.stringify({action:"hapus",id})
-  });
-  loadData();
-}
-
-// GRAFIK
-async function loadGrafik(){
-
-  let d = await (await fetch(GAS+"?action=grafik")).json();
-
-  let ctx = document.getElementById("chart");
-  if(!ctx) return;
-
-  if(chart) chart.destroy();
-
-  chart = new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam",
-        data:d.map(x=>x.total)
-      }]
-    }
-  });
+  resetForm();
+  loadDash();
 }
 
 // RESET
@@ -161,6 +90,27 @@ function resetForm(){
   mulai.value="";
   akhir.value="";
   total.value="";
+}
+
+// GRAFIK
+async function loadGrafik(){
+
+  let d = await (await fetch(GAS+"?action=grafik")).json();
+
+  let ctx = document.getElementById("chart");
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:d.map(x=>x.nama),
+      datasets:[{
+        label:"Jam Lembur",
+        data:d.map(x=>x.total)
+      }]
+    }
+  });
 }
 
 // LOGOUT
