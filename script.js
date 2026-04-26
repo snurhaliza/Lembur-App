@@ -253,4 +253,4 @@ function init(){
 function logout(){
   localStorage.clear();
   location.href="index.html";
-}MASI BELUM TERUPDATE 
+}
