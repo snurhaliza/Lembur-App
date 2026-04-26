@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Karyawan - Maintenax</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body onload="init()">
 
 <div class="sidebar">
   <h3 id="welcome"></h3>
+
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('input')">Input Lembur</button>
   <button onclick="logout()">Logout</button>
@@ -16,20 +18,18 @@
 
 <div class="content">
 
+<!-- DASHBOARD -->
 <div id="dash">
 
   <div id="todayDate"></div>
 
   <div class="grid">
-    <div class="card">
-      Hari Ini
-      <h2 id="todayTotal">0 Jam</h2>
-    </div>
 
     <div class="card">
-      Bulan Ini
+      Total Bulan Ini
       <h2 id="monthTotal">0 Jam</h2>
     </div>
+
   </div>
 
   <div class="card">
@@ -39,7 +39,9 @@
 
 </div>
 
+<!-- INPUT -->
 <div id="input" style="display:none">
+
   <div class="card">
 
     <input id="nik" readonly>
@@ -48,7 +50,7 @@
     <input id="keterangan" placeholder="Pekerjaan">
 
     <select id="jenis">
-      <option value="">Alasan</option>
+      <option value="">Lembur</option>
       <option>N</option>
       <option>H</option>
     </select>
@@ -62,12 +64,13 @@
 
     <input type="time" id="mulai">
     <input type="time" id="akhir">
-    <input id="total" readonly>
+    <input id="total" readonly placeholder="Total Jam">
 
     <button onclick="simpan()">Submit</button>
     <button onclick="resetForm()">Reset</button>
 
   </div>
+
 </div>
 
 </div>
