@@ -1,8 +1,62 @@
 body{
 margin:0;
 font-family:sans-serif;
-background:#f4f6fb;
 }
+
+/* 🔥 LOGIN BACKGROUND */
+.login-bg{
+height:100vh;
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* 🔥 LOGIN BOX */
+.login-box{
+width:320px;
+padding:25px;
+background:white;
+border-radius:15px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-box h2{
+margin-bottom:15px;
+color:#1e3a8a;
+}
+
+.login-box input,
+.login-box select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ddd;
+}
+
+.login-box button{
+width:100%;
+padding:10px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.login-box button:hover{
+background:#1e40af;
+}
+
+.error{
+color:red;
+font-size:13px;
+}
+
+/* ================= APP ================= */
 
 .sidebar{
 width:220px;
@@ -27,6 +81,8 @@ cursor:pointer;
 .content{
 margin-left:240px;
 padding:20px;
+background:#f4f6fb;
+min-height:100vh;
 }
 
 .card{
@@ -42,32 +98,13 @@ display:flex;
 gap:10px;
 }
 
-.login-box{
-width:320px;
-margin:120px auto;
-padding:25px;
+table{
+width:100%;
+border-collapse:collapse;
 background:white;
-border-radius:12px;
-text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
-.login-box button{
-background:#2563eb;
-color:white;
-border:none;
-padding:10px;
-width:100%;
-border-radius:8px;
-cursor:pointer;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin:8px 0;
-}
-
-.error{
-color:red;
+th,td{
+padding:8px;
+border:1px solid #ddd;
 }
