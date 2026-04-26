@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbx-RX_YoBR0tkEXKvSVUHvvMGGne-ofQ5h8i8QrvfUYDkL0l71TKSZrTHOlmre9XWLd/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxdSjQoeY2Zf94gEJiNaj9ouUv5u13red6knJkywoP0jVsxlTfFnFz0ue_Yb3MZcwWv/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -188,13 +188,19 @@ function resetForm(){
   total.value="";
 }
 
-// ================= DATA =================
+// ================= DATA (FIX HAPUS + SEARCH) =================
 async function loadData(){
 
   let r = await fetch(GAS_URL+"?action=data");
   let data = await r.json();
 
-  table.innerHTML = data.map(d=>`
+  let keyword = document.getElementById("search").value.toLowerCase();
+
+  let filtered = data.filter(d => 
+    d.nama.toLowerCase().includes(keyword)
+  );
+
+  table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
     <td>${d.nik}</td>
@@ -205,7 +211,21 @@ async function loadData(){
     <td>${d.mulai}</td>
     <td>${d.akhir}</td>
     <td>${d.total}</td>
+    <td><button onclick="hapus(${d.id})">Hapus</button></td>
   </tr>`).join("");
+}
+
+// ================= DELETE =================
+async function hapus(id){
+
+  if(!confirm("Yakin hapus data?")) return;
+
+  await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"delete",id})
+  });
+
+  loadData();
 }
 
 // ================= INIT =================
@@ -219,7 +239,7 @@ function init(){
 
   menu("dash");
 
-  tampilkanTanggal(); // ✅ TAMBAHAN
+  tampilkanTanggal();
 
   if(mulai && akhir){
     mulai.oninput=hitungJam;
