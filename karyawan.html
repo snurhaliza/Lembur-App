@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Karyawan - Maintenax</title>
+  <title>Karyawan</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -12,25 +12,15 @@
   <h3 id="welcome"></h3>
 
   <button onclick="menu('dash')">Dashboard</button>
-  <button onclick="menu('input')">Input Lembur</button>
+  <button onclick="menu('input')">Input</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
-<!-- DASHBOARD -->
 <div id="dash">
 
-  <div id="todayDate"></div>
-
-  <div class="grid">
-
-    <div class="card">
-      Total Bulan Ini
-      <h2 id="monthTotal">0 Jam</h2>
-    </div>
-
-  </div>
+  <div id="todayDate" class="card"></div>
 
   <div class="card">
     <h3>Top 3 Karyawan</h3>
@@ -39,7 +29,6 @@
 
 </div>
 
-<!-- INPUT -->
 <div id="input" style="display:none">
 
   <div class="card">
