@@ -1,5 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbz_Tuh8aMm8_iEAwFMnet5m65uHsK_B-Dmsezq0IM1W_ytH6F5lC3UcJSL1fBd8QIWe/exec";
-
+const GAS = "https://script.google.com/macros/s/AKfycbyJzOOUt2I-6xP8WtK4OpjQ4T8pPfp_a_UQl4Hc6MtO59cWvpBYkGUF3Ku9TXJszLQI/exec";
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
@@ -7,10 +6,9 @@ let chart;
 async function login(){
 
   let pass = password.value.trim();
-  let role = document.getElementById("role").value;
+  let role = roleSelect.value;
 
-  let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
-  let d = await r.json();
+  let d = await (await fetch(`${GAS}?action=login&password=${pass}`)).json();
 
   if(!d.status){
     msg.innerText="Login gagal!";
@@ -23,61 +21,52 @@ async function login(){
   }
 
   localStorage.setItem("user",JSON.stringify(d));
-
   location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
-// MENU
-function menu(id){
-  document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
-  document.getElementById(id).style.display="block";
-
-  if(id==="dash"){
-    loadDashboard();
-    loadGrafik();
-  }
-
-  if(id==="data") loadData();
-}
-
 // DASHBOARD
-async function loadDashboard(){
+async function loadDash(){
 
-  let url = GAS_URL+"?action=dashboard";
+  let url = GAS+"?action=dash";
   if(user?.nik) url+="&nik="+user.nik;
 
-  let r = await fetch(url);
-  let d = await r.json();
+  let d = await (await fetch(url)).json();
 
-  if(todayCount) todayCount.innerText = d.todayTotal||0;
-  if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
+  if(todayCount) todayCount.innerText=d.notif||0;
+  if(monthTotal) monthTotal.innerText=(d.total||0)+" Jam";
 }
 
-// GRAFIK
-async function loadGrafik(){
+// DATA
+async function loadData(){
 
-  let r = await fetch(GAS_URL+"?action=grafik");
-  let d = await r.json();
+  let d = await (await fetch(GAS+"?action=data")).json();
 
-  let ctx = document.getElementById("chart");
-  if(!ctx) return;
+  table.innerHTML = d.map(x=>`
+  <tr>
+    <td>${x.tanggal}</td>
+    <td>${x.nik}</td>
+    <td>${x.nama}</td>
+    <td>${x.pekerjaan}</td>
+    <td>${x.lembur}</td>
+    <td>${x.k_alasan}</td>
+    <td>${x.mulai}</td>
+    <td>${x.akhir}</td>
+    <td>${x.total}</td>
+    <td><button onclick="hapus(${x.id})">Hapus</button></td>
+  </tr>`).join("");
+}
 
-  if(chart) chart.destroy();
-
-  chart = new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:d.map(x=>x.total)
-      }]
-    }
+// DELETE
+async function hapus(id){
+  await fetch(GAS,{
+    method:"POST",
+    body:JSON.stringify({action:"hapus",id})
   });
+  loadData();
 }
 
 // HITUNG JAM
-function hitungJam(){
+function hitung(){
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
   let j=(b-a)/3600000;
@@ -88,7 +77,7 @@ function hitungJam(){
 // SIMPAN
 async function simpan(){
 
-  let r = await fetch(GAS_URL,{
+  let d = await (await fetch(GAS,{
     method:"POST",
     body:JSON.stringify({
       action:"simpan",
@@ -101,9 +90,7 @@ async function simpan(){
       akhir:akhir.value,
       total:total.value
     })
-  });
-
-  let d = await r.json();
+  })).json();
 
   if(!d.status){
     alert(d.msg);
@@ -111,48 +98,38 @@ async function simpan(){
   }
 
   alert("Tersimpan");
-  resetForm();
-  loadDashboard();
 }
 
-// RESET
-function resetForm(){
-  keterangan.value="";
-  jenis.value="";
-  jam.value="";
-  mulai.value="";
-  akhir.value="";
-  total.value="";
-}
+// GRAFIK
+async function loadGrafik(){
 
-// DATA ADMIN
-async function loadData(){
+  let d = await (await fetch(GAS+"?action=grafik")).json();
 
-  let r = await fetch(GAS_URL+"?action=data");
-  let data = await r.json();
+  let ctx=document.getElementById("chart");
+  if(!ctx) return;
 
-  table.innerHTML = data.map(d=>`
-  <tr>
-    <td>${d.tanggal}</td>
-    <td>${d.nik}</td>
-    <td>${d.nama}</td>
-    <td>${d.pekerjaan}</td>
-    <td>${d.lembur}</td>
-    <td>${d.k_alasan}</td>
-    <td>${d.mulai}</td>
-    <td>${d.akhir}</td>
-    <td>${d.total}</td>
-    <td><button onclick="hapus(${d.id})">Hapus</button></td>
-  </tr>`).join("");
-}
+  if(chart) chart.destroy();
 
-// DELETE
-async function hapus(id){
-  await fetch(GAS_URL,{
-    method:"POST",
-    body:JSON.stringify({action:"delete",id})
+  chart=new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:d.map(x=>x.nama),
+      datasets:[{data:d.map(x=>x.total)}]
+    }
   });
-  loadData();
+}
+
+// MENU
+function menu(id){
+  document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
+  document.getElementById(id).style.display="block";
+
+  if(id==="dash"){
+    loadDash();
+    loadGrafik();
+  }
+
+  if(id==="data") loadData();
 }
 
 // INIT
@@ -167,14 +144,11 @@ function init(){
   menu("dash");
 
   if(mulai && akhir){
-    mulai.oninput=hitungJam;
-    akhir.oninput=hitungJam;
+    mulai.oninput=hitung;
+    akhir.oninput=hitung;
   }
 
-  setInterval(()=>{
-    loadDashboard();
-    loadGrafik();
-  },10000);
+  setInterval(loadDash,15000);
 }
 
 // LOGOUT
