@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycby9Qunx5lbCBThMRIln56ckHoJy37xdIoJY__UP2yc_-VOaaukCQMUncs_5MN-Izh60/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbx-RX_YoBR0tkEXKvSVUHvvMGGne-ofQ5h8i8QrvfUYDkL0l71TKSZrTHOlmre9XWLd/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -31,6 +31,19 @@ async function login(){
   location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
+// ================= MENU =================
+function menu(id){
+  document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
+  document.getElementById(id).style.display="block";
+
+  if(id==="dash"){
+    loadDashboard();
+    loadGrafik();
+  }
+
+  if(id==="data") loadData();
+}
+
 // ================= DASHBOARD =================
 async function loadDashboard(){
 
@@ -48,7 +61,7 @@ async function loadDashboard(){
   if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
 }
 
-// ================= GRAFIK (SUDAH FILTER) =================
+// ================= GRAFIK (SUDAH FILTER BULAN) =================
 async function loadGrafik(){
 
   let bulan = document.getElementById("filterBulan")?.value;
@@ -90,6 +103,111 @@ async function loadGrafik(){
   });
 }
 
+// ================= HITUNG JAM =================
+function hitungJam(){
+
+  if(!mulai.value || !akhir.value){
+    total.value="";
+    return;
+  }
+
+  let a=new Date("2000 "+mulai.value);
+  let b=new Date("2000 "+akhir.value);
+
+  let j=(b-a)/3600000;
+  if(j<0) j+=24;
+
+  total.value=j.toFixed(1);
+}
+
+// ================= SIMPAN =================
+async function simpan(){
+
+  if(!keterangan.value.trim()) return alert("Pekerjaan wajib diisi!");
+  if(!jenis.value) return alert("Jenis lembur wajib dipilih!");
+  if(!jam.value) return alert("Keterangan alasan wajib dipilih!");
+  if(!mulai.value) return alert("Jam mulai wajib diisi!");
+  if(!akhir.value) return alert("Jam akhir wajib diisi!");
+  if(!total.value || total.value==0) return alert("Total jam tidak valid!");
+
+  let a = new Date("2000 "+mulai.value);
+  let b = new Date("2000 "+akhir.value);
+
+  if(a.getTime() === b.getTime()){
+    return alert("Jam mulai dan akhir tidak boleh sama!");
+  }
+
+  let r = await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"simpan",
+      nik:user.nik,
+      nama:user.nama,
+      pekerjaan:keterangan.value.trim(),
+      lembur:jenis.value,
+      k_alasan:jam.value,
+      mulai:mulai.value,
+      akhir:akhir.value,
+      total:total.value
+    })
+  });
+
+  let d = await r.json();
+
+  if(!d.status){
+    alert(d.msg);
+    return;
+  }
+
+  alert("Tersimpan ✅");
+  resetForm();
+  loadDashboard();
+}
+
+// ================= RESET =================
+function resetForm(){
+  keterangan.value="";
+  jenis.value="";
+  jam.value="";
+  mulai.value="";
+  akhir.value="";
+  total.value="";
+}
+
+// ================= DATA =================
+async function loadData(){
+
+  let r = await fetch(GAS_URL+"?action=data");
+  let data = await r.json();
+
+  table.innerHTML = data.map(d=>`
+  <tr>
+    <td>${d.tanggal}</td>
+    <td>${d.nik}</td>
+    <td>${d.nama}</td>
+    <td>${d.pekerjaan}</td>
+    <td>${d.lembur}</td>
+    <td>${d.k_alasan}</td>
+    <td>${d.mulai}</td>
+    <td>${d.akhir}</td>
+    <td>${d.total}</td>
+    <td><button onclick="hapus(${d.id})">Hapus</button></td>
+  </tr>`).join("");
+}
+
+// ================= DELETE =================
+async function hapus(id){
+
+  if(!confirm("Yakin hapus data?")) return;
+
+  await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"delete",id})
+  });
+
+  loadData();
+}
+
 // ================= INIT =================
 function init(){
 
@@ -99,10 +217,14 @@ function init(){
     if(welcome) welcome.innerText="Halo "+user.nama;
   }
 
-  loadDashboard();
-  loadGrafik();
+  menu("dash");
 
-  // ✅ trigger filter bulan
+  if(mulai && akhir){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
+  }
+
+  // ✅ FILTER BULAN
   let filter = document.getElementById("filterBulan");
   if(filter){
     filter.onchange = loadGrafik;
