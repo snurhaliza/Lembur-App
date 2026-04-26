@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzBoeWSNMAPTqVTU9wTx6Af54P2ij5oCwOG_z8f3UFNlcNsfpr6A2OW0FB-lFL2uua0/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbz_Tuh8aMm8_iEAwFMnet5m65uHsK_B-Dmsezq0IM1W_ytH6F5lC3UcJSL1fBd8QIWe/exec";
 
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
@@ -17,7 +17,7 @@ async function login(){
     return;
   }
 
-  if(d.role!==role){
+  if(d.role !== role){
     msg.innerText="Role salah!";
     return;
   }
@@ -76,7 +76,7 @@ async function loadGrafik(){
   });
 }
 
-// INPUT
+// HITUNG JAM
 function hitungJam(){
   let a=new Date("2000 "+mulai.value);
   let b=new Date("2000 "+akhir.value);
@@ -85,6 +85,7 @@ function hitungJam(){
   total.value=j.toFixed(1);
 }
 
+// SIMPAN
 async function simpan(){
 
   let r = await fetch(GAS_URL,{
@@ -114,6 +115,7 @@ async function simpan(){
   loadDashboard();
 }
 
+// RESET
 function resetForm(){
   keterangan.value="";
   jenis.value="";
@@ -144,6 +146,7 @@ async function loadData(){
   </tr>`).join("");
 }
 
+// DELETE
 async function hapus(id){
   await fetch(GAS_URL,{
     method:"POST",
@@ -171,7 +174,7 @@ function init(){
   setInterval(()=>{
     loadDashboard();
     loadGrafik();
-  },10000); // 🔥 jangan terlalu sering
+  },10000);
 }
 
 // LOGOUT
