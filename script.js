@@ -3,6 +3,20 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbx-RX_YoBR0tkEXKvSVUHvv
 let user = JSON.parse(localStorage.getItem("user"));
 let chart;
 
+// ================= TANGGAL =================
+function tampilkanTanggal(){
+
+  let el = document.getElementById("todayDate");
+  if(!el) return;
+
+  let now = new Date();
+
+  let hari = now.toLocaleDateString("id-ID", { weekday: "long" });
+  let tanggal = now.toLocaleDateString("id-ID");
+
+  el.innerText = hari + ", " + tanggal;
+}
+
 // ================= LOGIN =================
 async function login(){
 
@@ -61,7 +75,7 @@ async function loadDashboard(){
   if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
 }
 
-// ================= GRAFIK (SUDAH FILTER BULAN) =================
+// ================= GRAFIK =================
 async function loadGrafik(){
 
   let bulan = document.getElementById("filterBulan")?.value;
@@ -191,21 +205,7 @@ async function loadData(){
     <td>${d.mulai}</td>
     <td>${d.akhir}</td>
     <td>${d.total}</td>
-    <td><button onclick="hapus(${d.id})">Hapus</button></td>
   </tr>`).join("");
-}
-
-// ================= DELETE =================
-async function hapus(id){
-
-  if(!confirm("Yakin hapus data?")) return;
-
-  await fetch(GAS_URL,{
-    method:"POST",
-    body:JSON.stringify({action:"delete",id})
-  });
-
-  loadData();
 }
 
 // ================= INIT =================
@@ -219,12 +219,13 @@ function init(){
 
   menu("dash");
 
+  tampilkanTanggal(); // ✅ TAMBAHAN
+
   if(mulai && akhir){
     mulai.oninput=hitungJam;
     akhir.oninput=hitungJam;
   }
 
-  // ✅ FILTER BULAN
   let filter = document.getElementById("filterBulan");
   if(filter){
     filter.onchange = loadGrafik;
