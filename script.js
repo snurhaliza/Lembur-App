@@ -5,41 +5,53 @@ let user = JSON.parse(localStorage.getItem("user"));
 // ================= LOGIN =================
 async function login(){
 
-  let pass = password.value.trim();
-  let role = role.value;
+  const pass = document.getElementById("password").value.trim();
+  const roleInput = document.getElementById("role").value;
+  const msg = document.getElementById("msg");
 
   if(!pass){
-    msg.innerText="Isi NIK!";
+    msg.innerText = "Isi NIK!";
     return;
   }
 
-  let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
-  let d = await r.json();
+  try{
 
-  if(!d.status){
-    msg.innerText="User tidak ditemukan!";
-    return;
+    const res = await fetch(`${GAS_URL}?action=login&password=${pass}`);
+    const d = await res.json();
+
+    if(!d.status){
+      msg.innerText = "User tidak ditemukan!";
+      return;
+    }
+
+    if(d.role !== roleInput){
+      msg.innerText = "Role salah!";
+      return;
+    }
+
+    localStorage.setItem("user", JSON.stringify(d));
+
+    location.href = d.role==="admin"
+      ? "admin.html"
+      : "karyawan.html";
+
+  }catch{
+    msg.innerText = "Server error!";
   }
-
-  if(d.role !== role){
-    msg.innerText="Role salah!";
-    return;
-  }
-
-  localStorage.setItem("user", JSON.stringify(d));
-
-  location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
 // ================= INIT =================
 function init(){
 
-  if(user){
-    if(nik) nik.value=user.nik;
-    if(nama) nama.value=user.nama;
-    if(welcome) welcome.innerText="Halo "+user.nama;
-    if(todayDate) todayDate.innerText=new Date().toLocaleDateString("id-ID");
+  if(!user){
+    location.href="index.html";
+    return;
   }
+
+  if(nik) nik.value=user.nik;
+  if(nama) nama.value=user.nama;
+  if(welcome) welcome.innerText="Halo "+user.nama;
+  if(todayDate) todayDate.innerText=new Date().toLocaleDateString("id-ID");
 
   menu("dash");
 
