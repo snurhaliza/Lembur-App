@@ -57,62 +57,57 @@ function menu(id){
 }
 
 // ================= DASHBOARD =================
-async function loadDashboard(){
+async function loadDashboardAdmin(){
 
-  let url = GAS_URL+"?action=dashboard";
+  let r = await fetch(GAS_URL+"?action=data");
+  let data = await r.json();
 
-  if(user){
-    url += "&nik="+user.nik;
-    url += "&role="+user.role;
-  }
+  let now = new Date();
+  let today = now.toLocaleDateString("id-ID");
+  let bulan = now.toISOString().slice(0,7); // yyyy-MM
 
-  let r = await fetch(url+"&t="+Date.now());
-  let d = await r.json();
+  let totalBulan = 0;
+  let mapHari = {};
 
-  if(todayCount) todayCount.innerText = d.todayTotal||0;
-  if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
-}
+  data.forEach(d=>{
 
-// ================= GRAFIK =================
-async function loadGrafik(){
+    // ===== TOTAL BULAN =====
+    let tgl = d.tanggal.split(" ")[0];
+    let parts = tgl.split("/"); // dd/MM/yyyy
+    let format = parts[2] + "-" + parts[1];
 
-  let bulan = document.getElementById("filterBulan")?.value;
-
-  let url = GAS_URL+"?action=grafik";
-
-  if(bulan){
-    url += "&bulan="+bulan;
-  }
-
-  let r = await fetch(url+"&t="+Date.now());
-  let d = await r.json();
-
-  let ctx = document.getElementById("chart");
-  if(!ctx) return;
-
-  if(chart) chart.destroy();
-
-  if(!d || d.length===0){
-    chart = new Chart(ctx,{
-      type:"bar",
-      data:{
-        labels:["Belum ada data"],
-        datasets:[{data:[0]}]
-      }
-    });
-    return;
-  }
-
-  chart = new Chart(ctx,{
-    type:"bar",
-    data:{
-      labels:d.map(x=>x.nama),
-      datasets:[{
-        label:"Jam Lembur",
-        data:d.map(x=>x.total)
-      }]
+    if(format === bulan){
+      totalBulan += Number(d.total||0);
     }
+
+    // ===== REKAP HARI INI =====
+    if(d.tanggal.startsWith(today)){
+      if(!mapHari[d.nama]) mapHari[d.nama]=0;
+      mapHari[d.nama]+=Number(d.total||0);
+    }
+
   });
+
+  // ===== TAMPILKAN TOTAL BULAN =====
+  let elTotal = document.getElementById("totalBulanDash");
+  if(elTotal) elTotal.innerText = totalBulan + " Jam";
+
+  // ===== TAMPILKAN REKAP HARI INI =====
+  let el = document.getElementById("rekapHariIni");
+
+  if(el){
+    let rows = Object.keys(mapHari).map(n=>`
+      <tr>
+        <td>${n}</td>
+        <td>${mapHari[n]} Jam</td>
+      </tr>
+    `).join("");
+
+    el.innerHTML = rows || `
+      <tr><td colspan="2">Tidak ada lembur hari ini</td></tr>
+    `;
+  }
+
 }
 
 // ================= HITUNG JAM =================
@@ -291,37 +286,59 @@ async function hapus(id){
 // ================= INIT =================
 function init(){
 
-  if(user){
-    if(nik) nik.value=user.nik;
-    if(nama) nama.value=user.nama;
-    if(welcome) welcome.innerText="Halo "+user.nama;
-  }
+ if(user){
+  if(nik) nik.value = user.nik;
+  if(nama) nama.value = user.nama;
 
+  if(welcome){
+    if(user.role === "admin"){
+      welcome.innerText = "Halo Admin, " + user.nama;
+    }else{
+      welcome.innerText = "Halo " + user.nama;
+    }
+  }
+}
+
+  // load pertama (akan panggil menu -> dashboard sesuai role)
   menu("dash");
+
   tampilkanTanggal();
 
+  // ================= HITUNG JAM =================
   if(mulai && akhir){
-    mulai.oninput=hitungJam;
-    akhir.oninput=hitungJam;
+    mulai.oninput = hitungJam;
+    akhir.oninput = hitungJam;
   }
 
+  // ================= FILTER GRAFIK =================
   let filter = document.getElementById("filterBulan");
   if(filter){
     filter.onchange = loadGrafik;
   }
 
-  // ✅ FILTER DATA BULAN
+  // ================= FILTER DATA =================
   let filterData = document.getElementById("filterBulanData");
   if(filterData){
     filterData.onchange = loadData;
   }
 
-  setInterval(()=>{
-    loadDashboard();
-    loadGrafik();
-  },10000);
-}
+  // biar langsung ke-load saat pertama buka menu data
+  loadData();
 
+  // ================= AUTO REFRESH =================
+  setInterval(()=>{
+
+    loadDashboard(); // notif tetap jalan
+
+    // 🔥 beda role
+    if(user?.role === "admin"){
+      loadDashboardAdmin();
+    }else{
+      loadGrafik();
+    }
+
+  }, 10000);
+}
 // ================= LOGOUT =================
 function logout(){
   localStorage.clear();
