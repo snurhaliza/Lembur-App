@@ -174,27 +174,37 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= FIX MOBILE KHUSUS ================= */
+/* ================= MOBILE FIX SIDEBAR + WELCOME ================= */
 @media(max-width:768px){
 
-  /* WELCOME BIAR KEBACA */
+  /* sidebar tetap horizontal */
   .sidebar{
-    flex-wrap:wrap; /* ❗ penting */
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:center;
     padding:10px;
   }
 
-  #welcome{
-    width:100%;
-    font-size:14px;
-    margin-bottom:5px;
-    text-align:left;
+  /* SEMUA BUTTON DI ATAS */
+  .sidebar button{
+    flex:1;
+    font-size:12px;
+    padding:10px;
+    margin:2px;
   }
 
-  /* BIAR BUTTON GA KEPOTONG */
-  .sidebar button{
-    flex:1 1 auto;
-    min-width:90px;
+  /* WELCOME PINDAH KE BAWAH */
+  #welcome{
+    width:100%;
+    order:99; /* ❗ dorong ke bawah */
+    margin-top:8px;
+    font-size:13px;
+    text-align:center;
+    opacity:0.8;
   }
+
+}
 
   /* FORM INPUT LEBIH RAPI */
   .card input,
