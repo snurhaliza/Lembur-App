@@ -4,79 +4,66 @@ body{
   background:#f4f6fb;
 }
 
-/* ================= LOGIN ================= */
+/* ================= LOGIN FIX (BALIK KE BIRU, TIDAK TERLALU LEBAR) ================= */
 .login-page{
   background:linear-gradient(135deg,#1e3a8a,#2563eb);
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  position:relative;
-  overflow:hidden;
 }
 
-.login-page::before,
-.login-page::after{
-  content:"";
-  position:absolute;
-  width:300px;
-  height:300px;
-  background:rgba(255,255,255,0.1);
-  border-radius:50%;
-  filter:blur(60px);
-}
-
-.login-page::before{
-  top:-80px;
-  left:-80px;
-}
-
-.login-page::after{
-  bottom:-80px;
-  right:-80px;
-}
-
+/* BOX LOGIN */
 .login-box{
   width:90%;
-  max-width:360px;
-  padding:30px 25px;
-  background:rgba(255,255,255,0.95);
-  border-radius:16px;
+  max-width:300px; /* ❗ biar gak kepanjangan */
+  padding:25px 20px;
+  background:white;
+  border-radius:12px;
   text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,0.25);
-  backdrop-filter:blur(10px);
-  animation:fadeIn 0.6s ease;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
+/* JUDUL */
 .login-box h2{
-  margin-bottom:20px;
   color:#1e3a8a;
+  margin-bottom:15px;
 }
 
+/* INPUT */
 .login-box input,
 .login-box select{
   width:100%;
-  padding:12px;
+  padding:10px;
   margin:8px 0;
-  border-radius:10px;
-  border:1px solid #ddd;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
 }
 
+/* BUTTON */
 .login-box button{
   width:100%;
-  padding:12px;
+  padding:10px;
   margin-top:10px;
   border:none;
-  border-radius:10px;
-  background:linear-gradient(135deg,#2563eb,#1e3a8a);
+  border-radius:8px;
+  background:#1e3a8a; /* ❗ balik ke biru solid */
   color:white;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
+  transition:0.2s;
 }
 
 .login-box button:hover{
-  transform:scale(1.03);
+  background:#2563eb;
+}
+
+/* ERROR */
+.error{
+  color:red;
+  font-size:13px;
+  margin-top:5px;
 }
 
 /* ================= SIDEBAR ================= */
