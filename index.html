@@ -3,10 +3,17 @@
 <head>
   <title>Login - Maintenax</title>
 
-  <!-- WAJIB untuk mobile -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- ✅ FIX MOBILE (ANTI ZOOM & LAYOUT AMAN) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- ✅ FIX INPUT MOBILE BIAR GAK ZOOM -->
+  <style>
+    input, select, button {
+      font-size: 16px;
+    }
+  </style>
 </head>
 
 <body class="login-page">
@@ -19,7 +26,8 @@
     <option value="admin">Admin</option>
   </select>
 
-  <input id="password" placeholder="Masukkan NIK">
+  <!-- ✅ FIX -->
+  <input id="password" type="text" placeholder="Masukkan NIK" autocomplete="off">
 
   <button onclick="login()">Login</button>
 
@@ -27,5 +35,25 @@
 </div>
 
 <script src="script.js"></script>
+
+<!-- ✅ ENTER + ANTI DOUBLE CLICK BUG -->
+<script>
+const input = document.getElementById("password");
+const btn = document.querySelector("button");
+
+input.addEventListener("keypress", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    btn.click();
+  }
+});
+
+// ✅ cegah klik spam (biar gak dobel request)
+btn.addEventListener("click", function(){
+  btn.disabled = true;
+  setTimeout(()=> btn.disabled = false, 1000);
+});
+</script>
+
 </body>
 </html>
