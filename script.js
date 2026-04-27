@@ -49,80 +49,70 @@ function menu(id){
   document.getElementById(id).style.display="block";
 
   if(id==="dash"){
-  loadDashboard();
-
-  if(user && user.role === "admin"){
-    loadDashboardAdmin(); // admin
-  }else{
-    loadGrafik();         // karyawan
+    loadDashboard();
+    loadGrafik();
   }
-}
 
   if(id==="data") loadData();
 }
 
 // ================= DASHBOARD =================
-async function loadDashboardAdmin(){
+async function loadDashboard(){
 
-  let r = await fetch(GAS_URL+"?action=data&t="+Date.now());
-  let data = await r.json();
+  let url = GAS_URL+"?action=dashboard";
 
-  let now = new Date();
-  let today = now.toISOString().slice(0,10);   // 2026-04-27
-  let thisMonth = now.toISOString().slice(0,7); // 2026-04
+  if(user){
+    url += "&nik="+user.nik;
+    url += "&role="+user.role;
+  }
 
-  let totalBulan = 0;
-  let mapHari = {};
+  let r = await fetch(url+"&t="+Date.now());
+  let d = await r.json();
 
-  data.forEach(d=>{
+  if(todayCount) todayCount.innerText = d.todayTotal||0;
+  if(monthTotal) monthTotal.innerText = (d.monthTotal||0)+" Jam";
+}
 
-    // dari GAS: dd/MM/yyyy
-    let parts = d.tanggal.split("/");
+// ================= GRAFIK =================
+async function loadGrafik(){
 
-    let tgl = parts[2]+"-"+parts[1]+"-"+parts[0]; // yyyy-MM-dd
-    let bln = parts[2]+"-"+parts[1];              // yyyy-MM
+  let bulan = document.getElementById("filterBulan")?.value;
 
-    // ===== TOTAL BULAN =====
-    if(bln === thisMonth){
-      totalBulan += Number(d.total||0);
+  let url = GAS_URL+"?action=grafik";
+
+  if(bulan){
+    url += "&bulan="+bulan;
+  }
+
+  let r = await fetch(url+"&t="+Date.now());
+  let d = await r.json();
+
+  let ctx = document.getElementById("chart");
+  if(!ctx) return;
+
+  if(chart) chart.destroy();
+
+  if(!d || d.length===0){
+    chart = new Chart(ctx,{
+      type:"bar",
+      data:{
+        labels:["Belum ada data"],
+        datasets:[{data:[0]}]
+      }
+    });
+    return;
+  }
+
+  chart = new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:d.map(x=>x.nama),
+      datasets:[{
+        label:"Jam Lembur",
+        data:d.map(x=>x.total)
+      }]
     }
-
-    // ===== REKAP HARI INI =====
-    if(tgl === today){
-      if(!mapHari[d.nama]) mapHari[d.nama]=0;
-      mapHari[d.nama]+=Number(d.total||0);
-    }
-
   });
-
-  // tampil total bulan
-  let elTotal = document.getElementById("totalBulanDash");
-  if(elTotal){
-    elTotal.innerText = totalBulan + " Jam";
-  }
-
-  // tampil rekap hari ini
-  let el = document.getElementById("rekapHariIni");
-
-  if(el){
-
-    if(Object.keys(mapHari).length === 0){
-      el.innerHTML = `
-        <tr>
-          <td colspan="2" style="text-align:center">
-            Tidak ada lembur hari ini
-          </td>
-        </tr>`;
-      return;
-    }
-
-    el.innerHTML = Object.keys(mapHari).map(n=>`
-      <tr>
-        <td>${n}</td>
-        <td>${mapHari[n]} Jam</td>
-      </tr>
-    `).join("");
-  }
 }
 
 // ================= HITUNG JAM =================
@@ -204,17 +194,15 @@ async function loadData(){
 
   let bulan = document.getElementById("filterBulanData")?.value;
 
-  console.log("FILTER BULAN:", bulan); // DEBUG
-
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    // 🔥 AMBIL TANGGAL TANPA JAM
+    // 🔥 AMBIL TANGGAL SAJA (BUANG JAM)
     let tgl = d.tanggal.split(" ")[0]; // 26/04/2026
 
     let parts = tgl.split("/"); // [dd, MM, yyyy]
 
-    let format = parts[2] + "-" + parts[1]; // 2026-04
+    let format = parts[2] + "-" + parts[1]; // yyyy-MM
 
     return format === bulan;
   });
@@ -270,7 +258,7 @@ async function loadData(){
       .join("");
   }
 
-  // ================= TABLE =================
+  // ================= TABLE (ASLI TIDAK DIUBAH) =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
@@ -301,58 +289,37 @@ async function hapus(id){
 // ================= INIT =================
 function init(){
 
- if(user){
-  if(nik) nik.value = user.nik;
-  if(nama) nama.value = user.nama;
-
-  if(welcome){
-    if(user.role === "admin"){
-      welcome.innerText = "Halo Admin, " + user.nama;
-    }else{
-      welcome.innerText = "Halo " + user.nama;
-    }
+  if(user){
+    if(nik) nik.value=user.nik;
+    if(nama) nama.value=user.nama;
+    if(welcome) welcome.innerText="Halo "+user.nama;
   }
-}
 
-  // load pertama (akan panggil menu -> dashboard sesuai role)
   menu("dash");
-
   tampilkanTanggal();
 
-if(mulai && akhir){
-  mulai.addEventListener("input", hitungJam);
-  akhir.addEventListener("input", hitungJam);
-}
+  if(mulai && akhir){
+    mulai.oninput=hitungJam;
+    akhir.oninput=hitungJam;
+  }
 
-  // ================= FILTER GRAFIK =================
   let filter = document.getElementById("filterBulan");
   if(filter){
     filter.onchange = loadGrafik;
   }
 
-  // ================= FILTER DATA =================
+  // ✅ FILTER DATA BULAN
   let filterData = document.getElementById("filterBulanData");
   if(filterData){
     filterData.onchange = loadData;
   }
 
-  // biar langsung ke-load saat pertama buka menu data
-  loadData();
-
-  // ================= AUTO REFRESH =================
   setInterval(()=>{
-
-    loadDashboard(); // notif tetap jalan
-
-    // 🔥 beda role
-    if(user?.role === "admin"){
-      loadDashboardAdmin();
-    }else{
-      loadGrafik();
-    }
-
-  }, 10000);
+    loadDashboard();
+    loadGrafik();
+  },10000);
 }
+
 // ================= LOGOUT =================
 function logout(){
   localStorage.clear();
