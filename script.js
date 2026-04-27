@@ -49,9 +49,14 @@ function menu(id){
   document.getElementById(id).style.display="block";
 
   if(id==="dash"){
-    loadDashboard();
-    loadGrafik();
+  loadDashboard();
+
+  if(user && user.role === "admin"){
+    loadDashboardAdmin(); // admin
+  }else{
+    loadGrafik();         // karyawan
   }
+}
 
   if(id==="data") loadData();
 }
@@ -59,55 +64,65 @@ function menu(id){
 // ================= DASHBOARD =================
 async function loadDashboardAdmin(){
 
-  let r = await fetch(GAS_URL+"?action=data");
+  let r = await fetch(GAS_URL+"?action=data&t="+Date.now());
   let data = await r.json();
 
   let now = new Date();
-  let today = now.toLocaleDateString("id-ID");
-  let bulan = now.toISOString().slice(0,7); // yyyy-MM
+  let today = now.toISOString().slice(0,10);   // 2026-04-27
+  let thisMonth = now.toISOString().slice(0,7); // 2026-04
 
   let totalBulan = 0;
   let mapHari = {};
 
   data.forEach(d=>{
 
-    // ===== TOTAL BULAN =====
-    let tgl = d.tanggal.split(" ")[0];
-    let parts = tgl.split("/"); // dd/MM/yyyy
-    let format = parts[2] + "-" + parts[1];
+    // dari GAS: dd/MM/yyyy
+    let parts = d.tanggal.split("/");
 
-    if(format === bulan){
+    let tgl = parts[2]+"-"+parts[1]+"-"+parts[0]; // yyyy-MM-dd
+    let bln = parts[2]+"-"+parts[1];              // yyyy-MM
+
+    // ===== TOTAL BULAN =====
+    if(bln === thisMonth){
       totalBulan += Number(d.total||0);
     }
 
     // ===== REKAP HARI INI =====
-    if(d.tanggal.startsWith(today)){
+    if(tgl === today){
       if(!mapHari[d.nama]) mapHari[d.nama]=0;
       mapHari[d.nama]+=Number(d.total||0);
     }
 
   });
 
-  // ===== TAMPILKAN TOTAL BULAN =====
+  // tampil total bulan
   let elTotal = document.getElementById("totalBulanDash");
-  if(elTotal) elTotal.innerText = totalBulan + " Jam";
+  if(elTotal){
+    elTotal.innerText = totalBulan + " Jam";
+  }
 
-  // ===== TAMPILKAN REKAP HARI INI =====
+  // tampil rekap hari ini
   let el = document.getElementById("rekapHariIni");
 
   if(el){
-    let rows = Object.keys(mapHari).map(n=>`
+
+    if(Object.keys(mapHari).length === 0){
+      el.innerHTML = `
+        <tr>
+          <td colspan="2" style="text-align:center">
+            Tidak ada lembur hari ini
+          </td>
+        </tr>`;
+      return;
+    }
+
+    el.innerHTML = Object.keys(mapHari).map(n=>`
       <tr>
         <td>${n}</td>
         <td>${mapHari[n]} Jam</td>
       </tr>
     `).join("");
-
-    el.innerHTML = rows || `
-      <tr><td colspan="2">Tidak ada lembur hari ini</td></tr>
-    `;
   }
-
 }
 
 // ================= HITUNG JAM =================
@@ -304,11 +319,10 @@ function init(){
 
   tampilkanTanggal();
 
-  // ================= HITUNG JAM =================
-  if(mulai && akhir){
-    mulai.oninput = hitungJam;
-    akhir.oninput = hitungJam;
-  }
+if(mulai && akhir){
+  mulai.addEventListener("input", hitungJam);
+  akhir.addEventListener("input", hitungJam);
+}
 
   // ================= FILTER GRAFIK =================
   let filter = document.getElementById("filterBulan");
