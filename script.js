@@ -38,6 +38,8 @@ async function login(){
     msg.innerText="Role salah!";
     return;
   }
+  // ✅ TAMBAHKAN INI
+alert("Login berhasil sebagai " + d.nama);
 
   localStorage.setItem("user",JSON.stringify(d));
   location.href = role==="admin" ? "admin.html" : "karyawan.html";
@@ -227,10 +229,33 @@ async function loadData(){
   }
 
   // ================= TOTAL BULAN =================
-  let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
+ let elTotal = document.getElementById("totalBulan");
 
-  let elTotal = document.getElementById("totalBulan");
-  if(elTotal) elTotal.innerText = totalBulan + " Jam";
+if(elTotal){
+
+  let namaBulan;
+
+  if(bulan){
+    // dari filter (yyyy-MM)
+    let [tahun, bln] = bulan.split("-");
+
+    namaBulan = new Date(tahun, bln-1)
+      .toLocaleDateString("id-ID",{ month:"long" });
+
+  }else{
+    // fallback ke bulan sekarang
+    let now = new Date();
+
+    namaBulan = now.toLocaleDateString("id-ID",{
+      month:"long"
+    });
+  }
+
+  // kapital
+  namaBulan = namaBulan.charAt(0).toUpperCase() + namaBulan.slice(1);
+
+  elTotal.innerText = `Total Lembur Bulan ${namaBulan}: ${totalBulan} Jam`;
+}
 
  
 
@@ -298,6 +323,11 @@ function init(){
 
 // ================= LOGOUT =================
 function logout(){
+
+  let yakin = confirm("Yakin mau logout?");
+
+  if(!yakin) return;
+
   localStorage.clear();
   location.href="index.html";
 }
