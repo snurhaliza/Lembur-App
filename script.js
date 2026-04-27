@@ -205,36 +205,35 @@ async function loadData(){
     return format === bulan;
   });
 
-  // ================= TOTAL BULAN =================
-  let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
+ // ================= TOTAL BULAN =================
+let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
 
-  let elTotal = document.getElementById("totalBulan");
-  if(elTotal) elTotal.innerText = totalBulan;
+// isi ANGKA saja ke span
+let elTotal = document.getElementById("totalBulan");
+if(elTotal) elTotal.innerText = totalBulan;
 
-  // ================= NAMA BULAN DINAMIS =================
-  const namaBulan = [
-    "Januari","Februari","Maret","April","Mei","Juni",
-    "Juli","Agustus","September","Oktober","November","Desember"
-  ];
+// ================= GANTI NAMA BULAN =================
+const namaBulan = [
+  "Januari","Februari","Maret","April","Mei","Juni",
+  "Juli","Agustus","September","Oktober","November","Desember"
+];
 
-  let label = document.getElementById("labelTotalBulan");
+let bulan = document.getElementById("filterBulanData")?.value;
 
-  if(label){
+let indexBulan;
 
-    let indexBulan;
+if(bulan){
+  indexBulan = parseInt(bulan.split("-")[1]) - 1;
+}else{
+  indexBulan = new Date().getMonth();
+}
 
-    if(bulan){
-      indexBulan = parseInt(bulan.split("-")[1]) - 1;
-    }else{
-      indexBulan = new Date().getMonth();
-    }
+// 👉 UBAH TEXT SAJA, JANGAN SENTUH SPAN
+let label = document.getElementById("labelTotalBulan");
 
-    label.innerHTML = `
-      Total Lembur Bulan ${namaBulan[indexBulan]}:
-      <span id="totalBulan">${totalBulan}</span> Jam
-    `;
-  }
-
+if(label){
+  label.childNodes[0].nodeValue = `Total Lembur Bulan ${namaBulan[indexBulan]}: `;
+}
   // ================= TABLE =================
   table.innerHTML = filtered.map(d=>`
   <tr>
