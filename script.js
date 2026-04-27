@@ -26,23 +26,35 @@ async function login(){
     return;
   }
 
-  let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
-  let d = await r.json();
+  try{
 
-  if(!d.status){
-    msg.innerText="User tidak ditemukan!";
-    return;
+    let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
+    let d = await r.json();
+
+    if(!d.status){
+      msg.innerText="NIK salah!";
+      return;
+    }
+
+    if(d.role!==role){
+      msg.innerText="Role salah!";
+      return;
+    }
+
+    // simpan user
+    localStorage.setItem("user",JSON.stringify(d));
+
+    // ✅ ALERT DULU BARU REDIRECT (pakai delay biar smooth)
+    alert("Login berhasil sebagai " + d.nama);
+
+    setTimeout(()=>{
+      location.href = role==="admin" ? "admin.html" : "karyawan.html";
+    }, 300);
+
+  }catch(err){
+    msg.innerText="Koneksi error!";
+    console.error(err);
   }
-
-  if(d.role!==role){
-    msg.innerText="Role salah!";
-    return;
-  }
-  // ✅ TAMBAHKAN INI
-alert("Login berhasil sebagai " + d.nama);
-
-  localStorage.setItem("user",JSON.stringify(d));
-  location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
 
 // ================= MENU =================
