@@ -197,24 +197,44 @@ async function loadData(){
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    // ✅ FIX: ambil tanggal saja (karena ada jam)
-    let tglOnly = d.tanggal.split(" ")[0];
-    let parts = tglOnly.split("/"); // dd/MM/yyyy
+    // 🔥 FIX FILTER PALING AMAN
+    let date = new Date(d.tanggal);
 
-    let format = parts[2] + "-" + parts[1]; // yyyy-MM
+    let y = date.getFullYear();
+    let m = String(date.getMonth()+1).padStart(2,'0');
+
+    let format = y + "-" + m;
 
     return format === bulan;
   });
 
-  // ================= TAMBAHAN (TIDAK MERUSAK) =================
+  // ================= JIKA DATA KOSONG =================
+  if(filtered.length === 0){
 
-  // ✅ TOTAL BULAN
+    table.innerHTML = `
+      <tr>
+        <td colspan="10" style="text-align:center; padding:20px;">
+          Tidak ada data di bulan ini
+        </td>
+      </tr>
+    `;
+
+    let elTotal = document.getElementById("totalBulan");
+    if(elTotal) elTotal.innerText = "0 Jam";
+
+    let elKar = document.getElementById("totalKaryawan");
+    if(elKar) elKar.innerHTML = "";
+
+    return;
+  }
+
+  // ================= TOTAL BULAN =================
   let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
 
   let elTotal = document.getElementById("totalBulan");
   if(elTotal) elTotal.innerText = totalBulan + " Jam";
 
-  // ✅ TOTAL PER KARYAWAN
+  // ================= TOTAL PER KARYAWAN =================
   let map = {};
   filtered.forEach(d=>{
     if(!map[d.nama]) map[d.nama]=0;
@@ -224,11 +244,23 @@ async function loadData(){
   let elKar = document.getElementById("totalKaryawan");
   if(elKar){
     elKar.innerHTML = Object.keys(map)
-      .map(n=>`${n}: ${map[n]} Jam`)
-      .join("<br>");
+      .map(n=>`
+        <div style="
+          padding:8px;
+          margin-bottom:5px;
+          background:#f1f5f9;
+          border-radius:6px;
+          display:flex;
+          justify-content:space-between;
+        ">
+          <span>${n}</span>
+          <b>${map[n]} Jam</b>
+        </div>
+      `)
+      .join("");
   }
 
-  // ================= ORIGINAL TABLE (TIDAK DIUBAH) =================
+  // ================= TABLE (TIDAK DIUBAH) =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
@@ -243,7 +275,6 @@ async function loadData(){
     <td><button onclick="hapus(${d.id})">Hapus</button></td>
   </tr>`).join("");
 }
-
 // ================= DELETE =================
 async function hapus(id){
 
