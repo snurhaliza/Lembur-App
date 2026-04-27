@@ -174,45 +174,55 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= TAMBAHAN: WELCOME DI BAWAH SIDEBAR ================= */
+/* ================= MOBILE ================= */
 @media(max-width:768px){
 
+  /* SIDEBAR TETAP SEPERTI PUNYAMU */
+  .sidebar{
+    position:relative;
+    width:100%;
+    height:auto;
+    display:flex;
+    gap:5px;
+    overflow-x:auto;
+    flex-wrap:wrap; /* ❗ penting biar bisa turun */
+  }
+
+  .sidebar h3{
+    display:none;
+  }
+
+  .sidebar button{
+    flex:1;
+    font-size:12px;
+    padding:10px;
+  }
+
+  /* ✅ WELCOME PASTI DI BAWAH */
   #welcome{
-    flex-basis:100%;   /* ❗ paksa pindah baris baru */
+    flex-basis:100%; /* paksa turun ke baris baru */
     margin-top:6px;
     font-size:13px;
     text-align:center;
   }
 
-
-  /* BUTTON JADI 1 BARIS */
-  .sidebar button{
-    flex:1;
-    font-size:12px;
-    padding:10px;
-    margin:2px;
-  }
-
-  /* WELCOME DI BAWAH */
-  #welcome{
-    width:100%;
-    order:2; /* ❗ setelah tombol */
-    margin-top:8px;
-    font-size:13px;
-    text-align:center;
-  }
-
-  /* CONTENT FULL (TIDAK KEGESER) */
+  /* CONTENT FULL */
   .content{
     margin-left:0;
     padding:10px;
   }
 
-  /* FORM LEBIH RAPI */
+  /* FORM */
   .card input,
   .card select{
     margin-bottom:12px;
   }
+
+  /* BUTTON INPUT */
+  #input button{
+    width:100%;
+    margin-top:10px;
+}
 
   /* BUTTON INPUT */
   #input button{
@@ -226,7 +236,6 @@ button:hover{
     margin-top:10px;
   }
 
-}
 /* ================= ANIMASI ================= */
 @keyframes fadeIn{
   from{
