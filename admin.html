@@ -3,9 +3,7 @@
 <head>
   <title>Admin - Maintenax</title>
 
-  <!-- WAJIB -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -22,7 +20,11 @@
 
 <div class="content">
 
+  <!-- DASHBOARD -->
   <div id="dash">
+
+    <!-- ✅ WELCOME ADMIN -->
+    <div id="welcome" class="card"></div>
 
     <div id="todayDate" class="card"></div>
 
@@ -45,11 +47,17 @@
 
   </div>
 
+  <!-- DATA -->
   <div id="data" style="display:none">
 
     <input type="month" id="filterBulanData">
 
-    <!-- WRAPPER biar scroll di HP -->
+    <!-- ✅ TOTAL BULAN -->
+    <h3>Total Lembur Bulan: <span id="totalBulan">0 Jam</span></h3>
+
+    <!-- ✅ TOTAL PER KARYAWAN -->
+    <div id="totalKaryawan" style="margin-bottom:15px;"></div>
+
     <div class="table-wrap">
       <table>
         <thead>
