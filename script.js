@@ -197,23 +197,21 @@ async function loadData(){
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    // 🔥 FIX FILTER PALING AMAN
-    let date = new Date(d.tanggal);
+    // 🔥 AMBIL TANGGAL SAJA (BUANG JAM)
+    let tgl = d.tanggal.split(" ")[0]; // 26/04/2026
 
-    let y = date.getFullYear();
-    let m = String(date.getMonth()+1).padStart(2,'0');
+    let parts = tgl.split("/"); // [dd, MM, yyyy]
 
-    let format = y + "-" + m;
+    let format = parts[2] + "-" + parts[1]; // yyyy-MM
 
     return format === bulan;
   });
 
-  // ================= JIKA DATA KOSONG =================
+  // ================= JIKA KOSONG =================
   if(filtered.length === 0){
-
     table.innerHTML = `
       <tr>
-        <td colspan="10" style="text-align:center; padding:20px;">
+        <td colspan="10" style="text-align:center;padding:20px;">
           Tidak ada data di bulan ini
         </td>
       </tr>
@@ -260,7 +258,7 @@ async function loadData(){
       .join("");
   }
 
-  // ================= TABLE (TIDAK DIUBAH) =================
+  // ================= TABLE (ASLI TIDAK DIUBAH) =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
