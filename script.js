@@ -194,15 +194,17 @@ async function loadData(){
 
   let bulan = document.getElementById("filterBulanData")?.value;
 
+  console.log("FILTER BULAN:", bulan); // DEBUG
+
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    // 🔥 AMBIL TANGGAL SAJA (BUANG JAM)
+    // 🔥 AMBIL TANGGAL TANPA JAM
     let tgl = d.tanggal.split(" ")[0]; // 26/04/2026
 
     let parts = tgl.split("/"); // [dd, MM, yyyy]
 
-    let format = parts[2] + "-" + parts[1]; // yyyy-MM
+    let format = parts[2] + "-" + parts[1]; // 2026-04
 
     return format === bulan;
   });
@@ -258,7 +260,7 @@ async function loadData(){
       .join("");
   }
 
-  // ================= TABLE (ASLI TIDAK DIUBAH) =================
+  // ================= TABLE =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
