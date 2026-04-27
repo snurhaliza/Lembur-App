@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Admin - Maintenax</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -9,7 +10,7 @@
 <body onload="init()">
 
 <div class="sidebar">
-  <h3>MAINTENAX</h3>
+  <h3>⚙ MaintenaX</h3>
 
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
@@ -18,27 +19,22 @@
 
 <div class="content">
 
-  <!-- DASHBOARD -->
   <div id="dash">
 
-    <!-- TANGGAL -->
     <div id="todayDate" class="card"></div>
 
-    <!-- NOTIF -->
     <div class="grid">
       <div class="card notif">
-        🔔 Notifikasi Hari Ini
+        🔔 Hari Ini
         <h2 id="todayCount">0</h2>
       </div>
     </div>
 
-    <!-- FILTER BULAN -->
     <div class="card">
       <label>Filter Bulan:</label>
       <input type="month" id="filterBulan" onchange="loadGrafik()">
     </div>
 
-    <!-- GRAFIK -->
     <div class="card">
       <h3>Top 3 Karyawan</h3>
       <canvas id="chart"></canvas>
@@ -46,29 +42,30 @@
 
   </div>
 
-  <!-- DATA -->
   <div id="data" style="display:none">
 
-  <input type="month" id="filterBulanData">
+    <input type="month" id="filterBulanData">
 
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>NIK</th>
-          <th>Nama</th>
-          <th>Pekerjaan</th>
-          <th>Lembur</th>
-          <th>K.Alasan</th>
-          <th>Mulai</th>
-          <th>Akhir</th>
-          <th>Total</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>NIK</th>
+            <th>Nama</th>
+            <th>Pekerjaan</th>
+            <th>Lembur</th>
+            <th>K.Alasan</th>
+            <th>Mulai</th>
+            <th>Akhir</th>
+            <th>Total</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
 
-      <tbody id="table"></tbody>
-    </table>
+        <tbody id="table"></tbody>
+      </table>
+    </div>
 
   </div>
 
