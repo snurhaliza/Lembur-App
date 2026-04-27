@@ -2,7 +2,10 @@
 <html>
 <head>
   <title>Karyawan</title>
+
+  <!-- WAJIB -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -13,35 +16,27 @@
   <h3 id="welcome"></h3>
 
   <button onclick="menu('dash')">Dashboard</button>
-  <button onclick="menu('input')">Input Lembur</button>
+  <button onclick="menu('input')">Input</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <div class="content">
 
-  <!-- DASHBOARD -->
   <div id="dash">
 
     <div id="todayDate" class="card"></div>
 
-    <div class="card motivasi">
-      💡 "Kerja keras hari ini menentukan masa depanmu"
-    </div>
-
     <div class="card">
-      <h3>Grafik Lembur</h3>
+      <h3>Top 3 Karyawan</h3>
       <input type="month" id="filterBulan">
       <canvas id="chart"></canvas>
     </div>
 
   </div>
 
-  <!-- INPUT -->
   <div id="input" style="display:none">
 
-    <div class="card form">
-
-      <h3>Input Lembur</h3>
+    <div class="card">
 
       <input id="nik" readonly>
       <input id="nama" readonly>
@@ -49,18 +44,19 @@
       <input id="keterangan" placeholder="Pekerjaan">
 
       <select id="jenis">
-        <option value="">Jenis Lembur</option>
+        <option value="">Lembur</option>
         <option>N</option>
         <option>H</option>
       </select>
 
       <select id="jam">
-        <option value="">Keterangan Alasan</option>
+        <option value="">K.Alasan</option>
         <option>1</option>
         <option>5</option>
         <option>8</option>
       </select>
 
+      <!-- WRAP AGAR RAPI DI HP -->
       <div class="row">
         <input type="time" id="mulai">
         <input type="time" id="akhir">
@@ -68,8 +64,8 @@
 
       <input id="total" readonly placeholder="Total Jam">
 
-      <button class="btn-primary" onclick="simpan()">Simpan</button>
-      <button class="btn-secondary" onclick="resetForm()">Reset</button>
+      <button onclick="simpan()">Submit</button>
+      <button onclick="resetForm()">Reset</button>
 
     </div>
 
