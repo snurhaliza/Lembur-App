@@ -174,20 +174,16 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= MOBILE FINAL FIX ================= */
+/* ================= TAMBAHAN: WELCOME DI BAWAH SIDEBAR ================= */
 @media(max-width:768px){
 
-  /* SIDEBAR JADI FULL ATAS (BUKAN FIXED) */
-  .sidebar{
-    position:relative;       /* ❗ hapus fixed */
-    width:100%;              /* ❗ full lebar */
-    height:auto;
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px;
+  #welcome{
+    flex-basis:100%;   /* ❗ paksa pindah baris baru */
+    margin-top:6px;
+    font-size:13px;
+    text-align:center;
   }
+
 
   /* BUTTON JADI 1 BARIS */
   .sidebar button{
