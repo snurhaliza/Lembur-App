@@ -174,58 +174,50 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= MOBILE ================= */
+/* ================= FIX MOBILE KHUSUS ================= */
 @media(max-width:768px){
 
-  /* sidebar jadi atas */
+  /* WELCOME BIAR KEBACA */
   .sidebar{
-    position:relative;
+    flex-wrap:wrap; /* ❗ penting */
+    padding:10px;
+  }
+
+  #welcome{
     width:100%;
-    height:auto;
-    display:flex;
-    gap:5px;
-    overflow-x:auto;
+    font-size:14px;
+    margin-bottom:5px;
+    text-align:left;
   }
 
-  .sidebar h3{
-    display:none;
-  }
-
+  /* BIAR BUTTON GA KEPOTONG */
   .sidebar button{
-    flex:1;
-    font-size:12px;
-    padding:10px;
+    flex:1 1 auto;
+    min-width:90px;
   }
 
-  /* content full */
-  .content{
-    margin-left:0;
-    padding:10px;
+  /* FORM INPUT LEBIH RAPI */
+  .card input,
+  .card select{
+    margin-bottom:12px;
   }
 
-  /* card lebih compact */
-  .card{
-    padding:12px;
+  /* TOMBOL JANGAN DEMPET */
+  .card button{
+    margin-top:8px;
   }
 
-  /* input lebih besar untuk jari */
-  input,select{
-    font-size:16px;
-    padding:14px;
+  /* KHUSUS HALAMAN INPUT (SUBMIT & RESET) */
+  #input button{
+    width:100%;
+    margin-top:10px;
   }
 
-  /* tombol besar */
-  button{
-    padding:14px;
-    font-size:16px;
+  /* KASIH JARAK ANTAR BUTTON */
+  #input button + button{
+    margin-top:10px;
   }
 
-  /* tabel scroll */
-  table{
-    display:block;
-    overflow-x:auto;
-    white-space:nowrap;
-  }
 }
 
 /* ================= ANIMASI ================= */
