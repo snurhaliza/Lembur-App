@@ -199,67 +199,43 @@ async function loadData(){
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    // 🔥 AMBIL TANGGAL SAJA (BUANG JAM)
-    let tgl = d.tanggal.split(" ")[0]; // 26/04/2026
-
-    let parts = tgl.split("/"); // [dd, MM, yyyy]
-
+    let parts = d.tanggal.split("/"); // dd/MM/yyyy
     let format = parts[2] + "-" + parts[1]; // yyyy-MM
 
     return format === bulan;
   });
 
-  // ================= JIKA KOSONG =================
-  if(filtered.length === 0){
-    table.innerHTML = `
-      <tr>
-        <td colspan="10" style="text-align:center;padding:20px;">
-          Tidak ada data di bulan ini
-        </td>
-      </tr>
-    `;
-
-    let elTotal = document.getElementById("totalBulan");
-    if(elTotal) elTotal.innerText = "0 Jam";
-
-    let elKar = document.getElementById("totalKaryawan");
-    if(elKar) elKar.innerHTML = "";
-
-    return;
-  }
-
   // ================= TOTAL BULAN =================
- let elTotal = document.getElementById("totalBulan");
+  let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
 
-if(elTotal){
+  let elTotal = document.getElementById("totalBulan");
+  if(elTotal) elTotal.innerText = totalBulan;
 
-  let namaBulan;
+  // ================= NAMA BULAN DINAMIS =================
+  const namaBulan = [
+    "Januari","Februari","Maret","April","Mei","Juni",
+    "Juli","Agustus","September","Oktober","November","Desember"
+  ];
 
-  if(bulan){
-    // dari filter (yyyy-MM)
-    let [tahun, bln] = bulan.split("-");
+  let label = document.getElementById("labelTotalBulan");
 
-    namaBulan = new Date(tahun, bln-1)
-      .toLocaleDateString("id-ID",{ month:"long" });
+  if(label){
 
-  }else{
-    // fallback ke bulan sekarang
-    let now = new Date();
+    let indexBulan;
 
-    namaBulan = now.toLocaleDateString("id-ID",{
-      month:"long"
-    });
+    if(bulan){
+      indexBulan = parseInt(bulan.split("-")[1]) - 1;
+    }else{
+      indexBulan = new Date().getMonth();
+    }
+
+    label.innerHTML = `
+      Total Lembur Bulan ${namaBulan[indexBulan]}:
+      <span id="totalBulan">${totalBulan}</span> Jam
+    `;
   }
 
-  // kapital
-  namaBulan = namaBulan.charAt(0).toUpperCase() + namaBulan.slice(1);
-
-  elTotal.innerText = `Total Lembur Bulan ${namaBulan}: ${totalBulan} Jam`;
-}
-
- 
-
-  // ================= TABLE (ASLI TIDAK DIUBAH) =================
+  // ================= TABLE =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
