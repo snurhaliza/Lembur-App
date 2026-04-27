@@ -174,43 +174,57 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= MOBILE ================= */
+/* ================= SIDEBAR MOBILE FULL ================= */
 @media(max-width:768px){
 
-  /* SIDEBAR */
+  /* SIDEBAR JADI ATAS */
   .sidebar{
     position:relative;
     width:100%;
     height:auto;
     display:flex;
-    gap:5px;
-    overflow-x:auto;
-    flex-wrap:wrap; /* ❗ WAJIB biar bisa turun */
+    flex-wrap:wrap;              /* ❗ biar bisa turun */
+    justify-content:space-between;
+    align-items:center;
+    padding:8px;
+    background:#1e3a8a;
+    gap:4px;
   }
 
-  /* BUTTON */
+  /* HILANGKAN JUDUL (BIAR RINGKAS) */
+  .sidebar h3:not(#welcome){
+    display:none;
+  }
+
+  /* BUTTON HORIZONTAL */
   .sidebar button{
     flex:1;
-    font-size:12px;
     padding:10px;
-    margin:2px;
+    font-size:12px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
   }
 
-  /* ✅ WELCOME PASTI DI BAWAH */
+  /* ✅ WELCOME DI BAWAH */
   .sidebar #welcome{
-    flex:0 0 100%;   /* ❗ ini yang paling penting */
-    width:100%;
+    flex:0 0 100%;          /* ❗ paksa 1 baris penuh */
+    order:99;               /* ❗ pastikan paling bawah */
     text-align:center;
     font-size:13px;
     margin-top:6px;
+    color:white;
+    font-weight:500;
   }
 
-  /* CONTENT */
+  /* CONTENT FULL */
   .content{
     margin-left:0;
     padding:10px;
   }
 
+}
   /* FORM */
   .card input,
   .card select{
