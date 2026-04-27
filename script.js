@@ -214,7 +214,7 @@ async function loadData(){
     return format === bulan;
   });
 
-  // ================= DATA (FILTER BULAN) =================
+ // ================= DATA (FILTER BULAN) =================
 async function loadData(){
 
   let r = await fetch(GAS_URL+"?action=data");
@@ -225,7 +225,7 @@ async function loadData(){
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    let t = d.tanggal.split(" ")[0]; // jaga kalau ada jam
+    let t = d.tanggal.split(" ")[0];
     let [dd, mm, yyyy] = t.split("/");
 
     let format = `${yyyy}-${mm.padStart(2,'0')}`;
@@ -239,7 +239,7 @@ async function loadData(){
   let elTotal = document.getElementById("totalBulan");
   if(elTotal) elTotal.innerText = totalBulan;
 
-  // ================= LABEL FIX (TIDAK ADA NAMA BULAN) =================
+  // ================= LABEL =================
   let label = document.getElementById("labelTotalBulan");
   if(label){
     label.childNodes[0].nodeValue = "Total Lembur Bulan Ini: ";
