@@ -206,15 +206,32 @@ async function loadData(){
   let bulan = document.getElementById("filterBulanData")?.value;
 
  let filtered = data.filter(d => {
+    if(!bulan) return true;
 
-  let [dd, mm, yyyy] = d.tanggal.split("/");
+    let parts = d.tanggal.split("/"); // dd/MM/yyyy
+    let format = parts[2] + "-" + parts[1]; // yyyy-MM
 
-  let tgl = new Date(`${yyyy}-${mm}-${dd}`); // ubah ke Date
+    return format === bulan;
+  });
 
-  let bulanData = tgl.toISOString().slice(0,7); // yyyy-MM
+  // ================= DATA (FILTER BULAN) =================
+async function loadData(){
 
-  return bulanData === bulan;
-});
+  let r = await fetch(GAS_URL+"?action=data");
+  let data = await r.json();
+
+  let bulan = document.getElementById("filterBulanData")?.value;
+
+  let filtered = data.filter(d => {
+    if(!bulan) return true;
+
+    let t = d.tanggal.split(" ")[0]; // jaga kalau ada jam
+    let [dd, mm, yyyy] = t.split("/");
+
+    let format = `${yyyy}-${mm.padStart(2,'0')}`;
+
+    return format === bulan;
+  });
 
   // ================= TOTAL BULAN =================
   let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
@@ -222,24 +239,22 @@ async function loadData(){
   let elTotal = document.getElementById("totalBulan");
   if(elTotal) elTotal.innerText = totalBulan;
 
-  // ================= NAMA BULAN OTOMATIS =================
-  const namaBulan = [
-    "Januari","Februari","Maret","April","Mei","Juni",
-    "Juli","Agustus","September","Oktober","November","Desember"
-  ];
-
-  let indexBulan;
-
-  if(bulan){
-    indexBulan = parseInt(bulan.split("-")[1]) - 1;
-  }else{
-    indexBulan = new Date().getMonth();
+  // ================= LABEL FIX (TIDAK ADA NAMA BULAN) =================
+  let label = document.getElementById("labelTotalBulan");
+  if(label){
+    label.childNodes[0].nodeValue = "Total Lembur Bulan Ini: ";
   }
 
-  let label = document.getElementById("labelTotalBulan");
-
-  if(label){
-    label.childNodes[0].nodeValue = `Total Lembur Bulan ${namaBulan[indexBulan]}: `;
+  // ================= JIKA KOSONG =================
+  if(filtered.length === 0){
+    table.innerHTML = `
+      <tr>
+        <td colspan="10" style="text-align:center;padding:20px;">
+          Tidak ada data di bulan ini
+        </td>
+      </tr>
+    `;
+    return;
   }
 
   // ================= TABLE =================
@@ -256,7 +271,6 @@ async function loadData(){
     <td>${d.total}</td>
     <td><button onclick="hapus(${d.id})">Hapus</button></td>
   </tr>`).join("");
-
 }
 // ================= DELETE =================
 async function hapus(id){
