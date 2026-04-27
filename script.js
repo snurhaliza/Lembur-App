@@ -28,6 +28,8 @@ async function login(){
     return;
   }
 
+  msg.innerText = "";
+
   try{
 
     let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
@@ -205,47 +207,26 @@ async function loadData(){
 
   let bulan = document.getElementById("filterBulanData")?.value;
 
- let filtered = data.filter(d => {
-    if(!bulan) return true;
-
-    let parts = d.tanggal.split("/"); // dd/MM/yyyy
-    let format = parts[2] + "-" + parts[1]; // yyyy-MM
-
-    return format === bulan;
-  });
-
- // ================= DATA (FILTER BULAN) =================
-async function loadData(){
-
-  let r = await fetch(GAS_URL+"?action=data");
-  let data = await r.json();
-
-  let bulan = document.getElementById("filterBulanData")?.value;
-
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    let t = d.tanggal.split(" ")[0];
-    let [dd, mm, yyyy] = t.split("/");
+    let tgl = d.tanggal.split(" ")[0];
+    let [dd, mm, yyyy] = tgl.split("/");
 
     let format = `${yyyy}-${mm.padStart(2,'0')}`;
 
     return format === bulan;
   });
 
-  // ================= TOTAL BULAN =================
+  // ✅ TOTAL BULAN
   let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
 
   let elTotal = document.getElementById("totalBulan");
-  if(elTotal) elTotal.innerText = totalBulan;
-
-  // ================= LABEL =================
-  let label = document.getElementById("labelTotalBulan");
-  if(label){
-    label.childNodes[0].nodeValue = "Total Lembur Bulan Ini: ";
+  if(elTotal){
+    elTotal.innerText = totalBulan + " Jam";
   }
 
-  // ================= JIKA KOSONG =================
+  // ✅ JIKA KOSONG
   if(filtered.length === 0){
     table.innerHTML = `
       <tr>
@@ -257,7 +238,7 @@ async function loadData(){
     return;
   }
 
-  // ================= TABLE =================
+  // ✅ TABLE
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
@@ -299,7 +280,7 @@ function init(){
 
     if(welcome){
       if(user.role === "admin"){
-        welcome.innerText = "Halo , " + user.nama;
+        welcome.innerText = "Halo Admin";
       }else{
         welcome.innerText = "Halo " + user.nama;
       }
