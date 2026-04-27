@@ -2,7 +2,10 @@
 <html>
 <head>
   <title>Admin - Maintenax</title>
+
+  <!-- WAJIB -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -10,7 +13,7 @@
 <body onload="init()">
 
 <div class="sidebar">
-  <h3>⚙ MaintenaX</h3>
+  <h3>MAINTENAX</h3>
 
   <button onclick="menu('dash')">Dashboard</button>
   <button onclick="menu('data')">Data Lembur</button>
@@ -25,7 +28,7 @@
 
     <div class="grid">
       <div class="card notif">
-        🔔 Hari Ini
+        🔔 Notifikasi Hari Ini
         <h2 id="todayCount">0</h2>
       </div>
     </div>
@@ -46,6 +49,7 @@
 
     <input type="month" id="filterBulanData">
 
+    <!-- WRAPPER biar scroll di HP -->
     <div class="table-wrap">
       <table>
         <thead>
