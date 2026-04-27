@@ -174,11 +174,14 @@ button:hover{
   font-size:13px;
 }
 
-/* ================= MOBILE FIX SIDEBAR + WELCOME ================= */
+/* ================= MOBILE FINAL FIX ================= */
 @media(max-width:768px){
 
-  /* sidebar tetap horizontal */
+  /* SIDEBAR JADI FULL ATAS (BUKAN FIXED) */
   .sidebar{
+    position:relative;       /* ❗ hapus fixed */
+    width:100%;              /* ❗ full lebar */
+    height:auto;
     display:flex;
     flex-wrap:wrap;
     justify-content:space-between;
@@ -186,7 +189,7 @@ button:hover{
     padding:10px;
   }
 
-  /* SEMUA BUTTON DI ATAS */
+  /* BUTTON JADI 1 BARIS */
   .sidebar button{
     flex:1;
     font-size:12px;
@@ -194,34 +197,33 @@ button:hover{
     margin:2px;
   }
 
-  /* WELCOME PINDAH KE BAWAH */
+  /* WELCOME DI BAWAH */
   #welcome{
     width:100%;
-    order:99; /* ❗ dorong ke bawah */
+    order:2; /* ❗ setelah tombol */
     margin-top:8px;
     font-size:13px;
     text-align:center;
-    opacity:0.8;
   }
 
-}
+  /* CONTENT FULL (TIDAK KEGESER) */
+  .content{
+    margin-left:0;
+    padding:10px;
+  }
 
-  /* FORM INPUT LEBIH RAPI */
+  /* FORM LEBIH RAPI */
   .card input,
   .card select{
     margin-bottom:12px;
   }
 
-  /* TOMBOL JANGAN DEMPET */
-  .card button{
-    margin-top:8px;
-  }
-
-  /* KHUSUS HALAMAN INPUT (SUBMIT & RESET) */
+  /* BUTTON INPUT */
   #input button{
     width:100%;
     margin-top:10px;
-  }
+ 
+}
 
   /* KASIH JARAK ANTAR BUTTON */
   #input button + button{
@@ -229,7 +231,6 @@ button:hover{
   }
 
 }
-
 /* ================= ANIMASI ================= */
 @keyframes fadeIn{
   from{
