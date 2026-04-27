@@ -269,7 +269,7 @@ async function hapus(id){
   loadData();
 }
 
-// ================= INIT =================
+
 // ================= INIT =================
 function init(){
 
@@ -283,7 +283,7 @@ function init(){
 
     if(welcome){
       if(user.role === "admin"){
-        welcome.innerText = "Halo Admin, " + user.nama;
+        welcome.innerText = "Halo , " + user.nama;
       }else{
         welcome.innerText = "Halo " + user.nama;
       }
