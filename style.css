@@ -177,7 +177,7 @@ button:hover{
 /* ================= MOBILE ================= */
 @media(max-width:768px){
 
-  /* SIDEBAR TETAP SEPERTI PUNYAMU */
+  /* SIDEBAR */
   .sidebar{
     position:relative;
     width:100%;
@@ -185,28 +185,27 @@ button:hover{
     display:flex;
     gap:5px;
     overflow-x:auto;
-    flex-wrap:wrap; /* ❗ penting biar bisa turun */
+    flex-wrap:wrap; /* ❗ WAJIB biar bisa turun */
   }
 
-  .sidebar h3{
-    display:none;
-  }
-
+  /* BUTTON */
   .sidebar button{
     flex:1;
     font-size:12px;
     padding:10px;
+    margin:2px;
   }
 
   /* ✅ WELCOME PASTI DI BAWAH */
-  #welcome{
-    flex-basis:100%; /* paksa turun ke baris baru */
-    margin-top:6px;
-    font-size:13px;
+  .sidebar #welcome{
+    flex:0 0 100%;   /* ❗ ini yang paling penting */
+    width:100%;
     text-align:center;
+    font-size:13px;
+    margin-top:6px;
   }
 
-  /* CONTENT FULL */
+  /* CONTENT */
   .content{
     margin-left:0;
     padding:10px;
@@ -222,19 +221,13 @@ button:hover{
   #input button{
     width:100%;
     margin-top:10px;
-}
+  }
 
-  /* BUTTON INPUT */
-  #input button{
-    width:100%;
-    margin-top:10px;
- 
-}
-
-  /* KASIH JARAK ANTAR BUTTON */
   #input button + button{
     margin-top:10px;
   }
+
+}
 
 /* ================= ANIMASI ================= */
 @keyframes fadeIn{
