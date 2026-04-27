@@ -35,15 +35,25 @@
       </div>
     </div>
 
-    <div class="card">
-      <label>Filter Bulan:</label>
-      <input type="month" id="filterBulan" onchange="loadGrafik()">
-    </div>
+    <!-- ✅ TOTAL BULAN -->
+<div class="card">
+  <h3>Total Lembur Bulan Ini</h3>
+  <h2 id="totalBulanDash">0 Jam</h2>
+</div>
 
-    <div class="card">
-      <h3>Top 3 Karyawan</h3>
-      <canvas id="chart"></canvas>
-    </div>
+<!-- ✅ REKAP HARI INI -->
+<div class="card">
+  <h3>Rekap Hari Ini</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nama</th>
+        <th>Jam</th>
+      </tr>
+    </thead>
+    <tbody id="rekapHariIni"></tbody>
+  </table>
+</div>
 
   </div>
 
@@ -51,12 +61,7 @@
   <div id="data" style="display:none">
 
    <input type="month" id="filterBulanData" onchange="loadData()">
-    <!-- ✅ TOTAL BULAN -->
-    <h3>Total Lembur Bulan: <span id="totalBulan">0 Jam</span></h3>
-
-    <!-- ✅ TOTAL PER KARYAWAN -->
-    <div id="totalKaryawan" style="margin-bottom:15px;"></div>
-
+   
     <div class="table-wrap">
       <table>
         <thead>
