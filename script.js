@@ -19,31 +19,41 @@ function tampilkanTanggal(){
 // ================= LOGIN =================
 async function login(){
 
-  let pass = password.value.trim();
+  let pass = document.getElementById("password").value.trim();
   let role = document.getElementById("role").value;
+  let msg = document.getElementById("msg");
 
   if(!pass){
-    msg.innerText="NIK wajib diisi!";
+    msg.innerText = "NIK wajib diisi!";
     return;
   }
 
-  let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
-  let d = await r.json();
+  try{
 
-  if(!d.status){
-    msg.innerText="User tidak ditemukan!";
-    return;
+    let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
+    let d = await r.json();
+
+    if(!d.status){
+      msg.innerText = "User tidak ditemukan!";
+      return;
+    }
+
+    if(d.role !== role){
+      msg.innerText = "Role salah!";
+      return;
+    }
+
+    localStorage.setItem("user", JSON.stringify(d));
+
+    alert("Login berhasil sebagai " + d.nama);
+
+    location.href = role === "admin" ? "admin.html" : "karyawan.html";
+
+  }catch(err){
+    msg.innerText = "Koneksi error!";
+    console.log(err);
   }
-
-  if(d.role!==role){
-    msg.innerText="Role salah!";
-    return;
-  }
-
-  localStorage.setItem("user",JSON.stringify(d));
-  location.href = role==="admin" ? "admin.html" : "karyawan.html";
 }
-
 // ================= MENU =================
 function menu(id){
   document.querySelectorAll(".content > div").forEach(x=>x.style.display="none");
@@ -204,35 +214,32 @@ async function loadData(){
     return format === bulan;
   });
 
- // ================= TOTAL BULAN =================
-let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
+  // ================= TOTAL BULAN =================
+  let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
 
-// isi ANGKA saja ke span
-let elTotal = document.getElementById("totalBulan");
-if(elTotal) elTotal.innerText = totalBulan;
+  let elTotal = document.getElementById("totalBulan");
+  if(elTotal) elTotal.innerText = totalBulan;
 
-// ================= GANTI NAMA BULAN =================
-const namaBulan = [
-  "Januari","Februari","Maret","April","Mei","Juni",
-  "Juli","Agustus","September","Oktober","November","Desember"
-];
+  // ================= NAMA BULAN OTOMATIS =================
+  const namaBulan = [
+    "Januari","Februari","Maret","April","Mei","Juni",
+    "Juli","Agustus","September","Oktober","November","Desember"
+  ];
 
-let bulan = document.getElementById("filterBulanData")?.value;
+  let indexBulan;
 
-let indexBulan;
+  if(bulan){
+    indexBulan = parseInt(bulan.split("-")[1]) - 1;
+  }else{
+    indexBulan = new Date().getMonth();
+  }
 
-if(bulan){
-  indexBulan = parseInt(bulan.split("-")[1]) - 1;
-}else{
-  indexBulan = new Date().getMonth();
-}
+  let label = document.getElementById("labelTotalBulan");
 
-// 👉 UBAH TEXT SAJA, JANGAN SENTUH SPAN
-let label = document.getElementById("labelTotalBulan");
+  if(label){
+    label.childNodes[0].nodeValue = `Total Lembur Bulan ${namaBulan[indexBulan]}: `;
+  }
 
-if(label){
-  label.childNodes[0].nodeValue = `Total Lembur Bulan ${namaBulan[indexBulan]}: `;
-}
   // ================= TABLE =================
   table.innerHTML = filtered.map(d=>`
   <tr>
@@ -247,6 +254,7 @@ if(label){
     <td>${d.total}</td>
     <td><button onclick="hapus(${d.id})">Hapus</button></td>
   </tr>`).join("");
+
 }
 // ================= DELETE =================
 async function hapus(id){
@@ -262,20 +270,32 @@ async function hapus(id){
 }
 
 // ================= INIT =================
+// ================= INIT =================
 function init(){
 
   if(user){
-    if(nik) nik.value=user.nik;
-    if(nama) nama.value=user.nama;
-    if(welcome) welcome.innerText="Halo "+user.nama;
+    let nikEl = document.getElementById("nik");
+    let namaEl = document.getElementById("nama");
+    let welcome = document.getElementById("welcome");
+
+    if(nikEl) nikEl.value = user.nik;
+    if(namaEl) namaEl.value = user.nama;
+
+    if(welcome){
+      if(user.role === "admin"){
+        welcome.innerText = "Halo Admin, " + user.nama;
+      }else{
+        welcome.innerText = "Halo " + user.nama;
+      }
+    }
   }
 
   menu("dash");
   tampilkanTanggal();
 
   if(mulai && akhir){
-    mulai.oninput=hitungJam;
-    akhir.oninput=hitungJam;
+    mulai.oninput = hitungJam;
+    akhir.oninput = hitungJam;
   }
 
   let filter = document.getElementById("filterBulan");
@@ -283,7 +303,6 @@ function init(){
     filter.onchange = loadGrafik;
   }
 
-  // ✅ FILTER DATA BULAN
   let filterData = document.getElementById("filterBulanData");
   if(filterData){
     filterData.onchange = loadData;
@@ -294,7 +313,6 @@ function init(){
     loadGrafik();
   },10000);
 }
-
 // ================= LOGOUT =================
 function logout(){
 
