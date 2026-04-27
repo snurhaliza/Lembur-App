@@ -1,66 +1,7 @@
 body{
   margin:0;
-  font-family:sans-serif;
+  font-family:'Segoe UI',sans-serif;
   background:#f4f6fb;
-}
-
-/* LOGIN */
-.login-page{
-  background:linear-gradient(135deg,#1e3a8a,#2563eb);
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-  overflow:hidden;
-}
-
-/* efek background halus */
-.login-page::before{
-  content:"";
-  position:absolute;
-  width:350px;
-  height:350px;
-  background:rgba(255,255,255,0.1);
-  border-radius:50%;
-  top:-100px;
-  left:-100px;
-  filter:blur(60px);
-}
-
-.login-page::after{
-  content:"";
-  position:absolute;
-  width:350px;
-  height:350px;
-  background:rgba(255,255,255,0.1);
-  border-radius:50%;
-  bottom:-100px;
-  right:-100px;
-  filter:blur(60px);
-}
-
-.login-box{
-  width:320px;
-  padding:30px 25px;
-  background:rgba(255,255,255,0.95);
-  border-radius:16px;
-  text-align:center;
-  box-shadow:0 15px 40px rgba(0,0,0,0.25);
-  backdrop-filter:blur(10px);
-  animation:fadeIn 0.6s ease;
-}
-
-/* animasi masuk */
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform:translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
 }
 
 /* SIDEBAR */
@@ -68,20 +9,31 @@ body{
   width:220px;
   height:100vh;
   position:fixed;
-  background:#1e3a8a;
+  background:linear-gradient(180deg,#1e3a8a,#2563eb);
   color:white;
   padding:15px;
 }
 
+.sidebar h3{
+  text-align:center;
+  margin-bottom:20px;
+}
+
 .sidebar button{
   width:100%;
-  padding:10px;
-  margin:5px 0;
+  padding:12px;
+  margin:6px 0;
   border:none;
-  background:#2563eb;
-  color:white;
   border-radius:8px;
+  background:rgba(255,255,255,0.1);
+  color:white;
   cursor:pointer;
+  transition:0.3s;
+}
+
+.sidebar button:hover{
+  background:white;
+  color:#1e3a8a;
 }
 
 /* CONTENT */
@@ -90,37 +42,62 @@ body{
   padding:20px;
 }
 
+/* CARD */
 .card{
   background:white;
   padding:15px;
-  border-radius:10px;
-  margin:10px 0;
-  text-align:center;
+  border-radius:12px;
+  margin-bottom:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
 }
 
-.grid{
-  display:flex;
-  gap:10px;
+/* MOTIVASI */
+.motivasi{
+  background:#fff7ed;
+  color:#9a3412;
+  font-weight:500;
 }
 
-table{
+/* INPUT */
+input, select{
   width:100%;
-  border-collapse:collapse;
-  background:white;
-}
-
-th,td{
-  padding:8px;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
   border:1px solid #ddd;
 }
 
-input,select{
+/* BUTTON */
+.btn-primary{
   width:100%;
-  padding:10px;
-  margin:8px 0;
+  padding:12px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  border-radius:8px;
+  margin-top:10px;
 }
 
-.error{
-  color:red;
-}
+/* MOBILE FIX */
+@media(max-width:768px){
 
+  .sidebar{
+    position:relative;
+    width:100%;
+    height:auto;
+    display:flex;
+    gap:5px;
+    overflow:auto;
+  }
+
+  .sidebar button{
+    flex:1;
+    font-size:12px;
+    padding:10px;
+  }
+
+  .content{
+    margin-left:0;
+    padding:15px;
+  }
+}
