@@ -197,12 +197,38 @@ async function loadData(){
   let filtered = data.filter(d => {
     if(!bulan) return true;
 
-    let parts = d.tanggal.split("/"); // dd/MM/yyyy
+    // ✅ FIX: ambil tanggal saja (karena ada jam)
+    let tglOnly = d.tanggal.split(" ")[0];
+    let parts = tglOnly.split("/"); // dd/MM/yyyy
+
     let format = parts[2] + "-" + parts[1]; // yyyy-MM
 
     return format === bulan;
   });
 
+  // ================= TAMBAHAN (TIDAK MERUSAK) =================
+
+  // ✅ TOTAL BULAN
+  let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
+
+  let elTotal = document.getElementById("totalBulan");
+  if(elTotal) elTotal.innerText = totalBulan + " Jam";
+
+  // ✅ TOTAL PER KARYAWAN
+  let map = {};
+  filtered.forEach(d=>{
+    if(!map[d.nama]) map[d.nama]=0;
+    map[d.nama]+=Number(d.total||0);
+  });
+
+  let elKar = document.getElementById("totalKaryawan");
+  if(elKar){
+    elKar.innerHTML = Object.keys(map)
+      .map(n=>`${n}: ${map[n]} Jam`)
+      .join("<br>");
+  }
+
+  // ================= ORIGINAL TABLE (TIDAK DIUBAH) =================
   table.innerHTML = filtered.map(d=>`
   <tr>
     <td>${d.tanggal}</td>
