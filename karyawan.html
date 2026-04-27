@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Karyawan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -12,7 +13,7 @@
   <h3 id="welcome"></h3>
 
   <button onclick="menu('dash')">Dashboard</button>
-  <button onclick="menu('input')">Input</button>
+  <button onclick="menu('input')">Input Lembur</button>
   <button onclick="logout()">Logout</button>
 </div>
 
@@ -21,16 +22,15 @@
   <!-- DASHBOARD -->
   <div id="dash">
 
-    <!-- TANGGAL -->
     <div id="todayDate" class="card"></div>
 
-    <!-- GRAFIK -->
+    <div class="card motivasi">
+      💡 "Kerja keras hari ini menentukan masa depanmu"
+    </div>
+
     <div class="card">
-      <h3>Top 3 Karyawan</h3>
-
-      <!-- ✅ FILTER BULAN -->
+      <h3>Grafik Lembur</h3>
       <input type="month" id="filterBulan">
-
       <canvas id="chart"></canvas>
     </div>
 
@@ -39,7 +39,9 @@
   <!-- INPUT -->
   <div id="input" style="display:none">
 
-    <div class="card">
+    <div class="card form">
+
+      <h3>Input Lembur</h3>
 
       <input id="nik" readonly>
       <input id="nama" readonly>
@@ -47,24 +49,27 @@
       <input id="keterangan" placeholder="Pekerjaan">
 
       <select id="jenis">
-        <option value="">Lembur</option>
+        <option value="">Jenis Lembur</option>
         <option>N</option>
         <option>H</option>
       </select>
 
       <select id="jam">
-        <option value="">K.Alasan</option>
+        <option value="">Keterangan Alasan</option>
         <option>1</option>
         <option>5</option>
         <option>8</option>
       </select>
 
-      <input type="time" id="mulai">
-      <input type="time" id="akhir">
+      <div class="row">
+        <input type="time" id="mulai">
+        <input type="time" id="akhir">
+      </div>
+
       <input id="total" readonly placeholder="Total Jam">
 
-      <button onclick="simpan()">Submit</button>
-      <button onclick="resetForm()">Reset</button>
+      <button class="btn-primary" onclick="simpan()">Simpan</button>
+      <button class="btn-secondary" onclick="resetForm()">Reset</button>
 
     </div>
 
