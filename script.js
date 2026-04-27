@@ -15,44 +15,55 @@ function tampilkanTanggal(){
   el.innerText = hari + ", " + tanggal;
 }
 
+
 // ================= LOGIN =================
 async function login(){
 
-  let pass = password.value.trim();
-  let role = document.getElementById("role").value;
+  const passEl = document.getElementById("password");
+  const roleEl = document.getElementById("role");
+  const msgEl = document.getElementById("msg");
+
+  let pass = passEl.value.trim();
+  let role = roleEl.value;
 
   if(!pass){
-    msg.innerText="NIK wajib diisi!";
+    msgEl.style.color = "red";
+    msgEl.innerText = "NIK wajib diisi!";
     return;
   }
 
   try{
 
-    let r = await fetch(`${GAS_URL}?action=login&password=${pass}`);
+    let r = await fetch(`${GAS_URL}?action=login&password=${pass}&t=${Date.now()}`);
     let d = await r.json();
 
     if(!d.status){
-      msg.innerText="NIK salah!";
+      msgEl.style.color = "red";
+      msgEl.innerText = "User tidak ditemukan!";
       return;
     }
 
-    if(d.role!==role){
-      msg.innerText="Role salah!";
+    if(d.role !== role){
+      msgEl.style.color = "red";
+      msgEl.innerText = "Role salah!";
       return;
     }
 
-    // simpan user
-    localStorage.setItem("user",JSON.stringify(d));
+    // ✅ SIMPAN USER
+    localStorage.setItem("user", JSON.stringify(d));
 
-    // ✅ ALERT DULU BARU REDIRECT (pakai delay biar smooth)
-    alert("Login berhasil sebagai " + d.nama);
+    // ✅ TAMPILKAN SUKSES
+    msgEl.style.color = "green";
+    msgEl.innerText = "Login berhasil sebagai " + d.nama;
 
+    // ✅ REDIRECT HALUS
     setTimeout(()=>{
       location.href = role==="admin" ? "admin.html" : "karyawan.html";
-    }, 300);
+    }, 500);
 
   }catch(err){
-    msg.innerText="Koneksi error!";
+    msgEl.style.color = "red";
+    msgEl.innerText = "Koneksi ke server gagal!";
     console.error(err);
   }
 }
