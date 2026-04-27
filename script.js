@@ -205,14 +205,16 @@ async function loadData(){
 
   let bulan = document.getElementById("filterBulanData")?.value;
 
-  let filtered = data.filter(d => {
-    if(!bulan) return true;
+ let filtered = data.filter(d => {
 
-    let parts = d.tanggal.split("/"); // dd/MM/yyyy
-    let format = parts[2] + "-" + parts[1]; // yyyy-MM
+  let [dd, mm, yyyy] = d.tanggal.split("/");
 
-    return format === bulan;
-  });
+  let tgl = new Date(`${yyyy}-${mm}-${dd}`); // ubah ke Date
+
+  let bulanData = tgl.toISOString().slice(0,7); // yyyy-MM
+
+  return bulanData === bulan;
+});
 
   // ================= TOTAL BULAN =================
   let totalBulan = filtered.reduce((sum,d)=> sum + Number(d.total||0),0);
