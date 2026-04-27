@@ -232,31 +232,7 @@ async function loadData(){
   let elTotal = document.getElementById("totalBulan");
   if(elTotal) elTotal.innerText = totalBulan + " Jam";
 
-  // ================= TOTAL PER KARYAWAN =================
-  let map = {};
-  filtered.forEach(d=>{
-    if(!map[d.nama]) map[d.nama]=0;
-    map[d.nama]+=Number(d.total||0);
-  });
-
-  let elKar = document.getElementById("totalKaryawan");
-  if(elKar){
-    elKar.innerHTML = Object.keys(map)
-      .map(n=>`
-        <div style="
-          padding:8px;
-          margin-bottom:5px;
-          background:#f1f5f9;
-          border-radius:6px;
-          display:flex;
-          justify-content:space-between;
-        ">
-          <span>${n}</span>
-          <b>${map[n]} Jam</b>
-        </div>
-      `)
-      .join("");
-  }
+ 
 
   // ================= TABLE (ASLI TIDAK DIUBAH) =================
   table.innerHTML = filtered.map(d=>`
